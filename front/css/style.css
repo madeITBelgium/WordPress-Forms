@@ -1,0 +1,21 @@
+.madeit-form-error {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    
+    background-color: #f5cbcb;
+    border-color: #f3bec6;
+    color: #de4949;
+}
+
+.madeit-form-success {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    
+    background-color: #bedcce;
+    border-color: #aed3bb;
+    color: #488669;
+}
