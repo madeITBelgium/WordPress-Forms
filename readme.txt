@@ -12,7 +12,7 @@ Build cool, easy and flexible forms with Forms.
 
 == Description ==
 
-Forms is an easy form manager that lets you manage all your cool forms. It's easy to create your own contact form or newsletter subscriber.
+Forms is an easy form manager that lets you manage all your cool forms. Creating your own contact form or newsletter subscriber is easy.
 
 = Docs & Support =
 

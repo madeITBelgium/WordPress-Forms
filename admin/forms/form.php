@@ -136,7 +136,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
                             <textarea id="madeit-forms-form" name="form" cols="100" rows="24" class="large-text code"><?php echo esc_textarea($formValue); ?></textarea>
                         </div>
                         <div class="contact-form-editor-panel" id="actions-panel">
-                           <h2><?php echo esc_html(__('Actions', '')); ?></h2>
+                           <h2><?php echo esc_html(__('Actions', 'madeit_forms')); ?></h2>
                             <fieldset>
                                 <legend><?php echo esc_html(__("In the following fields, you can use these name-tags:", 'madeit_forms')); ?><br /><span class="name-tags"></span></legend>
                                 <?php
