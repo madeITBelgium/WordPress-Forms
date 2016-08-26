@@ -4,7 +4,7 @@ Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 1.0
+Stable tag: 1.1
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
