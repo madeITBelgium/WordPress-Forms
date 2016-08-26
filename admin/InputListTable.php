@@ -26,11 +26,11 @@ class InputListTable extends WP_List_Table {
     function get_columns() {
         $columns = array(
             'cb' => '<input type="checkbox" />',
-            'id' => __('ID', 'madeit_forms'),
-            'form' => __('Form', 'madeit_forms'),
-            'ip' => __('IP', 'madeit_forms'),
-            'read' => __('Read', 'madeit_forms'),
-            'create_time' => __('Create date', 'madeit_forms'),
+            'id' => __('ID', 'forms-by-made-it'),
+            'form' => __('Form', 'forms-by-made-it'),
+            'ip' => __('IP', 'forms-by-made-it'),
+            'read' => __('Read', 'forms-by-made-it'),
+            'create_time' => __('Create date', 'forms-by-made-it'),
         );
         return $columns;
     }
@@ -99,7 +99,7 @@ class InputListTable extends WP_List_Table {
             case 'ip':
                 return $item->ip;
             case 'read':
-                return $item->read == 1 ? __('Yes', 'madeit_forms') : __('No', 'madeit_forms');
+                return $item->read == 1 ? __('Yes', 'forms-by-made-it') : __('No', 'forms-by-made-it');
             case 'create_time':
                 return $item->create_time;
             default:
@@ -127,7 +127,7 @@ class InputListTable extends WP_List_Table {
     }
     
     function column_form($item) {
-        $form = $this->db->table('madeit_forms')->where('id', $item->form_id)->first();
+        $form = $this->db->table('forms-by-made-it')->where('id', $item->form_id)->first();
         $actions = array(
             //'show' => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a>', 'madeit_form', 'edit', $form->id),
         );

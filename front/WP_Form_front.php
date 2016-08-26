@@ -110,7 +110,7 @@ class WP_Form_front {
                 }
                 
                 
-                echo "<pre>" . print_r($dbI, true) . "</pre>";
+                //echo "<pre>" . print_r($dbI, true) . "</pre>";
                 if($error) {
                     echo '<div class="madeit-form-error">' . $error_msg . '</div>';
                 } else {
@@ -126,7 +126,7 @@ class WP_Form_front {
                 echo '</form>';
             }
         } else {
-            echo __("Can't display the form.", 'madeit_forms');
+            echo __("Can't display the form.", 'forms-by-made-it');
         }
         
         $content = ob_get_clean();

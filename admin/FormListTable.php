@@ -24,10 +24,10 @@ class FormListTable extends WP_List_Table {
     function get_columns() {
         $columns = array(
             'cb' => '<input type="checkbox" />',
-            //'id' => __('ID', 'madeit_forms'),
-            'title' => __('Title', 'madeit_forms'),
-            'short_code' => __('Shortcode', 'madeit_forms'),
-            'create_time' => __('Create date', 'madeit_forms'),
+            //'id' => __('ID', 'forms-by-made-it'),
+            'title' => __('Title', 'forms-by-made-it'),
+            'short_code' => __('Shortcode', 'forms-by-made-it'),
+            'create_time' => __('Create date', 'forms-by-made-it'),
         );
         return $columns;
     }
