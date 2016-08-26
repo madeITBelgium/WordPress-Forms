@@ -6,7 +6,7 @@
  * Author: Made I.T.
  * Author URI: https://www.madeit.be
  * Version: 1.0
- * Text Domain: madeit_form
+ * Text Domain: forms-by-made-it
  * Domain Path: /languages
  * License: GPLv2
  */
@@ -24,6 +24,11 @@ if( !defined( 'MADEIT_FORM_ADMIN' ) ) {
 if( !defined( 'MADEIT_FORM_FRONT' ) ) {
 	define( 'MADEIT_FORM_FRONT', MADEIT_FORM_DIR . '/front' ); // Admin Dir
 }
+
+function forms_by_made_it_load_plugin_textdomain() {
+    load_plugin_textdomain( 'forms-by-made-it', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+}
+add_action( 'plugins_loaded', 'forms_by_made_it_load_plugin_textdomain' );
 
 require_once(MADEIT_FORM_DIR . '/vendor/autoload.php');
 

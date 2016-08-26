@@ -5,7 +5,7 @@ class WP_MADEIT_FORM_Module_Submit
     private $message_fields = array('submit' => array());
     
     public function __construct() {
-        $this->addTag('submit', __('Submit', 'madeit_forms'), 'tag_generator_submit', array($this, 'tag_generator_submit'), array($this, 'validation_submit'));
+        $this->addTag('submit', __('Submit', 'forms-by-made-it'), 'tag_generator_submit', array($this, 'tag_generator_submit'), array($this, 'validation_submit'));
         $this->addHooks();
     }
     
@@ -30,8 +30,8 @@ class WP_MADEIT_FORM_Module_Submit
         $args = wp_parse_args( $args, array() );
         $type = $args['id'];
 
-        $description = __("Generate a form-tag for a submit button. For more details, see %s.", 'madeit_forms');
-        $desc_link = '<a href="' . esc_url('https://www.madeit.be/wordpress/forms/docs/submit-button/') . '" target="_blank">' . __('Text Fields', 'madeit_forms') . '</a>';
+        $description = __("Generate a form-tag for a submit button. For more details, see %s.", 'forms-by-made-it');
+        $desc_link = '<a href="' . esc_url('https://www.madeit.be/wordpress/forms/docs/submit-button/') . '" target="_blank">' . __('Text Fields', 'forms-by-made-it') . '</a>';
 
         ?>
         <div class="control-box">
@@ -40,17 +40,17 @@ class WP_MADEIT_FORM_Module_Submit
                 <table class="form-table">
                     <tbody>
                         <tr>
-                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-values'); ?>"><?php echo esc_html(__('Label', 'madeit_forms')); ?></label></th>
+                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-values'); ?>"><?php echo esc_html(__('Label', 'forms-by-made-it')); ?></label></th>
                             <td>
                                 <input type="text" name="values" class="oneline" id="<?php echo esc_attr( $args['content'] . '-values' ); ?>" /><br />
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php echo esc_html(__('Id attribute', 'madeit_forms')); ?></label></th>
+                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php echo esc_html(__('Id attribute', 'forms-by-made-it')); ?></label></th>
                             <td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr($args['content'] . '-id'); ?>" /></td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php echo esc_html(__('Class attribute', 'madeit_forms')); ?></label></th>
+                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php echo esc_html(__('Class attribute', 'forms-by-made-it')); ?></label></th>
                             <td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr($args['content'] . '-class'); ?>" /></td>
                         </tr>
                     </tbody>
@@ -60,7 +60,7 @@ class WP_MADEIT_FORM_Module_Submit
         <div class="insert-box">
             <input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
             <div class="submitbox">
-                <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr(__('Insert Tag', 'madeit_forms')); ?>" />
+                <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr(__('Insert Tag', 'forms-by-made-it')); ?>" />
             </div>
         </div>
         <?php

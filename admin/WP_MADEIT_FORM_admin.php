@@ -9,31 +9,31 @@ class WP_MADEIT_FORM_admin {
         $this->db = \WeDevs\ORM\Eloquent\Database::instance();
         
         $this->messages = array(
-            array('field' => 'success',             'description' => __("Form successfully completed", 'madeit_forms'),                     'value' => __('Thank you for your message. It has been sent.', 'madeit_forms')),
-            array('field' => 'failed',              'description' => __("Form failed to complete", 'madeit_forms'),                         'value' => __('There was an error trying to send your message. Please try again later.', 'madeit_forms')),
-            array('field' => 'validation_error',    'description' => __("Validation errors occurred", 'madeit_forms'),                      'value' => __('One or more fields have an error. Please check and try again.', 'madeit_forms')),
-            array('field' => 'spam',                'description' => __("Submission was referred to as spam", 'madeit_forms'),              'value' => __('There was an error trying to send your message. Please try again later.', 'madeit_forms')),
-            array('field' => 'accept_terms',        'description' => __("There are terms that the sender must accept", 'madeit_forms'),     'value' => __('You must accept the terms and conditions before sending your message.', 'madeit_forms')),
-            array('field' => 'invalid_required',    'description' => __("There is a field that the sender must fill in", 'madeit_forms'),   'value' => __('The field is required.', 'madeit_forms')),
-            array('field' => 'invalid_too_long',    'description' => __("There is a field with input that is longer than the maximum allowed length", 'madeit_forms'), 'value' => __('The field is too long.', 'madeit_forms')),
-            array('field' => 'invalid_too_short',   'description' => __("There is a field with input that is shorter than the minimum allowed length", 'madeit_forms'), 'value' => __('The field is too short.', 'madeit_forms')),
-            //array('field' => '', 'description' => __("", 'madeit_forms'), 'value' => __('', 'madeit_forms')),
+            array('field' => 'success',             'description' => __("Form successfully completed", 'forms-by-made-it'),                     'value' => __('Thank you for your message. It has been sent.', 'forms-by-made-it')),
+            array('field' => 'failed',              'description' => __("Form failed to complete", 'forms-by-made-it'),                         'value' => __('There was an error trying to send your message. Please try again later.', 'forms-by-made-it')),
+            array('field' => 'validation_error',    'description' => __("Validation errors occurred", 'forms-by-made-it'),                      'value' => __('One or more fields have an error. Please check and try again.', 'forms-by-made-it')),
+            array('field' => 'spam',                'description' => __("Submission was referred to as spam", 'forms-by-made-it'),              'value' => __('There was an error trying to send your message. Please try again later.', 'forms-by-made-it')),
+            array('field' => 'accept_terms',        'description' => __("There are terms that the sender must accept", 'forms-by-made-it'),     'value' => __('You must accept the terms and conditions before sending your message.', 'forms-by-made-it')),
+            array('field' => 'invalid_required',    'description' => __("There is a field that the sender must fill in", 'forms-by-made-it'),   'value' => __('The field is required.', 'forms-by-made-it')),
+            array('field' => 'invalid_too_long',    'description' => __("There is a field with input that is longer than the maximum allowed length", 'forms-by-made-it'), 'value' => __('The field is too long.', 'forms-by-made-it')),
+            array('field' => 'invalid_too_short',   'description' => __("There is a field with input that is shorter than the minimum allowed length", 'forms-by-made-it'), 'value' => __('The field is too short.', 'forms-by-made-it')),
+            //array('field' => '', 'description' => __("", 'forms-by-made-it'), 'value' => __('', 'forms-by-made-it')),
         );
     }
     
     public function initMenu() {
         global $_wp_last_object_menu;
         $_wp_last_object_menu++;
-        add_menu_page(__('Forms', 'madeit_forms'), __('Forms', 'madeit_forms'), 'manage_options', 'madeit_forms', array($this, 'show_all'), 'dashicons-email', $_wp_last_object_menu);
-        add_submenu_page('madeit_forms', __('Made I.T. Forms', 'madeit_forms'), __('Forms', 'madeit_forms'), 'manage_options', 'madeit_forms', array($this, 'show_all'));
-        add_submenu_page('madeit_forms', __('Made I.T. Forms - New', 'madeit_forms'), __('Add new', 'madeit_forms'), 'manage_options', 'madeit_form', array($this, 'new_form'));
+        add_menu_page(__('Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it'), 'manage_options', 'madeit_forms', array($this, 'show_all'), 'dashicons-email', $_wp_last_object_menu);
+        add_submenu_page('madeit_forms', __('Made I.T. Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it'), 'manage_options', 'madeit_forms', array($this, 'show_all'));
+        add_submenu_page('madeit_forms', __('Made I.T. Forms - New', 'forms-by-made-it'), __('Add new', 'forms-by-made-it'), 'manage_options', 'madeit_form', array($this, 'new_form'));
         
         $new = "";
         $count = $this->db->table('madeit_form_inputs')->where('read', 0)->count();
         if($count > 0) {
-            $new = "<span class='update-plugins' title='" . __('Unread form submits', 'madeit_forms') . "'><span class='update-count'>" . number_format_i18n($count) . "</span></span>";
+            $new = "<span class='update-plugins' title='" . __('Unread form submits', 'forms-by-made-it') . "'><span class='update-count'>" . number_format_i18n($count) . "</span></span>";
         }
-        add_submenu_page('madeit_forms', __('Made I.T. Forms - Inputs', 'madeit_forms'), __('Submitted forms ' . $new, 'madeit_forms'), 'manage_options', 'madeit_form_input', array($this, 'all_inputs'));
+        add_submenu_page('madeit_forms', __('Made I.T. Forms - Inputs', 'forms-by-made-it'), __('Submitted forms ' . $new, 'forms-by-made-it'), 'manage_options', 'madeit_form_input', array($this, 'all_inputs'));
     }
     
     public function initStyle() {
@@ -69,13 +69,13 @@ class WP_MADEIT_FORM_admin {
         echo '<div class="wrap">';
         if(!isset($_GET['action']) || $_GET['action'] != "edit") {
             ?>
-            <h1><?php echo __('Forms', 'madeit_forms'); ?><a href="admin.php?page=madeit_form" class="add-new-h2"><?php echo __('Add new', 'madeit_forms'); ?></a></h1>
+            <h1><?php echo __('Forms', 'forms-by-made-it'); ?><a href="admin.php?page=madeit_form" class="add-new-h2"><?php echo __('Add new', 'forms-by-made-it'); ?></a></h1>
             <?php
         }
         if(isset($_GET['action']) && $_GET['action'] == "delete") {
             $this->db->table('madeit_forms')->where('id', $_GET['id'])->delete();
             ?>
-            <div class="updated"><p><strong><?php echo __('The form is deleted.', 'madeit_forms'); ?></strong></p></div>
+            <div class="updated"><p><strong><?php echo __('The form is deleted.', 'forms-by-made-it'); ?></strong></p></div>
             <?php
         }
         if(isset($_GET['action']) && $_GET['action'] == "edit") {
@@ -85,7 +85,7 @@ class WP_MADEIT_FORM_admin {
             $f = $this->db->table('madeit_forms')->where('id', $_GET['id'])->first();
             if(!isset($f->id)) {
                 ?>
-                <div class="error"><p><strong><?php echo __('The form isn\'t available', 'madeit_forms'); ?></strong></p></div>
+                <div class="error"><p><strong><?php echo __('The form isn\'t available', 'forms-by-made-it'); ?></strong></p></div>
                 <?php
             } else {
                 $form = array('id' => $f->id, 'title' => $f->title, 'form' => $f->form, 'actions' => json_decode($f->actions, true), 'messages' => json_decode($f->messages, true));
@@ -159,17 +159,17 @@ class WP_MADEIT_FORM_admin {
             $f = $this->db->table('madeit_forms')->where('title', $form['title'])->orderBy('id', 'desc')->first();
             if(!isset($f->id)) {
                 ?>
-                <div class="error"><p><strong><?php echo __('The form doesn\'t exist', 'madeit_forms'); ?></strong></p></div>
+                <div class="error"><p><strong><?php echo __('The form doesn\'t exist', 'forms-by-made-it'); ?></strong></p></div>
                 <?php
             } else {
                 $form = array('id' => $f->id, 'title' => $f->title, 'form' => $f->form, 'actions' => json_decode($f->actions, true), 'messages' => json_decode($f->messages, true));
             }
             ?>
-            <div class="updated"><p><strong><?php echo __('The form is successfully saved.', 'madeit_forms'); ?></strong></p></div>
+            <div class="updated"><p><strong><?php echo __('The form is successfully saved.', 'forms-by-made-it'); ?></strong></p></div>
             <?php
         } else {
             ?>
-            <div class="error"><p><strong><?php echo __($error, 'madeit_forms'); ?></strong></p></div>
+            <div class="error"><p><strong><?php echo __($error, 'forms-by-made-it'); ?></strong></p></div>
             <?php
         }
         return $form;
@@ -209,7 +209,7 @@ class WP_MADEIT_FORM_admin {
 
         if($error) {
             ?>
-            <div class="error"><p><strong><?php echo __($error_msg, 'madeit_forms'); ?></strong></p></div>
+            <div class="error"><p><strong><?php echo __($error_msg, 'forms-by-made-it'); ?></strong></p></div>
             <?php
         } else {
             $this->db->table('madeit_forms')->where('id', $_GET['id'])->update(
@@ -221,7 +221,7 @@ class WP_MADEIT_FORM_admin {
                 )
             );
             ?>
-            <div class="updated"><p><strong><?php echo __('The form is successfully saved.', 'madeit_forms'); ?></strong></p></div>
+            <div class="updated"><p><strong><?php echo __('The form is successfully saved.', 'forms-by-made-it'); ?></strong></p></div>
             <?php
         }
     }
@@ -231,13 +231,13 @@ class WP_MADEIT_FORM_admin {
         echo '<div class="wrap">';
         if(!isset($_GET['action']) || $_GET['action'] != "edit") {
             ?>
-            <h1><?php echo __('Submitted forms', 'madeit_forms'); ?></h1>
+            <h1><?php echo __('Submitted forms', 'forms-by-made-it'); ?></h1>
             <?php
         }
         if(isset($_GET['action']) && $_GET['action'] == "delete") {
             $this->db->table('madeit_form_inputs')->where('id', $_GET['id'])->delete();
             ?>
-            <div class="updated"><p><strong><?php echo __('The submitted data is deleted.', 'madeit_forms'); ?></strong></p></div>
+            <div class="updated"><p><strong><?php echo __('The submitted data is deleted.', 'forms-by-made-it'); ?></strong></p></div>
             <?php
         }
         if(isset($_GET['action']) && $_GET['action'] == "show") {
@@ -246,7 +246,7 @@ class WP_MADEIT_FORM_admin {
             $this->db->table('madeit_form_inputs')->where('id', $_GET['id'])->update(array('read' => 1));
             if(!isset($f->id)) {
                 ?>
-                <div class="error"><p><strong><?php echo __('The data isn\'t available', 'madeit_forms'); ?></strong></p></div>
+                <div class="error"><p><strong><?php echo __('The data isn\'t available', 'forms-by-made-it'); ?></strong></p></div>
                 <?php
             } else {
                 include(MADEIT_FORM_DIR . '/admin/forms/submitted.php');

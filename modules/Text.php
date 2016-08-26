@@ -4,15 +4,15 @@ if(!class_exists("WP_MADEIT_FORM_Module")) {
 }
 class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
     public function __construct() {
-        $this->addTag('text', __('Text', 'madeit_forms'), 'tag_generator_text', array($this, 'tag_generator_text'), array($this, 'validation_text'));
-        $this->addTag('email', __('Email', 'madeit_forms'), 'tag_generator_text', array($this, 'tag_generator_text'),  array($this, 'validation_email'));
-        $this->addTag('url', __('URL', 'madeit_forms'), 'tag_generator_text', array($this, 'tag_generator_text'), array($this, 'validation_url'));
-        $this->addTag('tel', __('Tel', 'madeit_forms'), 'tag_generator_text', array($this, 'tag_generator_text'), array($this, 'validation_tel'));
+        $this->addTag('text', __('Text', 'forms-by-made-it'), 'tag_generator_text', array($this, 'tag_generator_text'), array($this, 'validation_text'));
+        $this->addTag('email', __('Email', 'forms-by-made-it'), 'tag_generator_text', array($this, 'tag_generator_text'),  array($this, 'validation_email'));
+        $this->addTag('url', __('URL', 'forms-by-made-it'), 'tag_generator_text', array($this, 'tag_generator_text'), array($this, 'validation_url'));
+        $this->addTag('tel', __('Tel', 'forms-by-made-it'), 'tag_generator_text', array($this, 'tag_generator_text'), array($this, 'validation_tel'));
         
         
-        $this->addMessageField('email', 'mod_text_invalid_email', __('Email address that the sender entered is invalid', 'madeit_forms'), __("The e-mail address entered is invalid.", "madeit_forms"));
-        $this->addMessageField('url', 'mod_text_invalid_url', __('URL that the sender entered is invalid', 'madeit_forms'), __("The URL is invalid.", "madeit_forms"));
-        $this->addMessageField('tel', 'mod_text_invalid_tel', __('Telephone number that the sender entered is invalid', 'madeit_forms'), __("The telephone number is invalid.", "madeit_forms"));
+        $this->addMessageField('email', 'mod_text_invalid_email', __('Email address that the sender entered is invalid', 'forms-by-made-it'), __("The e-mail address entered is invalid.", "madeit_forms"));
+        $this->addMessageField('url', 'mod_text_invalid_url', __('URL that the sender entered is invalid', 'forms-by-made-it'), __("The URL is invalid.", "madeit_forms"));
+        $this->addMessageField('tel', 'mod_text_invalid_tel', __('Telephone number that the sender entered is invalid', 'forms-by-made-it'), __("The telephone number is invalid.", "madeit_forms"));
         
         $this->addHooks();
     }
@@ -26,16 +26,16 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
         }
 
         if ( 'text' == $type ) {
-            $description = __("Generate a form-tag for a single-line plain text input field. For more details, see %s.", 'madeit_forms');
+            $description = __("Generate a form-tag for a single-line plain text input field. For more details, see %s.", 'forms-by-made-it');
         } elseif ( 'email' == $type ) {
-            $description = __("Generate a form-tag for a single-line email address input field. For more details, see %s.", 'madeit_forms');
+            $description = __("Generate a form-tag for a single-line email address input field. For more details, see %s.", 'forms-by-made-it');
         } elseif ( 'url' == $type ) {
-            $description = __("Generate a form-tag for a single-line URL input field. For more details, see %s.", 'madeit_forms');
+            $description = __("Generate a form-tag for a single-line URL input field. For more details, see %s.", 'forms-by-made-it');
         } elseif ( 'tel' == $type ) {
-            $description = __("Generate a form-tag for a single-line telephone number input field. For more details, see %s.", 'madeit_forms');
+            $description = __("Generate a form-tag for a single-line telephone number input field. For more details, see %s.", 'forms-by-made-it');
         }
 
-        $desc_link = '<a href="' . esc_url('https://www.madeit.be/wordpress/forms/docs/text-fields/') . '" target="_blank">' . __('Text Fields', 'madeit_forms') . '</a>';
+        $desc_link = '<a href="' . esc_url('https://www.madeit.be/wordpress/forms/docs/text-fields/') . '" target="_blank">' . __('Text Fields', 'forms-by-made-it') . '</a>';
 
         ?>
         <div class="control-box">
@@ -44,31 +44,31 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
                 <table class="form-table">
                     <tbody>
                         <tr>
-                            <th scope="row"><?php echo esc_html(__('Field type', 'madeit_forms')); ?></th>
+                            <th scope="row"><?php echo esc_html(__('Field type', 'forms-by-made-it')); ?></th>
                             <td>
                                 <fieldset>
-                                    <legend class="screen-reader-text"><?php echo esc_html(__('Field type', 'madeit_forms')); ?></legend>
-                                    <label><input type="checkbox" name="required" /> <?php echo esc_html(__('Required field', 'madeit_forms')); ?></label>
+                                    <legend class="screen-reader-text"><?php echo esc_html(__('Field type', 'forms-by-made-it')); ?></legend>
+                                    <label><input type="checkbox" name="required" /> <?php echo esc_html(__('Required field', 'forms-by-made-it')); ?></label>
                                 </fieldset>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php echo esc_html(__('Name', 'madeit_forms')); ?></label></th>
+                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php echo esc_html(__('Name', 'forms-by-made-it')); ?></label></th>
                             <td><input type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr($args['content'] . '-name' ); ?>" /></td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-values'); ?>"><?php echo esc_html(__('Default value', 'madeit_forms')); ?></label></th>
+                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-values'); ?>"><?php echo esc_html(__('Default value', 'forms-by-made-it')); ?></label></th>
                             <td>
                                 <input type="text" name="values" class="oneline" id="<?php echo esc_attr($args['content'] . '-values'); ?>" /><br />
-                                <label><input type="checkbox" name="placeholder" class="option" /> <?php echo esc_html(__('Use this text as the placeholder of the field', 'madeit_forms')); ?></label>
+                                <label><input type="checkbox" name="placeholder" class="option" /> <?php echo esc_html(__('Use this text as the placeholder of the field', 'forms-by-made-it')); ?></label>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php echo esc_html(__('Id attribute', 'madeit_forms')); ?></label></th>
+                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php echo esc_html(__('Id attribute', 'forms-by-made-it')); ?></label></th>
                             <td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr($args['content'] . '-id' ); ?>" /></td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php echo esc_html(__('Class attribute', 'madeit_forms')); ?></label></th>
+                            <th scope="row"><label for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php echo esc_html(__('Class attribute', 'forms-by-made-it')); ?></label></th>
                             <td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr($args['content'] . '-class' ); ?>" /></td>
                         </tr>
                     </tbody>
@@ -78,12 +78,12 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
         <div class="insert-box">
             <input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
             <div class="submitbox">
-                <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr(__('Insert Tag', 'madeit_forms')); ?>" />
+                <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr(__('Insert Tag', 'forms-by-made-it')); ?>" />
             </div>
             <br class="clear" />
             <p class="description mail-tag">
                 <label for="<?php echo esc_attr($args['content'] . '-mailtag'); ?>">
-                    <?php echo sprintf( esc_html(__("To use the value input through this field in a action field, you need to insert the corresponding name-tag (%s) into the field on the Actions tab.", 'madeit_forms')), '<strong><span class="mail-tag"></span></strong>'); ?>
+                    <?php echo sprintf( esc_html(__("To use the value input through this field in a action field, you need to insert the corresponding name-tag (%s) into the field on the Actions tab.", 'forms-by-made-it')), '<strong><span class="mail-tag"></span></strong>'); ?>
                     <input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr($args['content'] . '-mailtag'); ?>" />
                 </label>
             </p>
