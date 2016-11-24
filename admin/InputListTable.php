@@ -127,7 +127,7 @@ class InputListTable extends WP_List_Table {
     }
     
     function column_form($item) {
-        $form = $this->db->table('forms-by-made-it')->where('id', $item->form_id)->first();
+        $form = $this->db->table('madeit_forms')->where('id', $item->form_id)->first();
         $actions = array(
             //'show' => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a>', 'madeit_form', 'edit', $form->id),
         );
