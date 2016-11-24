@@ -15,7 +15,7 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action {
         
         $this->addAction('MAILCHIMP', __('Mailchimp', 'forms-by-made-it'), array($this, 'callback'));
         
-        //$this->addHooks();
+        $this->addHooks();
     }
     
     public function callback($data, $messages) {
@@ -27,7 +27,10 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action {
         }
         
         try {
-            $mc->lists->subscribe($data['mc_list_id'], array('email' => $data['mc_email'], 'fname' => $data['mc_firstname'], 'lname' => $data['mc_name']));
+            $d = $mc->lists->subscribe($data['mc_list_id'], array('email' => $data['mc_email'],
+                                                                  "merge_fields" => ['fname' => $data['mc_firstname'], 'lname' => $data['mc_name']]));
+            
+        //print_r($d);exit;
         } catch (Mailchimp_Error $e) {
             if ($e->getMessage()) {
                 return $e->getMessage();
