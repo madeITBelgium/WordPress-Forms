@@ -36,6 +36,8 @@ require_once(MADEIT_FORM_DIR . '/vendor/autoload.php');
 require_once(MADEIT_FORM_DIR . '/actions/Email.php');
 $a = new WP_MADEIT_FORM_Email;
 
+//require_once(MADEIT_FORM_DIR . '/actions/Mailchmp.php');
+//$a = new WP_MADEIT_FORM_Mailchimp;
 
 require_once(MADEIT_FORM_DIR . '/modules/Text.php');
 require_once(MADEIT_FORM_DIR . '/modules/Textarea.php');

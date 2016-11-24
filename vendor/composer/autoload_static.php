@@ -7,9 +7,9 @@ namespace Composer\Autoload;
 class ComposerStaticInitf62106dfb0a0cfe9a60da8c4bad66ee9
 {
     public static $files = array (
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '65fec9ebcfbb3cbb4fd0d519687aea01' => __DIR__ . '/..' . '/danielstjules/stringy/src/Create.php',
         '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -26,6 +26,7 @@ class ComposerStaticInitf62106dfb0a0cfe9a60da8c4bad66ee9
         'I' => 
         array (
             'Illuminate\\Support\\' => 19,
+            'Illuminate\\Pagination\\' => 22,
             'Illuminate\\Database\\' => 20,
             'Illuminate\\Contracts\\' => 21,
             'Illuminate\\Container\\' => 21,
@@ -57,6 +58,10 @@ class ComposerStaticInitf62106dfb0a0cfe9a60da8c4bad66ee9
         array (
             0 => __DIR__ . '/..' . '/illuminate/support',
         ),
+        'Illuminate\\Pagination\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/pagination',
+        ),
         'Illuminate\\Database\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/database',
@@ -76,6 +81,13 @@ class ComposerStaticInitf62106dfb0a0cfe9a60da8c4bad66ee9
     );
 
     public static $prefixesPsr0 = array (
+        'M' => 
+        array (
+            'Mailchimp' => 
+            array (
+                0 => __DIR__ . '/..' . '/mailchimp/mailchimp/src',
+            ),
+        ),
         'D' => 
         array (
             'Doctrine\\Common\\Inflector\\' => 
