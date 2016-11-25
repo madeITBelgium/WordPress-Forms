@@ -35,7 +35,7 @@ class DatabaseInit {
                 ip VARCHAR(255) DEFAULT NULL,
                 user_agent VARCHAR(255) DEFAULT NULL,
                 spam int(2) DEFAULT 0,
-                read INT(2) DEFAULT 0,
+                `read` INT(2) DEFAULT 0,
                 result VARCHAR(255) DEFAULT NULL,
                 create_time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
                 primary KEY (id)
