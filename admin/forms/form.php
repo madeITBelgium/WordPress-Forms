@@ -56,7 +56,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
                                     $errors = $this->checkFormActions($form['id']);
                                     if($errors > 0) {
                                         $message = sprintf(_n('%s configuration error found', '%s configuration errors found', $errors, 'madeit_forms'), $errors);
-                                        $link = sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/wordpress/forms/faq/configuration-validator"), __("What's this?", 'madeit_forms'), "");
+                                        $link = sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/producten/wordpress/forms-plugin/#configuration-validator"), __("What's this?", 'madeit_forms'), "");
                                         echo sprintf('<div class="misc-pub-section warning">%1$s<br />%2$s</div>',$message, $link);
                                     }
                                     ?>
@@ -100,9 +100,9 @@ if ( !defined( 'ABSPATH' ) ) exit;
                         <h3><?php echo esc_html(__( 'Information', 'madeit_forms')); ?></h3>
                         <div class="inside">
                             <ul>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/wordpress/forms/docs"), __('Docs', 'madeit_forms'), ""); ?></li>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/wordpress/forms/faq"), __('F.A.Q.', 'madeit_forms'), ""); ?></li>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/wordpress/forms/support"), __('Support', 'madeit_forms'), ""); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/producten/wordpress/forms-plugin/#docs"), __('Docs', 'madeit_forms'), ""); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/producten/wordpress/forms-plugin/#faq"), __('F.A.Q.', 'madeit_forms'), ""); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/producten/wordpress/forms-plugin/#support"), __('Support', 'madeit_forms'), ""); ?></li>
                             </ul>
                         </div>
                     </div><!-- #informationdiv -->
