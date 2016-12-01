@@ -40,21 +40,23 @@ jQuery(document).ready(function($) {
     function getTags() {
         var formData = $('#madeit-forms-form').val();
         var tags = [];
-        $.each(formData.split("["), function(i, v) {
-            v = v.trim();
-            if(v.length > 0) {
-                var posName = v.indexOf('name="');
-                if(posName > 0) {
-                    v = v.substring(posName + 6);
-                    v = v.substring(0, v.indexOf('"'));
-                    tags.push(v);
+        if(formData !== undefined) {
+            $.each(formData.split("["), function(i, v) {
+                v = v.trim();
+                if(v.length > 0) {
+                    var posName = v.indexOf('name="');
+                    if(posName > 0) {
+                        v = v.substring(posName + 6);
+                        v = v.substring(0, v.indexOf('"'));
+                        tags.push(v);
+                    }
                 }
+            });
+            if(tags.length > 0) {
+                $('.name-tags').html("[" + tags.join('], [') + "]")
+            } else {
+                $('.name-tags').html("");
             }
-        });
-        if(tags.length > 0) {
-            $('.name-tags').html("[" + tags.join('], [') + "]")
-        } else {
-            $('.name-tags').html("");
         }
     }
 

@@ -99,7 +99,11 @@ class WP_Form_front {
                         
                         if(is_callable($action['callback'])) {
                             $result = call_user_func($action['callback'], $data, $messages);
-                            if($result !== true) {
+                            if(is_array($result) && isset($result['type'])) {
+                                if($result['type'] == "JS") {
+                                    echo "<script>" . $result['code'] . "</script>";
+                                }
+                            } else if($result !== true) {
                                 $error = true;
                                 $error_msg = $result;
                             }
