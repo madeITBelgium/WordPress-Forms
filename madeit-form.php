@@ -5,7 +5,7 @@
  * Description: Build cool, easy and flexible forms with Forms.
  * Author: Made I.T.
  * Author URI: https://www.madeit.be
- * Version: 1.3
+ * Version: 1.4
  * Text Domain: madeit_form
  * Domain Path: /languages
  * License: GPLv2
@@ -30,13 +30,17 @@ require_once(MADEIT_FORM_DIR . '/actions/Mailchimp.php');
 $a = new WP_MADEIT_FORM_Mailchimp;
 require_once(MADEIT_FORM_DIR . '/actions/GAEvent.php');
 $a = new WP_MADEIT_FORM_GAEvent;
+require_once(MADEIT_FORM_DIR . '/actions/Download.php');
+$a = new WP_MADEIT_FORM_Download;
 
 require_once(MADEIT_FORM_DIR . '/modules/Text.php');
+require_once(MADEIT_FORM_DIR . '/modules/Checkbox.php');
 require_once(MADEIT_FORM_DIR . '/modules/Textarea.php');
 require_once(MADEIT_FORM_DIR . '/modules/Submit.php');
 require_once(MADEIT_FORM_DIR . '/modules/Select.php');
 require_once(MADEIT_FORM_DIR . '/modules/Number.php');
 $t = new WP_MADEIT_FORM_Module_Text;
+$t = new WP_MADEIT_FORM_Module_Checkbox;
 $t = new WP_MADEIT_FORM_Module_Textarea;
 $t = new WP_MADEIT_FORM_Module_Select;
 $t = new WP_MADEIT_FORM_Module_Number;

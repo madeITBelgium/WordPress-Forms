@@ -3,8 +3,8 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 4.4
-Tested up to: 4.7
-Stable tag: 1.3
+Tested up to: 4.8.1
+Stable tag: 1.4
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -46,6 +46,11 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
+
+= 1.4 =
+* Checkbox added
+* File download
+* Email as HTML checkbox
 
 = 1.3 =
 * Google analytics Event integration

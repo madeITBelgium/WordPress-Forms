@@ -186,8 +186,13 @@ if ( !defined( 'ABSPATH' ) ) exit;
                                                                         </select>
                                                                         <?php
                                                                     } else if($info['type'] == "textarea") {
+                                                                        $value = stripcslashes($inputValue);
                                                                         ?>
-                                                                        <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo isset($info['options']['min-height']) ? $info['options']['min-height'] : "50px"; ?>;"><?php echo esc_attr($inputValue); ?></textarea>
+                                                                        <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo isset($info['options']['min-height']) ? $info['options']['min-height'] : "50px"; ?>;"><?php echo $value; ?></textarea>
+                                                                        <?php
+                                                                    } else if($info['type'] == "checkbox") {
+                                                                        ?>
+                                                                        <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="" value="checked" <?php if($inputValue == "checked") { echo 'CHECKED'; } ?>>
                                                                         <?php
                                                                     }
                                                                     ?>
@@ -285,19 +290,24 @@ if ( !defined( 'ABSPATH' ) ) exit;
                                 <?php
                                 if($info['type'] == "text") {
                                     ?>
-                                    <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_" class="large-text code" size="70" value="<?php echo esc_attr($info['value']); ?>" />
+                                    <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" value="<?php echo esc_attr($inputValue); ?>" />
                                     <?php
                                 } elseif($info['type'] == "select") {
                                     ?>
-                                    <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_" class="large-text code" size="70" width="100%">
+                                    <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" width="100%">
                                         <?php foreach($info['options'] as $key => $val) { ?>
-                                            <option value="<?php echo esc_html($key); ?>" <?php if($key == $info['value']) echo "SELECTED" ; ?>><?php echo esc_html($val); ?></option>
+                                            <option value="<?php echo esc_html($key); ?>" <?php if($key == $inputValue) echo "SELECTED" ; ?>><?php echo esc_html($val); ?></option>
                                         <?php } ?> 
                                     </select>
                                     <?php
                                 } else if($info['type'] == "textarea") {
+                                    $value = stripcslashes($inputValue);
                                     ?>
-                                    <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_" class="large-text code" style="min-height: <?php echo isset($info['options']['min-height']) ? $info['options']['min-height'] : "50px"; ?>;"><?php echo esc_attr($info['value']); ?></textarea>
+                                    <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo isset($info['options']['min-height']) ? $info['options']['min-height'] : "50px"; ?>;"><?php echo $value; ?></textarea>
+                                    <?php
+                                } else if($info['type'] == "checkbox") {
+                                    ?>
+                                    <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="" value="checked" <?php if($inputValue == "checked") { echo 'CHECKED'; } ?>>
                                     <?php
                                 }
                                 ?>
