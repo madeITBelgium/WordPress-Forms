@@ -33,7 +33,7 @@ class WP_MADEIT_FORM_admin {
         if($count > 0) {
             $new = "<span class='update-plugins' title='" . __('Unread form submits', 'forms-by-made-it') . "'><span class='update-count'>" . number_format_i18n($count) . "</span></span>";
         }
-        add_submenu_page('madeit_forms', __('Made I.T. Forms - Inputs', 'forms-by-made-it'), __('Submitted forms ' . $new, 'forms-by-made-it'), 'manage_options', 'madeit_form_input', array($this, 'all_inputs'));
+        add_submenu_page('madeit_forms', __('Made I.T. Forms - Inputs', 'forms-by-made-it'), __('Submitted forms', 'forms-by-made-it') . " " . $new, 'manage_options', 'madeit_form_input', array($this, 'all_inputs'));
     }
     
     public function initStyle() {
@@ -108,7 +108,14 @@ class WP_MADEIT_FORM_admin {
 [email name=\"your-email\"]
 [submit value=\"Send\"]";
         if(isset($_POST['add_new'])) {
-            $form = $this->post_form();
+            if($_POST['form_id'] == 0) {
+                $form = $this->post_form();
+            }
+            else {
+                $this->post_edit_form();
+                $f = $this->db->table('madeit_forms')->where('id', $_POST['form_id'])->first();
+                $form = array('id' => $f->id, 'title' => $f->title, 'form' => $f->form, 'actions' => json_decode($f->actions, true), 'messages' => json_decode($f->messages, true));
+            }
         } else {
             $form = array('id' => 0, 'title' => '', 'form' => $from, 'actions' => array(), 'messages' => array());
         }
@@ -116,6 +123,9 @@ class WP_MADEIT_FORM_admin {
     }
     
     public function post_form() {
+        if (!wp_verify_nonce($_POST['_wpnonce'], 'madeit-form-save-contact-form')) {
+            die(__('Security check')); 
+        }
         $form = array('id' => $_POST['form_id'], 'title' => $_POST['title'], 'form' => $_POST['form'], 'actions' => array(), 'messages' => array());
         $error = false;
         $error_msg = "";
@@ -176,6 +186,9 @@ class WP_MADEIT_FORM_admin {
     }
         
     public function post_edit_form() {
+        if (!wp_verify_nonce($_POST['_wpnonce'], 'madeit-form-save-contact-form')) {
+            wp_die(__('Security check')); 
+        }
         $form = array('id' => $_POST['form_id'], 'title' => $_POST['title'], 'form' => $_POST['form'], 'actions' => array(), 'messages' => array());
         $error = false;
         $error_msg = "";
@@ -212,7 +225,7 @@ class WP_MADEIT_FORM_admin {
             <div class="error"><p><strong><?php echo __($error_msg, 'forms-by-made-it'); ?></strong></p></div>
             <?php
         } else {
-            $this->db->table('madeit_forms')->where('id', $_GET['id'])->update(
+            $this->db->table('madeit_forms')->where('id', $_POST['form_id'])->update(
                 array(
                     'title' => $form['title'],
                     'form' => $form['form'], 
@@ -225,7 +238,6 @@ class WP_MADEIT_FORM_admin {
             <?php
         }
     }
-    
     
     public function all_inputs() {
         echo '<div class="wrap">';

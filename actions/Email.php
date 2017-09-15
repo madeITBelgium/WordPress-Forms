@@ -27,8 +27,8 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action {
         }
         
         
-        add_filter( 'wp_mail_from', [$this, 'my_mail_from']);
-        add_filter( 'wp_mail_from_name', [$this, 'my_mail_from_name']);
+        add_filter('wp_mail_from', [$this, 'my_mail_from']);
+        add_filter('wp_mail_from_name', [$this, 'my_mail_from_name']);
         
         $result = wp_mail($data['to'], $data['subject'], $email, $data['header']);
         if($result !== true) {
@@ -38,11 +38,11 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action {
     }
     
     public function my_mail_from( $email ) {
-        return "info@sparkofjuly.com";
+        return get_bloginfo('admin_email');
     }
     
     public function my_mail_from_name($name) {
-        return "Spark of July";
+        return  get_bloginfo('name');
     }
 
 }

@@ -113,8 +113,8 @@ class FormListTable extends WP_List_Table {
     function column_title($item) {
         $actions = array(
             //'show' => sprintf('<a href="?page=%s&action=%s&id=%s">Show</a>', $_REQUEST['page'], 'show', $item->id),
-            'edit' => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a>', $_REQUEST['page'], 'edit', $item->id),
-            'delete' => sprintf('<a href="?page=%s&action=%s&id=%s">Delete</a>', $_REQUEST['page'], 'delete', $item->id),
+            'edit' => sprintf('<a href="?page=%s&action=%s&id=%s">' . esc_html(__('Edit')) . '</a>', $_REQUEST['page'], 'edit', $item->id),
+            'delete' => sprintf('<a href="?page=%s&action=%s&id=%s">' . esc_html(__('Delete')) . '</a>', $_REQUEST['page'], 'delete', $item->id),
         );
         return sprintf('<a href="?page=%s&action=%s&id=%s">%s</a> %s', $_REQUEST['page'], 'edit', $item->id, $item->title, $this->row_actions($actions));
     }

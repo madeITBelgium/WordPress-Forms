@@ -120,8 +120,8 @@ class InputListTable extends WP_List_Table {
     
     function column_id($item) {
         $actions = array(
-            'show' => sprintf('<a href="?page=%s&action=%s&id=%s">Show</a>', $_REQUEST['page'], 'show', $item->id),
-            'delete' => sprintf('<a href="?page=%s&action=%s&id=%s">Delete</a>', $_REQUEST['page'], 'delete', $item->id),
+            'show' => sprintf('<a href="?page=%s&action=%s&id=%s">' . esc_html(__('Show')) . '</a>', $_REQUEST['page'], 'show', $item->id),
+            'delete' => sprintf('<a href="?page=%s&action=%s&id=%s">' . esc_html(__('Delete')) . '</a>', $_REQUEST['page'], 'delete', $item->id),
         );
         return sprintf('<a href="?page=%s&action=%s&id=%s">%s</a> %s', $_REQUEST['page'], 'edit', $item->id, $item->id, $this->row_actions($actions));
     }
