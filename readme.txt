@@ -48,6 +48,7 @@ Currently no upgrade
 == Changelog ==
 
 = 1.5 =
+* Invisible reCaptcha integration
 * Security fixes
 * New form editing save fix
 * Translation improvments
