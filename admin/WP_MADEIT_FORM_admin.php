@@ -38,13 +38,14 @@ class WP_MADEIT_FORM_admin {
     
     public function initStyle() {
         wp_register_style('madeit-form-admin-style', MADEIT_FORM_URL . '/admin/css/style.css', array(), null);
+        wp_register_style('madeit-tabs', MADEIT_FORM_URL . 'admin/css/tabs.css', array(), null);
+        wp_enqueue_style('madeit-tabs');
         wp_enqueue_style('madeit-form-admin-style');
-        
+
         wp_enqueue_script('jquery-ui-core');
         wp_enqueue_script('jquery-ui-tabs');
-
-	    wp_enqueue_script( 'madeit-form-script', MADEIT_FORM_URL . '/admin/js/script.js', array('jquery'), 1, true);
-        //wp_enqueue_style('jquery-ui-smoothness',  MADEIT_FORM_URL . '/admin/css/smoothness/jquery-ui.min.css', array(), '1.10.3', 'screen');
+        wp_enqueue_script( 'madeit-form-script', MADEIT_FORM_URL . 'admin/js/script.js', array('jquery'), 1, true);
+        wp_enqueue_script('madeit-tabs', MADEIT_FORM_URL . 'admin/js/tabs.js', array('jquery'), 1, true);
     }
     
     public function addAction($id, $value) {

@@ -94,13 +94,13 @@ if ( !defined( 'ABSPATH' ) ) exit;
                 </div><!-- #postbox-container-1 -->
 
                 <div id="postbox-container-2" class="postbox-container">
-                    <div id="contact-form-editor">
-                        <ul id="contact-form-editor-tabs">
+                    <div id="madeit-tab">
+                        <ul id="madeit-tab-tabs">
                             <li id="form-panels-tab"><a href="#form-panel"><?php echo esc_html(__('Form', 'forms-by-made-it')); ?></a></li>
                             <li id="actions-panels-tab"><a href="#actions-panel"><?php echo esc_html(__('Actions', 'forms-by-made-it')); ?></a></li>
                             <li id="messages-panels-tab"><a href="#messages-panel"><?php echo esc_html(__('Messages', 'forms-by-made-it')); ?></a></li>
                         </ul>
-                        <div class="contact-form-editor-panel" id="form-panel">
+                        <div class="madeit-tab-panel" id="form-panel">
                             <h2><?php echo esc_html( __( 'Form', 'forms-by-made-it' ) ); ?></h2>
                             <span id="tag-generator-list">
                                 <?php
@@ -120,7 +120,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
                             
                             <textarea id="madeit-forms-form" name="form" cols="100" rows="24" class="large-text code"><?php echo esc_textarea($formValue); ?></textarea>
                         </div>
-                        <div class="contact-form-editor-panel" id="actions-panel">
+                        <div class="madeit-tab-panel" id="actions-panel">
                            <h2><?php echo esc_html(__('Actions', 'forms-by-made-it')); ?></h2>
                             <fieldset>
                                 <legend><?php echo esc_html(__("In the following fields, you can use these name-tags:", 'forms-by-made-it')); ?><br /><span class="name-tags"></span></legend>
@@ -198,7 +198,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
                             <span style="float:right; margin: 5px"><a href="javascript:void(0);" class="add-section" style="text-decoration:none;"><span class="dashicons dashicons-plus"></span></a></span>
                             <div class="clear"></div>
                         </div>
-                        <div class="contact-form-editor-panel" id="messages-panel">
+                        <div class="madeit-tab-panel" id="messages-panel">
                            <h2><?php echo esc_html(__('Messages', '')); ?></h2>
                             <fieldset>
                                 <legend><?php echo esc_html(__("In the following fields, you can use these name-tags:", 'forms-by-made-it')); ?><br /><span class="name-tags"></span></legend>
@@ -216,7 +216,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
                                 ?>
                             </fieldset>
                         </div>
-                    </div><!-- #contact-form-editor -->
+                    </div><!-- #madeit-tab -->
                 </div><!-- #postbox-container-2 -->
             </div><!-- #post-body -->
             <br class="clear" />
