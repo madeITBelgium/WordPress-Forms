@@ -31,7 +31,7 @@ class WP_Form_front
 
         wp_register_style('madeit-form-style', MADEIT_FORM_URL.'front/css/style.css', [], null);
         wp_enqueue_style('madeit-form-style');
-        if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+        if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
             wp_enqueue_script('recaptcha', 'https://www.google.com/recaptcha/api.js', [], null, true);
         }
 
@@ -147,19 +147,21 @@ class WP_Form_front
 
         return $content;
     }
-    
-    private function renderForm($id, $form) {
+
+    private function renderForm($id, $form)
+    {
         $this->form_id = $id;
         add_filter('madeit_forms_form_id', [$this, 'form_id']);
-        echo '<form action="" method="post" id="form_' . $id . '">';
+        echo '<form action="" method="post" id="form_'.$id.'">';
         echo '<input type="hidden" name="form_id" value="'.$id.'">';
         $formValue = $form->form;
         $formValue = str_replace('\"', '"', $formValue);
         echo do_shortcode($formValue);
         echo '</form>';
     }
-    
-    public function form_id() {
+
+    public function form_id()
+    {
         return $this->form_id;
     }
 
@@ -174,7 +176,7 @@ class WP_Form_front
 
     private function getTagNameFromPostInput($form, $inputKey)
     {
-        if($inputKey == "btn_submit" || $inputKey == "g-recaptcha-response") {
+        if ($inputKey == 'btn_submit' || $inputKey == 'g-recaptcha-response') {
             return 'submit';
         }
         $pos = strpos($form, 'name="'.$inputKey.'"');
