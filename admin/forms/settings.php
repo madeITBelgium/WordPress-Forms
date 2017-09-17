@@ -1,23 +1,25 @@
 <?php
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-/**
- * Made I.T. 
- * 
+/*
+ * Made I.T.
+ *
  * @package Made I.T.
  * @since 1.0.0
  */
 ?>
 <div class="wrap">
     <h1><?php echo esc_html(__('Settings', 'forms-by-made-it')); ?></h1>
-    <form method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>" id="madeit-security-admin-form-element">
-        <?php if($success) {
-            ?>
+    <form method="post" action="<?php echo str_replace('%7E', '~', $_SERVER['REQUEST_URI']); ?>" id="madeit-security-admin-form-element">
+        <?php if ($success) {
+    ?>
             <div class="updated"><p><strong><?php echo __('The settings are successfully saved.', 'forms-by-made-it'); ?></strong></p></div>
             <?php
-        }
-        if(!empty($error)) {
+}
+        if (!empty($error)) {
             ?>
             <div class="error"><p><strong><?php echo __($error, 'forms-by-made-it'); ?></strong></p></div>
             <?php
@@ -28,12 +30,12 @@ if ( !defined( 'ABSPATH' ) ) exit;
             <div id="post-body" class="metabox-holder columns-2">
                 <div id="postbox-container-1" class="postbox-container">
                     <div id="informationdiv" class="postbox">
-                        <h3><?php echo esc_html(__( 'Information', 'forms-by-made-it')); ?></h3>
+                        <h3><?php echo esc_html(__('Information', 'forms-by-made-it')); ?></h3>
                         <div class="inside">
                             <ul>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/producten/wordpress/forms-plugin/#docs"), __('Docs', 'forms-by-made-it'), ""); ?></li>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/producten/wordpress/forms-plugin/#faq"), __('F.A.Q.', 'forms-by-made-it'), ""); ?></li>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url("https://www.madeit.be/producten/wordpress/forms-plugin/#support"), __('Support', 'forms-by-made-it'), ""); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#docs'), __('Docs', 'forms-by-made-it'), ''); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#faq'), __('F.A.Q.', 'forms-by-made-it'), ''); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#support'), __('Support', 'forms-by-made-it'), ''); ?></li>
                             </ul>
                         </div>
                     </div><!-- #informationdiv -->
@@ -54,7 +56,9 @@ if ( !defined( 'ABSPATH' ) ) exit;
                                                 <label for=""><?php echo esc_html(__('Enable reCaptcha', 'forms-by-made-it')); ?></label>
                                             </th>
                                             <td>
-                                                <input type="checkbox" name="madeit_forms_reCaptcha" class="" value="1" <?php if($this->defaultSettings['reCaptcha']['enabled']) echo "CHECKED"; ?> />
+                                                <input type="checkbox" name="madeit_forms_reCaptcha" class="" value="1" <?php if ($this->defaultSettings['reCaptcha']['enabled']) {
+            echo 'CHECKED';
+        } ?> />
                                             </td>
                                         </tr>
                                         <tr>

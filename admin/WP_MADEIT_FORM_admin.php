@@ -32,19 +32,18 @@ class WP_MADEIT_FORM_admin
     {
         global $_wp_last_object_menu;
         $_wp_last_object_menu++;
-        
+
         $new = '';
         $count = $this->db->table('madeit_form_inputs')->where('read', 0)->count();
         if ($count > 0) {
             $new = "<span class='update-plugins' title='".__('Unread form submits', 'forms-by-made-it')."'><span class='update-count'>".number_format_i18n($count).'</span></span>';
         }
-        
+
         add_menu_page(__('Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it').' '.$new, 'manage_options', 'madeit_forms', [$this, 'show_all'], 'dashicons-email', $_wp_last_object_menu);
         add_submenu_page('madeit_forms', __('Made I.T. Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it'), 'manage_options', 'madeit_forms', [$this, 'show_all']);
         add_submenu_page('madeit_forms', __('Made I.T. Forms - New', 'forms-by-made-it'), __('Add new', 'forms-by-made-it'), 'manage_options', 'madeit_form', [$this, 'new_form']);
         add_submenu_page('madeit_forms', __('Made I.T. Forms - Settings', 'forms-by-made-it'), __('Settings', 'forms-by-made-it'), 'manage_options', 'madeit_forms_settings', [$this, 'settings']);
 
-        
         add_submenu_page('madeit_forms', __('Made I.T. Forms - Inputs', 'forms-by-made-it'), __('Submitted forms', 'forms-by-made-it').' '.$new, 'manage_options', 'madeit_form_input', [$this, 'all_inputs']);
     }
 
@@ -108,7 +107,7 @@ class WP_MADEIT_FORM_admin
                 include MADEIT_FORM_DIR.'/admin/forms/form.php';
             }
         } else {
-             require_once(MADEIT_FORM_DIR.'/admin/FormListTable.php');
+            require_once MADEIT_FORM_DIR.'/admin/FormListTable.php';
             $list = new FormListTable();
             $list->prepare_items();
             $list->display();
@@ -280,28 +279,30 @@ class WP_MADEIT_FORM_admin
                 include MADEIT_FORM_DIR.'/admin/forms/submitted.php';
             }
         } else {
-            require_once(MADEIT_FORM_DIR.'/admin/InputListTable.php');
+            require_once MADEIT_FORM_DIR.'/admin/InputListTable.php';
             $list = new InputListTable();
             $list->prepare_items();
             $list->display();
         }
         echo '</div>';
     }
-    
-    public function settings() {
+
+    public function settings()
+    {
         $success = false;
-        $error = "";
-        if(isset($_POST['save_settings'])) {
+        $error = '';
+        if (isset($_POST['save_settings'])) {
             $success = $this->save_settings();
-            if($success !== true) {
+            if ($success !== true) {
                 $error = $success;
                 $success = false;
             }
         }
-        include_once MADEIT_FORM_ADMIN . '/forms/settings.php';
+        include_once MADEIT_FORM_ADMIN.'/forms/settings.php';
     }
-    
-    private function save_settings() {
+
+    private function save_settings()
+    {
         $success = false;
         $nonce = $_POST['_wpnonce'];
         if (!wp_verify_nonce($nonce, 'madeit_forms_settings')) {
@@ -311,16 +312,16 @@ class WP_MADEIT_FORM_admin
             $this->settings->checkCheckbox('madeit_forms_reCaptcha');
             $this->settings->checkTextbox('madeit_forms_reCaptcha_key');
             $this->settings->checkTextbox('madeit_forms_reCaptcha_secret');
-            
-            if(get_option('madeit_forms_reCaptcha_key', null) == null || get_option('madeit_forms_reCaptcha_secret', null) == null) {
+
+            if (get_option('madeit_forms_reCaptcha_key', null) == null || get_option('madeit_forms_reCaptcha_secret', null) == null) {
                 update_option('madeit_forms_reCaptcha', false);
             }
             $success = true;
         }
         $this->defaultSettings = $this->settings->loadDefaultSettings();
+
         return $success;
     }
-    
 
     public function getTags($form)
     {
