@@ -6,9 +6,9 @@ class WP_MADEIT_FORM_Module_Number extends WP_MADEIT_FORM_Module {
     public function __construct() {
         $this->addTag('number', __('Number', 'forms-by-made-it'), 'tag_generator_text', array($this, 'tag_generator_text'), array($this, 'validation_text'));
         
-        $this->addMessageField('number', 'mod_number_invalid_number', __('Number format that the sender entered is invalid', 'forms-by-made-it'), __("The number format is invalid.", "madeit_forms"));
-        $this->addMessageField('number', 'mod_number_number_too_small', __('Number is smaller than minimum limit', 'forms-by-made-it'), __("The number is smaller than the minimum allowed.", "madeit_forms"));
-        $this->addMessageField('number', 'mod_number_number_too_large', __('Number is larger than maximum limit', 'forms-by-made-it'), __("The number is larger than the maximum allowed.", "madeit_forms"));
+        $this->addMessageField('number', 'mod_number_invalid_number', __('Number format that the sender entered is invalid', 'forms-by-made-it'), __("The number format is invalid.", "forms-by-made-it"));
+        $this->addMessageField('number', 'mod_number_number_too_small', __('Number is smaller than minimum limit', 'forms-by-made-it'), __("The number is smaller than the minimum allowed.", "forms-by-made-it"));
+        $this->addMessageField('number', 'mod_number_number_too_large', __('Number is larger than maximum limit', 'forms-by-made-it'), __("The number is larger than the maximum allowed.", "forms-by-made-it"));
         
         $this->addHooks();
     }

@@ -10,9 +10,9 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
         $this->addTag('tel', __('Tel', 'forms-by-made-it'), 'tag_generator_text', array($this, 'tag_generator_text'), array($this, 'validation_tel'));
         
         
-        $this->addMessageField('email', 'mod_text_invalid_email', __('Email address that the sender entered is invalid', 'forms-by-made-it'), __("The e-mail address entered is invalid.", "madeit_forms"));
-        $this->addMessageField('url', 'mod_text_invalid_url', __('URL that the sender entered is invalid', 'forms-by-made-it'), __("The URL is invalid.", "madeit_forms"));
-        $this->addMessageField('tel', 'mod_text_invalid_tel', __('Telephone number that the sender entered is invalid', 'forms-by-made-it'), __("The telephone number is invalid.", "madeit_forms"));
+        $this->addMessageField('email', 'mod_text_invalid_email', __('Email address that the sender entered is invalid', 'forms-by-made-it'), __("The e-mail address entered is invalid.", "forms-by-made-it"));
+        $this->addMessageField('url', 'mod_text_invalid_url', __('URL that the sender entered is invalid', 'forms-by-made-it'), __("The URL is invalid.", "forms-by-made-it"));
+        $this->addMessageField('tel', 'mod_text_invalid_tel', __('Telephone number that the sender entered is invalid', 'forms-by-made-it'), __("The telephone number is invalid.", "forms-by-made-it"));
         
         $this->addHooks();
     }
