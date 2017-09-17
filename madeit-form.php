@@ -24,6 +24,10 @@ if (!defined('MADEIT_FORM_FRONT')) {
     define('MADEIT_FORM_FRONT', MADEIT_FORM_DIR.'/front'); // Admin Dir
 }
 require_once MADEIT_FORM_DIR.'/vendor/autoload.php';
+
+require_once MADEIT_FORM_DIR.'/WP_MadeIT_Form_Settings.php';
+$wp_madeit_form_settings = new WP_MadeIT_Form_Settings();
+
 require_once MADEIT_FORM_DIR.'/actions/Email.php';
 $a = new WP_MADEIT_FORM_Email();
 require_once MADEIT_FORM_DIR.'/actions/Mailchimp.php';
@@ -45,12 +49,15 @@ $t = new WP_MADEIT_FORM_Module_Textarea();
 $t = new WP_MADEIT_FORM_Module_Select();
 $t = new WP_MADEIT_FORM_Module_Number();
 $t = new WP_MADEIT_FORM_Module_Submit();
+
 require_once MADEIT_FORM_DIR.'/DatabaseInit.php';
 $wp_plugin_dbinit = new DatabaseInit();
 $wp_plugin_dbinit->addHooks();
+
 require_once MADEIT_FORM_DIR.'/admin/WP_MADEIT_FORM_admin.php';
-$wp_madeit_form_admin = new WP_MADEIT_FORM_admin();
+$wp_madeit_form_admin = new WP_MADEIT_FORM_admin($wp_madeit_form_settings);
 $wp_madeit_form_admin->addHooks();
+
 require_once MADEIT_FORM_DIR.'/front/WP_Form_front.php';
-$wp_NBD_front = new WP_Form_front();
+$wp_NBD_front = new WP_Form_front($wp_madeit_form_settings);
 $wp_NBD_front->addHooks();

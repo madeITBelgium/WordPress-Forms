@@ -6,9 +6,14 @@ class WP_Form_front
     private $tags = [];
     private $actions = [];
     private $messages = [];
+    private $settings;
+    private $defaultSettings;
+    private $form_id = null;
 
-    public function __construct()
+    public function __construct($settings)
     {
+        $this->settings = $settings;
+        $this->defaultSettings = $this->settings->loadDefaultSettings();
         $this->db = \WeDevs\ORM\Eloquent\Database::instance();
     }
 
@@ -24,8 +29,11 @@ class WP_Form_front
             $this->addModule($id, $value);
         }
 
-        wp_register_style('madeit-form-style', MADEIT_FORM_URL.'/front/css/style.css', [], null);
+        wp_register_style('madeit-form-style', MADEIT_FORM_URL.'front/css/style.css', [], null);
         wp_enqueue_style('madeit-form-style');
+        if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+            wp_enqueue_script('recaptcha', 'https://www.google.com/recaptcha/api.js', [], null, true);
+        }
 
         $this->shortCodes();
     }
@@ -68,6 +76,7 @@ class WP_Form_front
 
                 if ($error) {
                     echo '<div class="madeit-form-error">'.$error_msg.'</div>';
+                    $this->renderForm($id, $form);
                     $content = ob_get_clean();
 
                     return $content;
@@ -122,17 +131,13 @@ class WP_Form_front
                 //echo "<pre>" . print_r($dbI, true) . "</pre>";
                 if ($error) {
                     echo '<div class="madeit-form-error">'.$error_msg.'</div>';
+                    $this->renderForm($id, $form);
                 } else {
                     echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
                 }
                 //return success message
             } else {
-                echo '<form action="" method="post">';
-                echo '<input type="hidden" name="form_id" value="'.$id.'">';
-                $formValue = $form->form;
-                $formValue = str_replace('\"', '"', $formValue);
-                echo do_shortcode($formValue);
-                echo '</form>';
+                $this->renderForm($id, $form);
             }
         } else {
             echo __("Can't display the form.", 'forms-by-made-it');
@@ -141,6 +146,21 @@ class WP_Form_front
         $content = ob_get_clean();
 
         return $content;
+    }
+    
+    private function renderForm($id, $form) {
+        $this->form_id = $id;
+        add_filter('madeit_forms_form_id', [$this, 'form_id']);
+        echo '<form action="" method="post" id="form_' . $id . '">';
+        echo '<input type="hidden" name="form_id" value="'.$id.'">';
+        $formValue = $form->form;
+        $formValue = str_replace('\"', '"', $formValue);
+        echo do_shortcode($formValue);
+        echo '</form>';
+    }
+    
+    public function form_id() {
+        return $this->form_id;
     }
 
     private function changeInputTag($value)
@@ -154,6 +174,9 @@ class WP_Form_front
 
     private function getTagNameFromPostInput($form, $inputKey)
     {
+        if($inputKey == "btn_submit" || $inputKey == "g-recaptcha-response") {
+            return 'submit';
+        }
         $pos = strpos($form, 'name="'.$inputKey.'"');
         if ($pos !== false) {
             $tags = explode('[', substr($form, 0, $pos));

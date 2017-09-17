@@ -3,9 +3,17 @@ class WP_MADEIT_FORM_Module_Submit
 {
     private $tags = array();
     private $message_fields = array('submit' => array());
+    private $settings;
+    private $defaultSettings = [];
     
     public function __construct() {
+        global $wp_madeit_form_settings;
+        $this->settings = $wp_madeit_form_settings;
+        $this->defaultSettings = $wp_madeit_form_settings->loadDefaultSettings();
+        
         $this->addTag('submit', __('Submit', 'forms-by-made-it'), 'tag_generator_submit', array($this, 'tag_generator_submit'), array($this, 'validation_submit'));
+        $this->addMessageField('submit', 'check_captcha', __('The captcha failed the validation.', 'forms-by-made-it'), __("The captcha couldn't validate you.", "forms-by-made-it"));
+        
         $this->addHooks();
     }
     
@@ -67,6 +75,17 @@ class WP_MADEIT_FORM_Module_Submit
     }
     
     public function validation_submit($tagOptions, $value, $messages) {
+        if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+            $secretKey = $this->defaultSettings['reCaptcha']['secret'];
+            if(!isset($_POST['g-recaptcha-response'])) {
+                return isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+            }
+            $response = $_POST['g-recaptcha-response'];     
+            $remoteIp = $_SERVER['REMOTE_ADDR'];
+            $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
+            $result = json_decode($reCaptchaValidationUrl, TRUE);
+            return $result['success'] == 1 ? true : (isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it"));
+        }
         return true;
     }
     
@@ -78,13 +97,26 @@ class WP_MADEIT_FORM_Module_Submit
             'value' => '',
         ), $atts ));
         ob_start();
+        $captcha = "";
+        $captcha_js = "element.form";
+        if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+            $captchaCallback = "onSubmit" . rand();
+            $class .= ' g-recaptcha';
+            $captcha = ' data-sitekey="' . $this->defaultSettings['reCaptcha']['key'] . '" data-callback="' . $captchaCallback . '"';
+            $formId = "form_" . apply_filters('madeit_forms_form_id', "");
+            $captcha_js = "<script>function " . $captchaCallback . "(token) { document.getElementById('" . $formId . "').submit(); }</script>";
+        }
         ?>
-        <input type="submit" 
+        <input type="submit" name="btn_submit"
+           <?php if($captcha != "") { echo $captcha; } ?>
            <?php if($value != "") { ?> value="<?php echo esc_html($value); ?>" <?php } ?>
            <?php if($id != "") { ?> id="<?php echo esc_html($id); ?>" <?php } ?>
            <?php if($class != "") { ?> class="<?php echo esc_html($class); ?>" <?php } ?>
                >
         <?php
+        if($captcha_js != "") {
+            echo $captcha_js;
+        }
         $content = ob_get_clean();
         return $content;
     }

@@ -6,9 +6,13 @@ class WP_MADEIT_FORM_admin
     private $tags = [];
     private $actions = [];
     private $messages = [];
+    private $settings;
+    private $defaultSettings;
 
-    public function __construct()
+    public function __construct($settings)
     {
+        $this->settings = $settings;
+        $this->defaultSettings = $this->settings->loadDefaultSettings();
         $this->db = \WeDevs\ORM\Eloquent\Database::instance();
 
         $this->messages = [
@@ -28,15 +32,19 @@ class WP_MADEIT_FORM_admin
     {
         global $_wp_last_object_menu;
         $_wp_last_object_menu++;
-        add_menu_page(__('Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it'), 'manage_options', 'madeit_forms', [$this, 'show_all'], 'dashicons-email', $_wp_last_object_menu);
-        add_submenu_page('madeit_forms', __('Made I.T. Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it'), 'manage_options', 'madeit_forms', [$this, 'show_all']);
-        add_submenu_page('madeit_forms', __('Made I.T. Forms - New', 'forms-by-made-it'), __('Add new', 'forms-by-made-it'), 'manage_options', 'madeit_form', [$this, 'new_form']);
-
+        
         $new = '';
         $count = $this->db->table('madeit_form_inputs')->where('read', 0)->count();
         if ($count > 0) {
             $new = "<span class='update-plugins' title='".__('Unread form submits', 'forms-by-made-it')."'><span class='update-count'>".number_format_i18n($count).'</span></span>';
         }
+        
+        add_menu_page(__('Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it').' '.$new, 'manage_options', 'madeit_forms', [$this, 'show_all'], 'dashicons-email', $_wp_last_object_menu);
+        add_submenu_page('madeit_forms', __('Made I.T. Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it'), 'manage_options', 'madeit_forms', [$this, 'show_all']);
+        add_submenu_page('madeit_forms', __('Made I.T. Forms - New', 'forms-by-made-it'), __('Add new', 'forms-by-made-it'), 'manage_options', 'madeit_form', [$this, 'new_form']);
+        add_submenu_page('madeit_forms', __('Made I.T. Forms - Settings', 'forms-by-made-it'), __('Settings', 'forms-by-made-it'), 'manage_options', 'madeit_forms_settings', [$this, 'settings']);
+
+        
         add_submenu_page('madeit_forms', __('Made I.T. Forms - Inputs', 'forms-by-made-it'), __('Submitted forms', 'forms-by-made-it').' '.$new, 'manage_options', 'madeit_form_input', [$this, 'all_inputs']);
     }
 
@@ -129,7 +137,7 @@ class WP_MADEIT_FORM_admin
         include_once MADEIT_FORM_ADMIN.'/forms/form.php';
     }
 
-    public function post_form()
+    private function post_form()
     {
         if (!wp_verify_nonce($_POST['_wpnonce'], 'madeit-form-save-contact-form')) {
             die(__('Security check'));
@@ -193,7 +201,7 @@ class WP_MADEIT_FORM_admin
         return $form;
     }
 
-    public function post_edit_form()
+    private function post_edit_form()
     {
         if (!wp_verify_nonce($_POST['_wpnonce'], 'madeit-form-save-contact-form')) {
             wp_die(__('Security check'));
@@ -279,6 +287,40 @@ class WP_MADEIT_FORM_admin
         }
         echo '</div>';
     }
+    
+    public function settings() {
+        $success = false;
+        $error = "";
+        if(isset($_POST['save_settings'])) {
+            $success = $this->save_settings();
+            if($success !== true) {
+                $error = $success;
+                $success = false;
+            }
+        }
+        include_once MADEIT_FORM_ADMIN . '/forms/settings.php';
+    }
+    
+    private function save_settings() {
+        $success = false;
+        $nonce = $_POST['_wpnonce'];
+        if (!wp_verify_nonce($nonce, 'madeit_forms_settings')) {
+            // This nonce is not valid.
+            wp_die('Security check');
+        } else {
+            $this->settings->checkCheckbox('madeit_forms_reCaptcha');
+            $this->settings->checkTextbox('madeit_forms_reCaptcha_key');
+            $this->settings->checkTextbox('madeit_forms_reCaptcha_secret');
+            
+            if(get_option('madeit_forms_reCaptcha_key', null) == null || get_option('madeit_forms_reCaptcha_secret', null) == null) {
+                update_option('madeit_forms_reCaptcha', false);
+            }
+            $success = true;
+        }
+        $this->defaultSettings = $this->settings->loadDefaultSettings();
+        return $success;
+    }
+    
 
     public function getTags($form)
     {
