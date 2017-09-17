@@ -1,48 +1,52 @@
 <?php
-if(!class_exists("WP_MADEIT_FORM_Action")) {
-    require_once(MADEIT_FORM_DIR . '/actions/WP_MADEIT_FORM_Action.php');
+
+if (!class_exists('WP_MADEIT_FORM_Action')) {
+    require_once MADEIT_FORM_DIR.'/actions/WP_MADEIT_FORM_Action.php';
 }
-class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action {
-    public function __construct() {
+class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
+{
+    public function __construct()
+    {
         $this->addActionField('to', __('To', 'forms-by-made-it'), 'text', get_bloginfo('admin_email'));
-        $this->addActionField('from', __('From', 'forms-by-made-it'), 'text', "[your-name] <" . get_bloginfo('admin_email') . ">");
-        $this->addActionField('subject', __('Subject', 'forms-by-made-it'), 'text', "[your-subject]");
-        $this->addActionField('header', __('Header', 'forms-by-made-it'), 'textarea', "Reply-to: [your-email]");
-        $this->addActionField('message', __('Message', 'forms-by-made-it'), 'textarea', "From: [your-name] <[your-email]>\nSubject: [your-subject]\n\nMessage:[your-message]", ['min-height' => "250px"]);
+        $this->addActionField('from', __('From', 'forms-by-made-it'), 'text', '[your-name] <'.get_bloginfo('admin_email').'>');
+        $this->addActionField('subject', __('Subject', 'forms-by-made-it'), 'text', '[your-subject]');
+        $this->addActionField('header', __('Header', 'forms-by-made-it'), 'textarea', 'Reply-to: [your-email]');
+        $this->addActionField('message', __('Message', 'forms-by-made-it'), 'textarea', "From: [your-name] <[your-email]>\nSubject: [your-subject]\n\nMessage:[your-message]", ['min-height' => '250px']);
         $this->addActionField('html', __('HTML', 'forms-by-made-it'), 'checkbox');
-        
-        
-        $this->addMessageField('action_email_email_error', __('The email can\'t be send.', 'forms-by-made-it'), __("Sorry, there was an error while processing your data. The admin is contacted.", "forms-by-made-it"));
-        
-        $this->addAction('EMAIL', __('E-mail', 'forms-by-made-it'), array($this, 'callback'));
-        
+
+        $this->addMessageField('action_email_email_error', __('The email can\'t be send.', 'forms-by-made-it'), __('Sorry, there was an error while processing your data. The admin is contacted.', 'forms-by-made-it'));
+
+        $this->addAction('EMAIL', __('E-mail', 'forms-by-made-it'), [$this, 'callback']);
+
         $this->addHooks();
     }
-    
-    public function callback($data, $messages) {
-        if(isset($data['html']) && $data['html'] == "checked") {
+
+    public function callback($data, $messages)
+    {
+        if (isset($data['html']) && $data['html'] == 'checked') {
             $email = stripcslashes($data['message']);
         } else {
             $email = nl2br($data['message']);
         }
-        
-        
+
         add_filter('wp_mail_from', [$this, 'my_mail_from']);
         add_filter('wp_mail_from_name', [$this, 'my_mail_from_name']);
-        
+
         $result = wp_mail($data['to'], $data['subject'], $email, $data['header']);
-        if($result !== true) {
+        if ($result !== true) {
             return isset($messages['action_email_email_error']) ? $messages['action_email_email_error'] : $messages['failed'];
         }
+
         return true;
     }
-    
-    public function my_mail_from( $email ) {
+
+    public function my_mail_from($email)
+    {
         return get_bloginfo('admin_email');
     }
-    
-    public function my_mail_from_name($name) {
+
+    public function my_mail_from_name($name)
+    {
         return  get_bloginfo('name');
     }
-
 }

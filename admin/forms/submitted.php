@@ -1,10 +1,12 @@
 <?php
 // Exit if accessed directly
-if(!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-/**
- * Made I.T. 
- * 
+/*
+ * Made I.T.
+ *
  * @package Made I.T.
  * @since 1.0.0
  */
@@ -17,7 +19,7 @@ if(!defined('ABSPATH')) exit;
         <div class="metabox-holder">
             <div class="meta-box-sortables ui-sortable">
                 <div id="settings" class="postbox">
-                    <div class="handlediv" title="<?php echo __( 'Click to toggle', 'forms-by-made-it' ) ?>"><br /></div>
+                    <div class="handlediv" title="<?php echo __('Click to toggle', 'forms-by-made-it') ?>"><br /></div>
                     <!-- settings box title -->
                     <h3 class="hndle">
                         <span style="vertical-align: top;"><?php echo esc_html($form->title) ?> - <?php echo $f->create_time; ?></span>
@@ -26,7 +28,7 @@ if(!defined('ABSPATH')) exit;
                         <table class="form-table">
                             <tbody>
                                 <?php
-                                foreach(json_decode($f->data, true) as $k => $v) {
+                                foreach (json_decode($f->data, true) as $k => $v) {
                                     ?>
                                     <tr>
                                         <th scope="row">
