@@ -6,8 +6,7 @@ class WP_MADEIT_FORM_Module_Submit
     private $settings;
     private $defaultSettings = [];
     
-    public function __construct() {
-        global $wp_madeit_form_settings;
+    public function __construct($wp_madeit_form_settings) {
         $this->settings = $wp_madeit_form_settings;
         $this->defaultSettings = $wp_madeit_form_settings->loadDefaultSettings();
         
@@ -98,7 +97,7 @@ class WP_MADEIT_FORM_Module_Submit
         ), $atts ));
         ob_start();
         $captcha = "";
-        $captcha_js = "element.form";
+        $captcha_js = "";
         if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
             $captchaCallback = "onSubmit" . rand();
             $class .= ' g-recaptcha';

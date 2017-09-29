@@ -48,7 +48,7 @@ $t = new WP_MADEIT_FORM_Module_Checkbox();
 $t = new WP_MADEIT_FORM_Module_Textarea();
 $t = new WP_MADEIT_FORM_Module_Select();
 $t = new WP_MADEIT_FORM_Module_Number();
-$t = new WP_MADEIT_FORM_Module_Submit();
+$t = new WP_MADEIT_FORM_Module_Submit($wp_madeit_form_settings);
 
 require_once MADEIT_FORM_DIR.'/DatabaseInit.php';
 $wp_plugin_dbinit = new DatabaseInit();
