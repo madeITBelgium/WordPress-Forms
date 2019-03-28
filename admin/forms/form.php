@@ -4,11 +4,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-
-function removeSlashes($str) {
-    while(strpos($str, "\'") !== false) {
+function removeSlashes($str)
+{
+    while (strpos($str, "\'") !== false) {
         $str = str_replace("\'", "'", $str);
     }
+
     return $str;
 }
 /*
