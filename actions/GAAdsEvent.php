@@ -16,8 +16,8 @@ class WP_MADEIT_FORM_GAAdsEvent extends WP_MADEIT_FORM_Action
 
     public function callback($data, $messages)
     {
-        return ['type' => 'JS', 'code' => "</script>
-        <script async src=\"https://www.googletagmanager.com/gtag/js?id=".$data['ga_ads_event_code']."\"></script>
+        return ['type' => 'JS', 'code' => '</script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id='.$data['ga_ads_event_code']."\"></script>
         <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments)};
