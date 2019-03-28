@@ -24,27 +24,24 @@ class WP_MADEIT_FORM_Mailpoet extends WP_MADEIT_FORM_Action
         $listIDs = !empty($data['mp_list_id']) ? [$data['mp_list_id']] : [];
 
         //in this array firstname and lastname are optional
-        $user_data = array(
-            'email' => !empty($data['mp_email']) ? $data['mp_email'] : '',
+        $user_data = [
+            'email'     => !empty($data['mp_email']) ? $data['mp_email'] : '',
             'firstname' => !empty($data['mp_firstname']) ? $data['mp_firstname'] : '',
-            'lastname' => !empty($data['mp_name']) ? $data['mp_name'] : '',
-        );
+            'lastname'  => !empty($data['mp_name']) ? $data['mp_name'] : '',
+        ];
 
-        if(count($listIDs) > 0) {
-            $data_subscriber = array('user' => $user_data, 'user_list' => array('list_ids' => $listIDs));
+        if (count($listIDs) > 0) {
+            $data_subscriber = ['user' => $user_data, 'user_list' => ['list_ids' => $listIDs]];
+        } else {
+            $data_subscriber = ['user' => $user_data];
         }
-        else {
-            $data_subscriber = array('user' => $user_data);
-        }
-        
+
         try {
             $helper_user = WYSIJA::get('user', 'helper');
             $helper_user->addSubscriber($data_subscriber);
+        } catch (Exception $e) {
         }
-        catch(Exception $e) {
-            
-        }
-        
+
         return true;
     }
 }

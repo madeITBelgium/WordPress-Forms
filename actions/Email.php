@@ -51,8 +51,9 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
     {
         return  get_bloginfo('name');
     }
-    
-    public function set_html_mail_content_type() {
+
+    public function set_html_mail_content_type()
+    {
         return 'text/html';
     }
 }
