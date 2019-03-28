@@ -358,7 +358,7 @@ class WP_MADEIT_FORM_admin
                 }
 
                 //execute actions
-                if (isset($form->actions) && count($form->actions) > 0) {
+                if (isset($form->actions) && !empty($form->actions)/* && count($form->actions) > 0*/) {
                     $formActions = json_decode($form->actions, true);
                     foreach ($formActions as $actID => $actionInfo) {
                         $action = $this->actions[$actionInfo['_id']];

@@ -44,7 +44,7 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
 
     public function my_mail_from($email)
     {
-        return emtpy($data['from']) ? get_bloginfo('admin_email') : $data['from'];
+        return empty($data['from']) ? get_bloginfo('admin_email') : $data['from'];
     }
 
     public function my_mail_from_name($name)
