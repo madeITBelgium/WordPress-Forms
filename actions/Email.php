@@ -31,22 +31,28 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
 
         add_filter('wp_mail_from', [$this, 'my_mail_from']);
         add_filter('wp_mail_from_name', [$this, 'my_mail_from_name']);
+        add_filter('wp_mail_content_type', [$this, 'set_html_mail_content_type']);
 
         $result = wp_mail($data['to'], $data['subject'], $email, $data['header']);
         if ($result !== true) {
             return isset($messages['action_email_email_error']) ? $messages['action_email_email_error'] : $messages['failed'];
         }
+        remove_filter('wp_mail_content_type', [$this, 'set_html_mail_content_type']);
 
         return true;
     }
 
     public function my_mail_from($email)
     {
-        return get_bloginfo('admin_email');
+        return emtpy($data['from']) ? get_bloginfo('admin_email') : $data['from'];
     }
 
     public function my_mail_from_name($name)
     {
         return  get_bloginfo('name');
+    }
+    
+    public function set_html_mail_content_type() {
+        return 'text/html';
     }
 }
