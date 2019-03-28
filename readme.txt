@@ -46,6 +46,9 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
+= 1.6.0 =
+* Bug fixes
+* Mailpoet integration
 
 = 1.5.1 =
 * Bug fixes
