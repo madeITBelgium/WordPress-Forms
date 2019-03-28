@@ -4,6 +4,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+
+function removeSlashes($str) {
+    while(strpos($str, "\'") !== false) {
+        $str = str_replace("\'", "'", $str);
+    }
+    return $str;
+}
 /*
  * Made I.T.
  *
@@ -219,7 +226,7 @@ if (!defined('ABSPATH')) {
                                     $value = isset($form['messages'][$arr['field']]) ? $form['messages'][$arr['field']] : $arr['value']; ?>
                                     <p class="description">
                                         <label for="<?php echo $arr['field']; ?>"><?php echo esc_html($arr['description']); ?><br />
-                                            <input type="text" id="messages_<?php echo $arr['field']; ?>" name="messages_<?php echo $arr['field']; ?>" class="large-text" size="70" value="<?php echo esc_attr($value); ?>" />
+                                            <input type="text" id="messages_<?php echo $arr['field']; ?>" name="messages_<?php echo $arr['field']; ?>" class="large-text" size="70" value="<?php echo esc_attr(removeSlashes($value)); ?>" />
                                         </label>
                                     </p>
                                     <?php
