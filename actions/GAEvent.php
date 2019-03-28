@@ -18,6 +18,6 @@ class WP_MADEIT_FORM_GAEvent extends WP_MADEIT_FORM_Action
 
     public function callback($data, $messages)
     {
-        return ['type' => 'JS', 'code' => "ga('send', 'event', '".$data['ga_event_category']."', '".$data['ga_event_action']."', '".$data['ga_event_label']."');"];
+        return ['type' => 'JS', 'code' => "window.onload = function () { ga('send', 'event', '".$data['ga_event_category']."', '".$data['ga_event_action']."', '".$data['ga_event_label']."'); }"];
     }
 }

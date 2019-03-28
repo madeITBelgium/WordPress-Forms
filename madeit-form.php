@@ -34,6 +34,8 @@ require_once MADEIT_FORM_DIR.'/actions/Mailchimp.php';
 $a = new WP_MADEIT_FORM_Mailchimp();
 require_once MADEIT_FORM_DIR.'/actions/GAEvent.php';
 $a = new WP_MADEIT_FORM_GAEvent();
+require_once MADEIT_FORM_DIR.'/actions/GAAdsEvent.php';
+$a = new WP_MADEIT_FORM_GAAdsEvent();
 require_once MADEIT_FORM_DIR.'/actions/Download.php';
 $a = new WP_MADEIT_FORM_Download();
 
