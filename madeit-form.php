@@ -25,7 +25,6 @@ if (!defined('MADEIT_FORM_FRONT')) {
 }
 require_once MADEIT_FORM_DIR.'/vendor/autoload.php';
 
-
 function wp_forms_by_madeit_load_plugin_textdomain()
 {
     load_plugin_textdomain('forms-by-made-it', false, basename(dirname(__FILE__)).'/languages/');
