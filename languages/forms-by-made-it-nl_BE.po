@@ -1,6 +1,5 @@
 # Copyright (C) 2016 Forms
 # This file is distributed under the same license as the Forms package.
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Forms 1.0\n"
@@ -9,202 +8,208 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-"X-Generator: Loco https://localise.biz/"
+"PO-Revision-Date: 2019-03-28 14:56+0000\n"
+"Last-Translator: Tjebbe Lievens <tjebbe.lievens@madeit.be>\n"
+"Language-Team: Nederlands (België)\n"
+"Language: nl_BE\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.1; wp-5.1.1"
 
 #: admin/InputListTable.php:35
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: admin/InputListTable.php:36 admin/forms/form.php:107
 #: admin/forms/form.php:112
 msgid "Form"
-msgstr ""
+msgstr "Formulier"
 
 #: admin/InputListTable.php:37 admin/forms/submitted.php:45
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: admin/InputListTable.php:38
 msgid "Read"
-msgstr ""
+msgstr "Lees"
 
 #: admin/InputListTable.php:39 admin/FormListTable.php:35
 msgid "Create date"
-msgstr ""
+msgstr "Aanmaak datum"
 
 #: admin/InputListTable.php:114
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: admin/InputListTable.php:114
 msgid "No"
-msgstr ""
+msgstr "Nee"
 
 #: admin/FormListTable.php:33
 msgid "Title"
-msgstr ""
+msgstr "TItel"
 
 #: admin/FormListTable.php:34
 msgid "Shortcode"
-msgstr ""
+msgstr "Shortcode"
 
 #: admin/WP_MADEIT_FORM_admin.php:19
 msgid "Form successfully completed"
-msgstr ""
+msgstr "Formulier is succesvol voltooid"
 
 #: admin/WP_MADEIT_FORM_admin.php:19
 msgid "Thank you for your message. It has been sent."
-msgstr ""
+msgstr "Bedankt voor je bericht!"
 
 #: admin/WP_MADEIT_FORM_admin.php:20
 msgid "Form failed to complete"
-msgstr ""
+msgstr "Formulier kan niet worden verwerkt"
 
 #: admin/WP_MADEIT_FORM_admin.php:20 admin/WP_MADEIT_FORM_admin.php:22
 msgid "There was an error trying to send your message. Please try again later."
 msgstr ""
+"Er is een error tijdens het verzenden van het formulier. Probeer later "
+"opnieuw."
 
 #: admin/WP_MADEIT_FORM_admin.php:21
 msgid "Validation errors occurred"
-msgstr ""
+msgstr "Validatie errors"
 
 #: admin/WP_MADEIT_FORM_admin.php:21
 msgid "One or more fields have an error. Please check and try again."
 msgstr ""
+"Eén of meerdere velden heeft een error. Gelieve dit te controleren en "
+"opnieuw te proberen."
 
 #: admin/WP_MADEIT_FORM_admin.php:22
 msgid "Submission was referred to as spam"
-msgstr ""
+msgstr "Verzending is gemarkeerd als spam"
 
 #: admin/WP_MADEIT_FORM_admin.php:23
 msgid "There are terms that the sender must accept"
-msgstr ""
+msgstr "Er zijn voorwaarden die de zender moet aanvaarden."
 
 #: admin/WP_MADEIT_FORM_admin.php:23
 msgid "You must accept the terms and conditions before sending your message."
 msgstr ""
+"Je moet de voorwaarden accepteren om het formulier te kunnen verzenden."
 
 #: admin/WP_MADEIT_FORM_admin.php:24
 msgid "There is a field that the sender must fill in"
-msgstr ""
+msgstr "Er is een verplicht veld dat de verzender moet invullen."
 
 #: admin/WP_MADEIT_FORM_admin.php:24
 msgid "The field is required."
-msgstr ""
+msgstr "Het veld is verplicht."
 
 #: admin/WP_MADEIT_FORM_admin.php:25
 msgid ""
 "There is a field with input that is longer than the maximum allowed length"
-msgstr ""
+msgstr "Er is een veld dat langer is dan de maximum toegestane lengte."
 
 #: admin/WP_MADEIT_FORM_admin.php:25
 msgid "The field is too long."
-msgstr ""
+msgstr "Het veld is te lang."
 
 #: admin/WP_MADEIT_FORM_admin.php:26
 msgid ""
 "There is a field with input that is shorter than the minimum allowed length"
-msgstr ""
+msgstr "Er is een veld dat korter is dan de minum toegelate lengte."
 
 #: admin/WP_MADEIT_FORM_admin.php:26
 msgid "The field is too short."
-msgstr ""
+msgstr "Het veld is te kort."
 
 #: admin/WP_MADEIT_FORM_admin.php:39
 msgid "Unread form submits"
-msgstr ""
+msgstr "Ongelezen formulier inzendingen"
 
 #. #-#-#-#-#  plugin.pot (Forms 1.0)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
 #: admin/WP_MADEIT_FORM_admin.php:42 admin/WP_MADEIT_FORM_admin.php:43
 #: admin/WP_MADEIT_FORM_admin.php:88
 msgid "Forms"
-msgstr ""
+msgstr "Forms"
 
 #: admin/WP_MADEIT_FORM_admin.php:43
 msgid "Made I.T. Forms"
-msgstr ""
+msgstr "Made I.T. Forms"
 
 #: admin/WP_MADEIT_FORM_admin.php:44
 msgid "Made I.T. Forms - New"
-msgstr ""
+msgstr "Made I.T. Forms - New"
 
 #: admin/WP_MADEIT_FORM_admin.php:44 admin/WP_MADEIT_FORM_admin.php:88
 msgid "Add new"
-msgstr ""
+msgstr "Voeg nieuwe toe"
 
 #: admin/WP_MADEIT_FORM_admin.php:45
 msgid "Made I.T. Forms - Settings"
-msgstr ""
+msgstr "Made I.T. Forms - Instellingen"
 
 #: admin/WP_MADEIT_FORM_admin.php:45 admin/forms/settings.php:15
 msgid "Settings"
-msgstr ""
+msgstr "Instellingen"
 
 #: admin/WP_MADEIT_FORM_admin.php:47
 msgid "Made I.T. Forms - Inputs"
-msgstr ""
+msgstr "Made I.T. Forms - Inputs"
 
 #: admin/WP_MADEIT_FORM_admin.php:47 admin/WP_MADEIT_FORM_admin.php:262
 msgid "Submitted forms"
-msgstr ""
+msgstr "Verzonden formulieren"
 
 #: admin/WP_MADEIT_FORM_admin.php:93
 msgid "The form is deleted."
-msgstr ""
+msgstr "Het formulier is verwijderd."
 
 #: admin/WP_MADEIT_FORM_admin.php:103
 msgid "The form isn't available"
-msgstr ""
+msgstr "Het formulier is niet meer beschikbaar."
 
 #: admin/WP_MADEIT_FORM_admin.php:187
 msgid "The form doesn't exist"
-msgstr ""
+msgstr "Het formulier bestaat niet meer."
 
 #: admin/WP_MADEIT_FORM_admin.php:192 admin/WP_MADEIT_FORM_admin.php:252
 msgid "The form is successfully saved."
-msgstr ""
+msgstr "Het formulier is succesvol opgeslagen."
 
 #: admin/WP_MADEIT_FORM_admin.php:267
 msgid "The submitted data is deleted."
-msgstr ""
+msgstr "De verzonden data is verwijderd."
 
 #: admin/WP_MADEIT_FORM_admin.php:276
 msgid "The data isn't available"
-msgstr ""
+msgstr "Deze data is niet beschikbaar."
 
 #: modules/Number.php:7
 msgid "Number"
-msgstr ""
+msgstr "Nummer"
 
 #: modules/Number.php:9
 msgid "Number format that the sender entered is invalid"
-msgstr ""
+msgstr "Het nummer formaat dat de verzender invoerde is incorrect."
 
 #: modules/Number.php:9
 msgid "The number format is invalid."
-msgstr ""
+msgstr "Het ingevoerde nummer is niet geldig."
 
 #: modules/Number.php:10
 msgid "Number is smaller than minimum limit"
-msgstr ""
+msgstr "Het opgegeven nummer is kleiner dan het toegelaten minimum."
 
 #: modules/Number.php:10
 msgid "The number is smaller than the minimum allowed."
-msgstr ""
+msgstr "Het ingevoerde nummer is kleiner dan het minimum toegestaan."
 
 #: modules/Number.php:11
 msgid "Number is larger than maximum limit"
-msgstr ""
+msgstr "Het opgegeven nummer is groter dan het toegelate, maximum"
 
 #: modules/Number.php:11
 msgid "The number is larger than the maximum allowed."
-msgstr ""
+msgstr "Het ingevoerde nummer is groter dan het maximum toegestaan."
 
 #: modules/Number.php:20
 #, php-format
@@ -212,74 +217,75 @@ msgid ""
 "Generate a form-tag for a field for numeric value input. For more details, "
 "see %s."
 msgstr ""
+"Genereer een form-tag voor een numeriek veld. Voor meer details zie %s."
 
 #: modules/Number.php:22 modules/Textarea.php:17 modules/Select.php:17
 #: modules/Submit.php:41 modules/Text.php:38
 msgid "Text Fields"
-msgstr ""
+msgstr "Tekst velden"
 
 #: modules/Number.php:31 modules/Number.php:34 modules/Textarea.php:26
 #: modules/Textarea.php:29 modules/Checkbox.php:26 modules/Checkbox.php:29
 #: modules/Select.php:26 modules/Select.php:29 modules/Text.php:47
 #: modules/Text.php:50
 msgid "Field type"
-msgstr ""
+msgstr "Veld type"
 
 #: modules/Number.php:36
 msgid "Spinbox"
-msgstr ""
+msgstr "Spinbox"
 
 #: modules/Number.php:37
 msgid "Slider"
-msgstr ""
+msgstr "Slider"
 
 #: modules/Number.php:39 modules/Textarea.php:30 modules/Checkbox.php:30
 #: modules/Select.php:30 modules/Text.php:51
 msgid "Required field"
-msgstr ""
+msgstr "Verplicht veld"
 
 #: modules/Number.php:44 modules/Textarea.php:35 modules/Checkbox.php:35
 #: modules/Select.php:35 modules/Text.php:56 actions/Mailchimp.php:12
 #: actions/Mailpoet.php:12
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 #: modules/Number.php:48 modules/Textarea.php:39 modules/Checkbox.php:39
 #: modules/Text.php:60
 msgid "Default value"
-msgstr ""
+msgstr "Standaard waarde"
 
 #: modules/Number.php:51 modules/Textarea.php:42 modules/Checkbox.php:42
 #: modules/Text.php:63
 msgid "Use this text as the placeholder of the field"
-msgstr ""
+msgstr "Gebruik deze tekst als placeholder van dit veld."
 
 #: modules/Number.php:56 modules/Number.php:59
 msgid "Range"
-msgstr ""
+msgstr "Range"
 
 #: modules/Number.php:61
 msgid "Min"
-msgstr ""
+msgstr "Min"
 
 #: modules/Number.php:66
 msgid "Max"
-msgstr ""
+msgstr "Max"
 
 #: modules/Number.php:74 modules/Textarea.php:46 modules/Checkbox.php:46
 #: modules/Select.php:51 modules/Submit.php:56 modules/Text.php:67
 msgid "Id attribute"
-msgstr ""
+msgstr "ID Attribuut"
 
 #: modules/Number.php:78 modules/Textarea.php:50 modules/Checkbox.php:50
 #: modules/Select.php:55 modules/Submit.php:60 modules/Text.php:71
 msgid "Class attribute"
-msgstr ""
+msgstr "Class attribuut"
 
 #: modules/Number.php:88 modules/Textarea.php:60 modules/Checkbox.php:60
 #: modules/Select.php:65 modules/Submit.php:70 modules/Text.php:81
 msgid "Insert Tag"
-msgstr ""
+msgstr "Voeg tag toe"
 
 #: modules/Number.php:93 modules/Textarea.php:65 modules/Checkbox.php:65
 #: modules/Select.php:70 modules/Text.php:86
@@ -288,10 +294,12 @@ msgid ""
 "To use the value input through this field in a action field, you need to "
 "insert the corresponding name-tag (%s) into the field on the Actions tab."
 msgstr ""
+"Om de waarde van die veld in een actie veld te gebruiken moet je de "
+"overeenkomende naam-tag (%s) invoeren in het veld in de actie tab."
 
 #: modules/Textarea.php:7
 msgid "Text area"
-msgstr ""
+msgstr "Tekst veld"
 
 #: modules/Textarea.php:16
 #, php-format
@@ -299,109 +307,112 @@ msgid ""
 "Generate a form-tag for a multi-line text input field. For more details, see "
 "%s."
 msgstr ""
+"Genereer een form-tag voor een tekst invoer veld. Voor meer details zie %s."
 
 #: modules/Checkbox.php:7 modules/Checkbox.php:17
 msgid "Checkbox"
-msgstr ""
+msgstr "Checkbox"
 
 #: modules/Checkbox.php:15
 #, php-format
 msgid ""
 "Generate a form-tag for a checkbox input field. For more details, see %s."
 msgstr ""
+"Genereer een form-tag voor een checkbox veld. Voor meer details zie %s."
 
 #: modules/Select.php:7
 msgid "Drop-down menu"
-msgstr ""
+msgstr "Dropdown menu"
 
 #: modules/Select.php:16
 #, php-format
 msgid "Generate a form-tag for a drop-down menu. For more details, see %s."
 msgstr ""
+"Genereer een form-tag voor een dropdown veld. Voor meer details zie %s."
 
 #: modules/Select.php:40 modules/Select.php:43
 msgid "Options"
-msgstr ""
+msgstr "Opties"
 
 #: modules/Select.php:45
 msgid "One option per line."
-msgstr ""
+msgstr "Eén optie per lijn."
 
 #: modules/Select.php:46
 msgid "Allow multiple selections"
-msgstr ""
+msgstr "Meerdere selecties mogelijk maken"
 
 #: modules/Select.php:47
 msgid "Insert a blank item as the first option"
-msgstr ""
+msgstr "Voer een leeg item in als eerst optie"
 
 #: modules/Submit.php:13
 msgid "Submit"
-msgstr ""
+msgstr "Verzenden"
 
 #: modules/Submit.php:14
 msgid "The captcha failed the validation."
-msgstr ""
+msgstr "De captcha is ongeldig."
 
 #: modules/Submit.php:14 modules/Submit.php:80 modules/Submit.php:86
 msgid "The captcha couldn't validate you."
-msgstr ""
+msgstr "De captcha is ongeldig."
 
 #: modules/Submit.php:40
 #, php-format
 msgid "Generate a form-tag for a submit button. For more details, see %s."
-msgstr ""
+msgstr "Genereer een form-tag voor een verzendknop. Voor meer details zie %s."
 
 #: modules/Submit.php:50 actions/GAEvent.php:12
 msgid "Label"
-msgstr ""
+msgstr "Label"
 
 #: modules/Text.php:7
 msgid "Text"
-msgstr ""
+msgstr "Tekst"
 
 #: modules/Text.php:8 actions/Mailchimp.php:10 actions/Mailpoet.php:10
 msgid "Email"
-msgstr ""
+msgstr "E-mailadres"
 
 #: modules/Text.php:9
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: modules/Text.php:10
 msgid "Tel"
-msgstr ""
+msgstr "Tel"
 
 #: modules/Text.php:13
 msgid "Email address that the sender entered is invalid"
-msgstr ""
+msgstr "Het e-mailadres dat de zender heeft ingevoerd is incorrect."
 
 #: modules/Text.php:13
 msgid "The e-mail address entered is invalid."
-msgstr ""
+msgstr "Het ingevoerde e-mailadres is incorrect."
 
 #: modules/Text.php:14
 msgid "URL that the sender entered is invalid"
-msgstr ""
+msgstr "De URL die de verzender invoerde is foutief"
 
 #: modules/Text.php:14
 msgid "The URL is invalid."
-msgstr ""
+msgstr "De URL is foutief."
 
 #: modules/Text.php:15
 msgid "Telephone number that the sender entered is invalid"
-msgstr ""
+msgstr "Het telefoonnummer dat de verzender invoerde is foutief."
 
 #: modules/Text.php:15
 msgid "The telephone number is invalid."
-msgstr ""
+msgstr "Het telefoonnummer is foutief."
 
 #: modules/Text.php:29
 #, php-format
 msgid ""
 "Generate a form-tag for a single-line plain text input field. For more "
 "details, see %s."
-msgstr ""
+msgstr "Genereer een form-tag voor een invoer veld. Voor meer details zie %s."
 
 #: modules/Text.php:31
 #, php-format
@@ -409,13 +420,14 @@ msgid ""
 "Generate a form-tag for a single-line email address input field. For more "
 "details, see %s."
 msgstr ""
+"Genereer een form-tag voor een e-mailadres veld. Voor meer details zie %s."
 
 #: modules/Text.php:33
 #, php-format
 msgid ""
 "Generate a form-tag for a single-line URL input field. For more details, see "
 "%s."
-msgstr ""
+msgstr "Genereer een form-tag voor een URL veld. Voor meer details zie %s."
 
 #: modules/Text.php:35
 #, php-format
@@ -423,22 +435,23 @@ msgid ""
 "Generate a form-tag for a single-line telephone number input field. For more "
 "details, see %s."
 msgstr ""
+"Genereer een form-tag voor een telefoonnummer veld. Voor meer details zie %s."
 
 #: front/WP_Form_front.php:144
 msgid "Can't display the form."
-msgstr ""
+msgstr "Kan het formulier niet tonen."
 
 #: actions/Mailchimp.php:11 actions/Mailpoet.php:11
 msgid "Firstname"
-msgstr ""
+msgstr "Voornaam"
 
 #: actions/Mailchimp.php:13
 msgid "API Key"
-msgstr ""
+msgstr "API Key"
 
 #: actions/Mailchimp.php:14 actions/Mailpoet.php:13
 msgid "List ID"
-msgstr ""
+msgstr "Lijst ID"
 
 #: actions/Mailchimp.php:16 actions/Mailpoet.php:15
 msgid "Can not subscribe"
@@ -447,75 +460,75 @@ msgstr ""
 #: actions/Mailchimp.php:16 actions/Mailpoet.php:15 actions/Email.php:17
 msgid ""
 "Sorry, there was an error while processing your data. The admin is contacted."
-msgstr ""
+msgstr "Sorry, er is een probleem bij het verzenden van je data."
 
 #: actions/Mailchimp.php:18
 msgid "Mailchimp"
-msgstr ""
+msgstr "Mailchimp"
 
 #: actions/Download.php:10
 msgid "Download URL"
-msgstr ""
+msgstr "Download URL"
 
 #: actions/Download.php:12
 msgid "File download"
-msgstr ""
+msgstr "Bestand download"
 
 #: actions/GAEvent.php:10
 msgid "Category"
-msgstr ""
+msgstr "Categorie"
 
 #: actions/GAEvent.php:11 admin/forms/form.php:142 admin/forms/form.php:242
 msgid "Action"
-msgstr ""
+msgstr "Actie"
 
 #: actions/GAEvent.php:14
 msgid "Google Analytics Event"
-msgstr ""
+msgstr "Google Analytics Event"
 
 #: actions/GAAdsEvent.php:10
 msgid "Google tag code"
-msgstr ""
+msgstr "Google tag code"
 
 #: actions/GAAdsEvent.php:12
 msgid "Google Ads Event"
-msgstr ""
+msgstr "Google Ads Event"
 
 #: actions/Mailpoet.php:17
 msgid "Mailpoet"
-msgstr ""
+msgstr "Mailpoet"
 
 #: actions/Email.php:10
 msgid "To"
-msgstr ""
+msgstr "Naar"
 
 #: actions/Email.php:11
 msgid "From"
-msgstr ""
+msgstr "Van"
 
 #: actions/Email.php:12
 msgid "Subject"
-msgstr ""
+msgstr "Onderwerp"
 
 #: actions/Email.php:13
 msgid "Header"
-msgstr ""
+msgstr "Header"
 
 #: actions/Email.php:14
 msgid "Message"
-msgstr ""
+msgstr "Bericht"
 
 #: actions/Email.php:15
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
 
 #: actions/Email.php:17
 msgid "The email can't be send."
-msgstr ""
+msgstr "De e-mail kon niet worden verzonden."
 
 #: actions/Email.php:19
 msgid "E-mail"
-msgstr ""
+msgstr "E-mailadres"
 
 #: admin/forms/submitted.php:22
 msgid "Click to toggle"
@@ -523,136 +536,140 @@ msgstr ""
 
 #: admin/forms/submitted.php:53
 msgid "User agent"
-msgstr ""
+msgstr "User agent"
 
 #: admin/forms/submitted.php:61
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: admin/forms/settings.php:19
 msgid "The settings are successfully saved."
-msgstr ""
+msgstr "De instellingen zijn opgeslagen."
 
 #: admin/forms/settings.php:33 admin/forms/form.php:93
 msgid "Information"
-msgstr ""
+msgstr "Informatie"
 
 #: admin/forms/settings.php:36 admin/forms/form.php:96
 msgid "Docs"
-msgstr ""
+msgstr "Documentatie"
 
 #: admin/forms/settings.php:37 admin/forms/form.php:97
 msgid "F.A.Q."
-msgstr ""
+msgstr "F.A.Q."
 
 #: admin/forms/settings.php:38 admin/forms/form.php:98
 msgid "Support"
-msgstr ""
+msgstr "Support"
 
 #: admin/forms/settings.php:47
 msgid "General settings"
-msgstr ""
+msgstr "Algemene instellingen"
 
 #: admin/forms/settings.php:51
 msgid "Security"
-msgstr ""
+msgstr "Beveiliging"
 
 #: admin/forms/settings.php:56
 msgid "Enable reCaptcha"
-msgstr ""
+msgstr "Schakel reCaptcha in."
 
 #: admin/forms/settings.php:71
 msgid "Create your key here."
-msgstr ""
+msgstr "Maak je key hier aan."
 
 #: admin/forms/settings.php:93 admin/forms/form.php:83
 msgid "Save"
-msgstr ""
+msgstr "Opslaan"
 
 #: admin/forms/form.php:17
 msgid "Add New Contact Form"
-msgstr ""
+msgstr "Voeg nieuw formulier toe"
 
 #: admin/forms/form.php:19
 msgid "Edit Contact Form"
-msgstr ""
+msgstr "Wijzig formulier"
 
 #: admin/forms/form.php:20
 msgid "Add New"
-msgstr ""
+msgstr "Voeg nieuwe toe"
 
 #: admin/forms/form.php:31
 msgid "Enter title here"
-msgstr ""
+msgstr "Voer titel hier in"
 
 #: admin/forms/form.php:38
 msgid ""
 "Copy this shortcode and paste it into your post, page, or text widget "
 "content:"
 msgstr ""
+"Kopieer deze shortcode en plak deze in je bericht, pagina of tekst widget "
+"inhoud:"
 
 #: admin/forms/form.php:49
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: admin/forms/form.php:55
 msgid "Duplicate"
-msgstr ""
+msgstr "Dupliceer"
 
 #: admin/forms/form.php:64
 #, php-format
 msgid "%s configuration error found"
 msgid_plural "%s configuration errors found"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%s configuratie error gevonden"
+msgstr[1] "%s configuratie errors gevonden"
 
 #: admin/forms/form.php:65
 msgid "What's this?"
-msgstr ""
+msgstr "Wat is dit?"
 
 #: admin/forms/form.php:75
 msgid "Delete"
-msgstr ""
+msgstr "Verwijder"
 
 #: admin/forms/form.php:75
 msgid ""
 "You are about to delete this contact form.\n"
 "  'Cancel' to stop, 'OK' to delete."
 msgstr ""
+"Je bent het formulier aan het verwijderen. 'Annuleer' om te stoppen, 'Oké' "
+"om te verwijderen."
 
 #: admin/forms/form.php:108 admin/forms/form.php:132
 msgid "Actions"
-msgstr ""
+msgstr "Acties"
 
 #: admin/forms/form.php:109
 msgid "Messages"
-msgstr ""
+msgstr "Berichten"
 
 #: admin/forms/form.php:119
 #, php-format
 msgid "Form-tag Generator: %s"
-msgstr ""
+msgstr "Formulier tag generator: %s"
 
 #: admin/forms/form.php:134 admin/forms/form.php:216
 msgid "In the following fields, you can use these name-tags:"
-msgstr ""
+msgstr "In het volgende veld kan je deze naam-tags gebruiken:"
 
 #: admin/forms/form.php:147 admin/forms/form.php:247
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #. Description of the plugin/theme
 msgid "Build cool, easy and flexible forms with Forms."
-msgstr ""
+msgstr "Bouw coole, eenvoudige en flexiebele formulieren met Forms."
 
 #. Plugin URI of the plugin/theme
 msgid "https://www.madeit.be/producten/wordpress/forms-plugin/"
-msgstr ""
+msgstr "https://www.madeit.be/forms-plugin/"
 
 #. Author of the plugin/theme
 msgid "Made I.T."
-msgstr ""
+msgstr "Made I.T."
 
 #. Author URI of the plugin/theme
 msgid "https://www.madeit.be"
-msgstr ""
+msgstr "https://www.madeit.be"

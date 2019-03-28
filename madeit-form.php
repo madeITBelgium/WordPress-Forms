@@ -25,6 +25,13 @@ if (!defined('MADEIT_FORM_FRONT')) {
 }
 require_once MADEIT_FORM_DIR.'/vendor/autoload.php';
 
+
+function wp_forms_by_madeit_load_plugin_textdomain()
+{
+    load_plugin_textdomain('forms-by-made-it', false, basename(dirname(__FILE__)).'/languages/');
+}
+add_action('plugins_loaded', 'wp_forms_by_madeit_load_plugin_textdomain');
+
 require_once MADEIT_FORM_DIR.'/WP_MadeIT_Form_Settings.php';
 $wp_madeit_form_settings = new WP_MadeIT_Form_Settings();
 
