@@ -11,16 +11,6 @@ class WP_MadeIT_Form_Settings
 
     public function loadDefaultSettings()
     {
-        if (get_option('madeit_forms_reCaptcha', null) == null) {
-            update_option('madeit_forms_reCaptcha', false);
-        }
-        if (get_option('madeit_forms_reCaptcha_key', null) == null) {
-            update_option('madeit_forms_reCaptcha_key', null);
-        }
-        if (get_option('madeit_forms_reCaptcha_secret', null) == null) {
-            update_option('madeit_forms_reCaptcha_secret', null);
-        }
-
         $this->defaultSettings = [
             'reCaptcha' => [
                 'enabled' => get_option('madeit_forms_reCaptcha', false),
