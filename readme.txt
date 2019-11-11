@@ -46,7 +46,7 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
-= 1.6.4 =
+= 1.6.3 =
 * Bug fixes
 * HTML event added
 * Redirect to specific page event added
