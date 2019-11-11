@@ -118,8 +118,7 @@ class WP_Form_front
                             if (is_array($result) && isset($result['type'])) {
                                 if ($result['type'] == 'JS') {
                                     echo '<script>'.$result['code'].'</script>';
-                                }
-                                else if ($result['type'] == 'HTML') {
+                                } elseif ($result['type'] == 'HTML') {
                                     echo str_replace('\"', '"', $result['code']);
                                 }
                             } elseif ($result !== true) {
@@ -199,8 +198,8 @@ class WP_Form_front
 
     private function getOptionsFromTag($form, $tag, $name)
     {
-        preg_match_all('/\[' . $tag . '.*name="' . $name . '".*\]/', $form, $result);
-        if(isset($result[0][0])) {
+        preg_match_all('/\['.$tag.'.*name="'.$name.'".*\]/', $form, $result);
+        if (isset($result[0][0])) {
             $partWithTag = $result[0][0];
 
             $key = '';
@@ -218,6 +217,7 @@ class WP_Form_front
                     $key = trim(substr($o, strpos($o, '"') + 1));
                 }
             }
+
             return $data;
         }
 
