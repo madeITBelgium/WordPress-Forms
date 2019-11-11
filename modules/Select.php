@@ -95,6 +95,11 @@ class WP_MADEIT_FORM_Module_Select extends WP_MADEIT_FORM_Module {
             'placeholder' => '',
             'value' => '',
         ), $atts ));
+        
+        $selected = null;
+        if(isset($_POST[$name])) {
+            $selected = $_POST[$name];
+        }
         ob_start();
         ?>
         <select 
@@ -110,7 +115,7 @@ class WP_MADEIT_FORM_Module_Select extends WP_MADEIT_FORM_Module {
             }
             foreach(explode("|", $value) as $v) {
                 ?>
-                <option value="<?php echo $v; ?>"><?php echo $v; ?></option>
+                <option value="<?php echo $v; ?>" <?php if($selected === $v) { echo 'SELECTED'; } ?>><?php echo $v; ?></option>
                 <?php
             }
             ?>

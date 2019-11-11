@@ -46,6 +46,10 @@ require_once MADEIT_FORM_DIR.'/actions/GAAdsEvent.php';
 $a = new WP_MADEIT_FORM_GAAdsEvent();
 require_once MADEIT_FORM_DIR.'/actions/Download.php';
 $a = new WP_MADEIT_FORM_Download();
+require_once MADEIT_FORM_DIR.'/actions/Javascript.php';
+$a = new WP_MADEIT_FORM_Javacript();
+require_once MADEIT_FORM_DIR.'/actions/Redirect.php';
+$a = new WP_MADEIT_FORM_Redirect();
 
 require_once MADEIT_FORM_DIR.'/modules/Text.php';
 require_once MADEIT_FORM_DIR.'/modules/Checkbox.php';

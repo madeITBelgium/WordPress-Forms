@@ -31,8 +31,10 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action
         }
 
         try {
-            $d = $mc->lists->subscribe($data['mc_list_id'], ['email'             => $data['mc_email'],
-                                                                  'merge_fields' => ['fname' => $data['mc_firstname'], 'lname' => $data['mc_name']], ]);
+            $d = $mc->lists->subscribe($data['mc_list_id'], [
+                'email' => $data['mc_email'],
+                'merge_fields' => ['fname' => $data['mc_firstname'], 'lname' => $data['mc_name']],
+            ]);
 
             //print_r($d);exit;
         } catch (Mailchimp_Error $e) {

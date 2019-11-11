@@ -89,6 +89,11 @@ class WP_MADEIT_FORM_Module_Checkbox extends WP_MADEIT_FORM_Module {
             'placeholder' => '',
             'value' => '',
         ), $atts ));
+        
+        $selected = null;
+        if(isset($_POST[$name])) {
+            $selected = $_POST[$name];
+        }
         ob_start();
         ?>
         <input type="checkbox" 
@@ -97,6 +102,7 @@ class WP_MADEIT_FORM_Module_Checkbox extends WP_MADEIT_FORM_Module {
            <?php if($id != "") { ?> id="<?php echo esc_html( $id); ?>" <?php } ?>
            <?php if($class != "") { ?> class="<?php echo esc_html( $class); ?>" <?php } ?>
            <?php echo $required == 'yes' ? "required" : "";  ?>
+           <?php echo $selected === $value ? 'CHECKED' : ''; ?>
                ><?php echo esc_html( $value); ?>
         <?php
         $content = ob_get_clean();

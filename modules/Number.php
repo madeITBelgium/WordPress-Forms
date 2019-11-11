@@ -118,6 +118,10 @@ class WP_MADEIT_FORM_Module_Number extends WP_MADEIT_FORM_Module {
             'min' => '',
             'max' => '',
         ), $atts ));
+        
+        if(isset($_POST[$name])) {
+            $value = $_POST[$name];
+        }
         ob_start();
         ?>
         <input type="number" 
@@ -146,6 +150,10 @@ class WP_MADEIT_FORM_Module_Number extends WP_MADEIT_FORM_Module {
             'min' => '',
             'max' => '',
         ), $atts ));
+        
+        if(isset($_POST[$name])) {
+            $value = $_POST[$name];
+        }
         ob_start();
         ?>
         <input type="range" 

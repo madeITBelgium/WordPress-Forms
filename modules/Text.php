@@ -148,6 +148,10 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
             'placeholder' => '',
             'value' => '',
         ), $atts ));
+        
+        if(isset($_POST[$name])) {
+            $value = $_POST[$name];
+        }
         ob_start();
         ?>
         <input type="text" 
@@ -172,6 +176,10 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
             'placeholder' => '',
             'value' => '',
         ), $atts));
+        
+        if(isset($_POST[$name])) {
+            $value = $_POST[$name];
+        }
         ob_start();
         ?>
         <input type="email" 
@@ -196,6 +204,10 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
             'placeholder' => '',
             'value' => '',
         ), $atts));
+        
+        if(isset($_POST[$name])) {
+            $value = $_POST[$name];
+        }
         ob_start();
         ?>
         <input type="url" 
@@ -220,6 +232,10 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
             'placeholder' => '',
             'value' => '',
         ), $atts));
+        
+        if(isset($_POST[$name])) {
+            $value = $_POST[$name];
+        }
         ob_start();
         ?>
         <input type="tel" 

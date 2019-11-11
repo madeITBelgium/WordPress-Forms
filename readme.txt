@@ -3,8 +3,8 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 4.4
-Tested up to: 5.2.2
-Stable tag: 1.6.3
+Tested up to: 5.3
+Stable tag: 1.6.4
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -46,6 +46,11 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
+= 1.6.4 =
+* Bug fixes
+* HTML event added
+* Redirect to specific page event added
+
 = 1.6.0 =
 * Bug fixes
 * Mailpoet integration

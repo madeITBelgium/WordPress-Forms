@@ -119,6 +119,9 @@ class WP_Form_front
                                 if ($result['type'] == 'JS') {
                                     echo '<script>'.$result['code'].'</script>';
                                 }
+                                else if ($result['type'] == 'HTML') {
+                                    echo str_replace('\"', '"', $result['code']);
+                                }
                             } elseif ($result !== true) {
                                 $error = true;
                                 $error_msg = $result;
@@ -196,33 +199,26 @@ class WP_Form_front
 
     private function getOptionsFromTag($form, $tag, $name)
     {
-        $pos = strpos($form, 'name="'.$name.'"');
-        if ($pos !== false) {
-            $firstPart = strpos($form, 0, $pos);
-            $parts = explode('['.$tag, $firstPart);
-            if (count($parts) > 0) {
-                $splitForm = explode('['.$tag, $firstPart);
-                $partWithTag = $splitForm[count($parts)];
-                $partWithTag = substr($partWithTag, 0, strpos($partWithTag, ']'));
+        preg_match_all('/\[' . $tag . '.*name="' . $name . '".*\]/', $form, $result);
+        if(isset($result[0][0])) {
+            $partWithTag = $result[0][0];
 
-                $key = '';
-                $data = [];
-                foreach (explode('="', $partWithTag) as $o) {
-                    if ($key == '') {
-                        $space = explode(' ', $o);
-                        if (count($space) <= 1) {
-                            $key = $space[0];
-                        } else {
-                            $key = $space[count($space) - 1];
-                        }
+            $key = '';
+            $data = [];
+            foreach (explode('="', $partWithTag) as $o) {
+                if ($key == '') {
+                    $space = explode(' ', $o);
+                    if (count($space) <= 1) {
+                        $key = $space[0];
                     } else {
-                        $data[$key] = substr($o, 0, strpos($o, '"'));
-                        $key = trim(substr($o, strpos($o, '"') + 1));
+                        $key = $space[count($space) - 1];
                     }
+                } else {
+                    $data[$key] = substr($o, 0, strpos($o, '"'));
+                    $key = trim(substr($o, strpos($o, '"') + 1));
                 }
-
-                return $data;
             }
+            return $data;
         }
 
         return false;

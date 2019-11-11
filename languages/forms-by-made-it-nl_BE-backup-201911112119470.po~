@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2019-03-28 14:54+0000\n"
+"PO-Revision-Date: 2019-03-28 14:56+0000\n"
 "Last-Translator: Tjebbe Lievens <tjebbe.lievens@madeit.be>\n"
 "Language-Team: Nederlands (België)\n"
 "Language: nl_BE\n"
@@ -51,7 +51,7 @@ msgstr "TItel"
 
 #: admin/FormListTable.php:34
 msgid "Shortcode"
-msgstr ""
+msgstr "Shortcode"
 
 #: admin/WP_MADEIT_FORM_admin.php:19
 msgid "Form successfully completed"
@@ -133,11 +133,11 @@ msgstr "Forms"
 
 #: admin/WP_MADEIT_FORM_admin.php:43
 msgid "Made I.T. Forms"
-msgstr ""
+msgstr "Made I.T. Forms"
 
 #: admin/WP_MADEIT_FORM_admin.php:44
 msgid "Made I.T. Forms - New"
-msgstr ""
+msgstr "Made I.T. Forms - New"
 
 #: admin/WP_MADEIT_FORM_admin.php:44 admin/WP_MADEIT_FORM_admin.php:88
 msgid "Add new"
@@ -153,7 +153,7 @@ msgstr "Instellingen"
 
 #: admin/WP_MADEIT_FORM_admin.php:47
 msgid "Made I.T. Forms - Inputs"
-msgstr ""
+msgstr "Made I.T. Forms - Inputs"
 
 #: admin/WP_MADEIT_FORM_admin.php:47 admin/WP_MADEIT_FORM_admin.php:262
 msgid "Submitted forms"
@@ -233,11 +233,11 @@ msgstr "Veld type"
 
 #: modules/Number.php:36
 msgid "Spinbox"
-msgstr ""
+msgstr "Spinbox"
 
 #: modules/Number.php:37
 msgid "Slider"
-msgstr ""
+msgstr "Slider"
 
 #: modules/Number.php:39 modules/Textarea.php:30 modules/Checkbox.php:30
 #: modules/Select.php:30 modules/Text.php:51
@@ -262,7 +262,7 @@ msgstr "Gebruik deze tekst als placeholder van dit veld."
 
 #: modules/Number.php:56 modules/Number.php:59
 msgid "Range"
-msgstr ""
+msgstr "Range"
 
 #: modules/Number.php:61
 msgid "Min"
@@ -381,7 +381,7 @@ msgstr "URL"
 
 #: modules/Text.php:10
 msgid "Tel"
-msgstr ""
+msgstr "Tel"
 
 #: modules/Text.php:13
 msgid "Email address that the sender entered is invalid"
@@ -464,7 +464,7 @@ msgstr "Sorry, er is een probleem bij het verzenden van je data."
 
 #: actions/Mailchimp.php:18
 msgid "Mailchimp"
-msgstr ""
+msgstr "Mailchimp"
 
 #: actions/Download.php:10
 msgid "Download URL"
@@ -484,11 +484,11 @@ msgstr "Actie"
 
 #: actions/GAEvent.php:14
 msgid "Google Analytics Event"
-msgstr ""
+msgstr "Google Analytics Event"
 
 #: actions/GAAdsEvent.php:10
 msgid "Google tag code"
-msgstr ""
+msgstr "Google tag code"
 
 #: actions/GAAdsEvent.php:12
 msgid "Google Ads Event"
@@ -496,7 +496,7 @@ msgstr "Google Ads Event"
 
 #: actions/Mailpoet.php:17
 msgid "Mailpoet"
-msgstr ""
+msgstr "Mailpoet"
 
 #: actions/Email.php:10
 msgid "To"
@@ -512,7 +512,7 @@ msgstr "Onderwerp"
 
 #: actions/Email.php:13
 msgid "Header"
-msgstr ""
+msgstr "Header"
 
 #: actions/Email.php:14
 msgid "Message"
@@ -520,7 +520,7 @@ msgstr "Bericht"
 
 #: actions/Email.php:15
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
 
 #: actions/Email.php:17
 msgid "The email can't be send."
@@ -568,7 +568,7 @@ msgstr "Algemene instellingen"
 
 #: admin/forms/settings.php:51
 msgid "Security"
-msgstr ""
+msgstr "Beveiliging"
 
 #: admin/forms/settings.php:56
 msgid "Enable reCaptcha"
@@ -664,12 +664,12 @@ msgstr "Bouw coole, eenvoudige en flexiebele formulieren met Forms."
 
 #. Plugin URI of the plugin/theme
 msgid "https://www.madeit.be/producten/wordpress/forms-plugin/"
-msgstr ""
+msgstr "https://www.madeit.be/forms-plugin/"
 
 #. Author of the plugin/theme
 msgid "Made I.T."
-msgstr ""
+msgstr "Made I.T."
 
 #. Author URI of the plugin/theme
 msgid "https://www.madeit.be"
-msgstr ""
+msgstr "https://www.madeit.be"

@@ -88,6 +88,10 @@ class WP_MADEIT_FORM_Module_Textarea extends WP_MADEIT_FORM_Module {
             'placeholder' => '',
             'value' => '',
         ), $atts ));
+        
+        if(isset($_POST[$name])) {
+            $value = $_POST[$name];
+        }
         ob_start();
         ?>
         <textarea <?php if($name != "") { ?> name="<?php echo esc_html($name); ?>" <?php } ?>
