@@ -4,7 +4,7 @@ Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 4.4
 Tested up to: 5.3
-Stable tag: 1.6.3
+Stable tag: 1.7.0
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -46,6 +46,9 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
+= 1.7.0 =
+* Add API function wp_form_api_save_input($id, $data);
+
 = 1.6.3 =
 * Bug fixes
 * HTML event added

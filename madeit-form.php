@@ -5,7 +5,7 @@
  * Description: Build cool, easy and flexible forms with Forms.
  * Author: Made I.T.
  * Author URI: https://www.madeit.be
- * Version: 1.6.3
+ * Version: 1.7.0
  * Text Domain: forms-by-made-it
  * Domain Path: /languages
  * License: GPLv2.
@@ -75,3 +75,14 @@ $wp_madeit_form_admin->addHooks();
 require_once MADEIT_FORM_DIR.'/front/WP_Form_front.php';
 $wp_NBD_front = new WP_Form_front($wp_madeit_form_settings);
 $wp_NBD_front->addHooks();
+
+require_once MADEIT_FORM_DIR.'/api/WP_Form_Api.php';
+$wp_NBD_api = new WP_Form_Api($wp_madeit_form_settings);
+$wp_NBD_api->addHooks();
+
+function wp_form_api_save_input($id, $data)
+{
+    global $wp_NBD_api;
+
+    return $wp_NBD_api->save($id, $data);
+}
