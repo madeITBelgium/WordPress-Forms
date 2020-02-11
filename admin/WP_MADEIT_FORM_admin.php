@@ -78,11 +78,11 @@ class WP_MADEIT_FORM_admin
 
     public function initAdmin()
     {
-        if($_GET['page'] === 'madeit_form_input' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
+        if ($_GET['page'] === 'madeit_form_input' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
             $data = $this->db->table('madeit_form_inputs')->where('form_id', $_GET['id'])->get();
             // output headers so that the file is downloaded rather than displayed
             header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: attachment; filename=export-madeit-forms-' . date('Y-m-d-H-i-s') . '.csv');
+            header('Content-Disposition: attachment; filename=export-madeit-forms-'.date('Y-m-d-H-i-s').'.csv');
 
             // create a file pointer connected to the output stream
             $output = fopen('php://output', 'w');
@@ -90,20 +90,20 @@ class WP_MADEIT_FORM_admin
             $d = $data[0];
             $row = json_decode(json_encode($d), true);
             unset($row['data']);
-            foreach(json_decode($d->data, true) as $k => $v) {
+            foreach (json_decode($d->data, true) as $k => $v) {
                 $row[$k] = $v;
             }
             unset($row['g-recaptcha-response']);
             $columns = array_keys($row);
-            
+
             // output the column headings
             fputcsv($output, $columns);
-            
+
             // fetch the data
-            foreach($data as $d) {
+            foreach ($data as $d) {
                 $row = json_decode(json_encode($d), true);
                 unset($row['data']);
-                foreach(json_decode($d->data, true) as $k => $v) {
+                foreach (json_decode($d->data, true) as $k => $v) {
                     $row[$k] = $v;
                 }
                 unset($row['g-recaptcha-response']);
@@ -207,12 +207,12 @@ class WP_MADEIT_FORM_admin
 
         if (!$error) {
             $this->db->table('madeit_forms')->insert([
-                    'title'       => $form['title'],
-                    'form'        => $form['form'],
-                    'actions'     => json_encode($form['actions']),
-                    'messages'    => json_encode($form['messages']),
-                    'create_time' => date('Y-m-d H:i:s'),
-                ]
+                'title'       => $form['title'],
+                'form'        => $form['form'],
+                'actions'     => json_encode($form['actions']),
+                'messages'    => json_encode($form['messages']),
+                'create_time' => date('Y-m-d H:i:s'),
+            ]
             );
             $f = $this->db->table('madeit_forms')->where('title', $form['title'])->orderBy('id', 'desc')->first();
             if (!isset($f->id)) {
@@ -311,23 +311,21 @@ class WP_MADEIT_FORM_admin
             } else {
                 include MADEIT_FORM_DIR.'/admin/forms/submitted.php';
             }
-        }
-        else {
-            $forms = $this->db->table('madeit_forms')->get();
-            ?>
+        } else {
+            $forms = $this->db->table('madeit_forms')->get(); ?>
             <form method="get" action="/wp-admin/admin.php">
-                <?php wp_nonce_field( 'export_forms' ); ?>
+                <?php wp_nonce_field('export_forms'); ?>
                 <input type="hidden" name="page" value="madeit_form_input">
                 <input type="hidden" name="action" value="export">
                 <select name="id">
-                    <?php foreach($forms as $form) { ?>
+                    <?php foreach ($forms as $form) { ?>
                     <option value="<?php echo $form->id; ?>"><?php echo $form->title; ?></option>
                     <?php } ?>
                 </select>
                 <input type="submit" value="Exporteer" class="button">
             </form>
             <?php
-            
+
             require_once MADEIT_FORM_DIR.'/admin/InputListTable.php';
             $list = new InputListTable();
             $list->prepare_items();
