@@ -1,53 +1,55 @@
-<?php namespace Illuminate\Contracts\Bus;
+<?php
 
-use Closure;
-use ArrayAccess;
+namespace Illuminate\Contracts\Bus;
 
-interface Dispatcher {
+interface Dispatcher
+{
+    /**
+     * Dispatch a command to its appropriate handler.
+     *
+     * @param  mixed  $command
+     * @return mixed
+     */
+    public function dispatch($command);
 
-	/**
-	 * Marshal a command and dispatch it to its appropriate handler.
-	 *
-	 * @param  mixed  $command
-	 * @param  array  $array
-	 * @return mixed
-	 */
-	public function dispatchFromArray($command, array $array);
+    /**
+     * Dispatch a command to its appropriate handler in the current process.
+     *
+     * @param  mixed  $command
+     * @param  mixed  $handler
+     * @return mixed
+     */
+    public function dispatchNow($command, $handler = null);
 
-	/**
-	 * Marshal a command and dispatch it to its appropriate handler.
-	 *
-	 * @param  mixed  $command
-	 * @param  \ArrayAccess  $source
-	 * @param  array  $extras
-	 * @return mixed
-	 */
-	public function dispatchFrom($command, ArrayAccess $source, array $extras = []);
+    /**
+     * Determine if the given command has a handler.
+     *
+     * @param  mixed  $command
+     * @return bool
+     */
+    public function hasCommandHandler($command);
 
-	/**
-	 * Dispatch a command to its appropriate handler.
-	 *
-	 * @param  mixed  $command
-	 * @param  \Closure|null  $afterResolving
-	 * @return mixed
-	 */
-	public function dispatch($command, Closure $afterResolving = null);
+    /**
+     * Retrieve the handler for a command.
+     *
+     * @param  mixed  $command
+     * @return bool|mixed
+     */
+    public function getCommandHandler($command);
 
-	/**
-	 * Dispatch a command to its appropriate handler in the current process.
-	 *
-	 * @param  mixed  $command
-	 * @param  \Closure|null  $afterResolving
-	 * @return mixed
-	 */
-	public function dispatchNow($command, Closure $afterResolving = null);
+    /**
+     * Set the pipes commands should be piped through before dispatching.
+     *
+     * @param  array  $pipes
+     * @return $this
+     */
+    public function pipeThrough(array $pipes);
 
-	/**
-	 * Set the pipes commands should be piped through before dispatching.
-	 *
-	 * @param  array  $pipes
-	 * @return $this
-	 */
-	public function pipeThrough(array $pipes);
-
+    /**
+     * Map a command to a handler.
+     *
+     * @param  array  $map
+     * @return $this
+     */
+    public function map(array $map);
 }

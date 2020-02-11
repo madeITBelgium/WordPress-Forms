@@ -1,31 +1,48 @@
-<?php namespace Illuminate\Contracts\Mail;
+<?php
 
-interface Mailer {
+namespace Illuminate\Contracts\Mail;
 
-	/**
-	 * Send a new message when only a raw text part.
-	 *
-	 * @param  string  $text
-	 * @param  \Closure|string  $callback
-	 * @return int
-	 */
-	public function raw($text, $callback);
+interface Mailer
+{
+    /**
+     * Begin the process of mailing a mailable class instance.
+     *
+     * @param  mixed  $users
+     * @return \Illuminate\Mail\PendingMail
+     */
+    public function to($users);
 
-	/**
-	 * Send a new message using a view.
-	 *
-	 * @param  string|array  $view
-	 * @param  array  $data
-	 * @param  \Closure|string  $callback
-	 * @return void
-	 */
-	public function send($view, array $data, $callback);
+    /**
+     * Begin the process of mailing a mailable class instance.
+     *
+     * @param  mixed  $users
+     * @return \Illuminate\Mail\PendingMail
+     */
+    public function bcc($users);
 
-	/**
-	 * Get the array of failed recipients.
-	 *
-	 * @return array
-	 */
-	public function failures();
+    /**
+     * Send a new message with only a raw text part.
+     *
+     * @param  string  $text
+     * @param  mixed  $callback
+     * @return void
+     */
+    public function raw($text, $callback);
 
+    /**
+     * Send a new message using a view.
+     *
+     * @param  string|array|\Illuminate\Contracts\Mail\Mailable  $view
+     * @param  array  $data
+     * @param  \Closure|string|null  $callback
+     * @return void
+     */
+    public function send($view, array $data = [], $callback = null);
+
+    /**
+     * Get the array of failed recipients.
+     *
+     * @return array
+     */
+    public function failures();
 }
