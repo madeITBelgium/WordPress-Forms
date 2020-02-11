@@ -90,15 +90,15 @@ class WP_Form_front
                 $postData = $_POST;
                 unset($postData['form_id']);
                 $dbI = $this->db->table('madeit_form_inputs')->insert([
-                        'form_id'     => $form->id,
-                        'data'        => json_encode($postData),
-                        'ip'          => $this->getIP(),
-                        'user_agent'  => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN',
-                        'spam'        => $spam ? 1 : 0,
-                        'read'        => 0,
-                        'result'      => '',
-                        'create_time' => date('Y-m-d H:i:s'),
-                    ]
+                    'form_id'     => $form->id,
+                    'data'        => json_encode($postData),
+                    'ip'          => $this->getIP(),
+                    'user_agent'  => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN',
+                    'spam'        => $spam ? 1 : 0,
+                    'read'        => 0,
+                    'result'      => '',
+                    'create_time' => date('Y-m-d H:i:s'),
+                ]
                 );
 
                 //execute actions

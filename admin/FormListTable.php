@@ -81,9 +81,9 @@ class FormListTable extends WP_List_Table
 
         /* -- Register the pagination -- */
         $this->set_pagination_args([
-          'total_items' => $totalitems,
-          'total_pages' => $totalpages,
-          'per_page'    => $perpage,
+            'total_items' => $totalitems,
+            'total_pages' => $totalpages,
+            'per_page'    => $perpage,
         ]);
         //The pagination links are automatically built according to those parameters
 

@@ -174,12 +174,12 @@ class WP_MADEIT_FORM_admin
 
         if (!$error) {
             $this->db->table('madeit_forms')->insert([
-                    'title'       => $form['title'],
-                    'form'        => $form['form'],
-                    'actions'     => json_encode($form['actions']),
-                    'messages'    => json_encode($form['messages']),
-                    'create_time' => date('Y-m-d H:i:s'),
-                ]
+                'title'       => $form['title'],
+                'form'        => $form['form'],
+                'actions'     => json_encode($form['actions']),
+                'messages'    => json_encode($form['messages']),
+                'create_time' => date('Y-m-d H:i:s'),
+            ]
             );
             $f = $this->db->table('madeit_forms')->where('title', $form['title'])->orderBy('id', 'desc')->first();
             if (!isset($f->id)) {

@@ -14,9 +14,9 @@ class WP_MADEIT_FORM_Action
     public function addActionField($name, $label, $type, $value = '', $options = [])
     {
         $this->action_fields[$name] = ['label'      => $label,
-                                          'type'    => $type,
-                                          'value'   => $value,
-                                          'options' => $options, ];
+            'type'                                  => $type,
+            'value'                                 => $value,
+            'options'                               => $options, ];
     }
 
     public function addMessageField($name, $label, $value = '')
