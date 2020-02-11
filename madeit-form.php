@@ -5,7 +5,7 @@
  * Description: Build cool, easy and flexible forms with Forms.
  * Author: Made I.T.
  * Author URI: https://www.madeit.be
- * Version: 1.7.0
+ * Version: 1.8.0
  * Text Domain: forms-by-made-it
  * Domain Path: /languages
  * License: GPLv2.
