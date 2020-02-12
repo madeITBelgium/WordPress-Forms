@@ -7,6 +7,7 @@ if (!class_exists('WP_List_Table')) {
 class InputListTable extends WP_List_Table
 {
     private $db;
+
     public function __construct($wp_plugin_db)
     {
         parent::__construct([
@@ -105,7 +106,7 @@ class InputListTable extends WP_List_Table
                 return $item->id;
             case 'form':
                 $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $item->form_id);
-                if(is_array($form)) {
+                if (is_array($form)) {
                     $form = json_decode(json_encode($form));
                 }
 
@@ -147,7 +148,7 @@ class InputListTable extends WP_List_Table
     public function column_form($item)
     {
         $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $item->form_id);
-        if(is_array($form)) {
+        if (is_array($form)) {
             $form = json_decode(json_encode($form));
         }
         $actions = [

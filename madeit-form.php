@@ -64,8 +64,7 @@ $t = new WP_MADEIT_FORM_Module_Select();
 $t = new WP_MADEIT_FORM_Module_Number();
 $t = new WP_MADEIT_FORM_Module_Submit($wp_madeit_form_settings);
 
-
-require_once MADEIT_FORM_DIR . '/WP_MadeIT_Form_DB.php';
+require_once MADEIT_FORM_DIR.'/WP_MadeIT_Form_DB.php';
 $wp_plugin_db = new WP_MadeIT_Form_DB();
 
 require_once MADEIT_FORM_DIR.'/DatabaseInit.php';

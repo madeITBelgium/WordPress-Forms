@@ -51,7 +51,7 @@ class WP_Form_front
         ob_start();
 
         $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $id);
-        if(is_array($form)) {
+        if (is_array($form)) {
             $form = json_decode(json_encode($form));
         }
         $formValue = $form->form;
@@ -92,10 +92,10 @@ class WP_Form_front
                 //insert into DB
                 $postData = $_POST;
                 unset($postData['form_id']);
-                
-                $this->db->queryWrite('INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', 
+
+                $this->db->queryWrite('INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
                                       $form->id, json_encode($postData), $this->getIP(), (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'), $spam ? 1 : 0, 0, '', date('Y-m-d H:i:s'));
-                
+
                 //execute actions
                 if (isset($form->actions) && !empty($form->actions)/* && count($form->actions) > 0*/) {
                     $formActions = json_decode($form->actions, true);
