@@ -87,7 +87,7 @@ class WP_MADEIT_FORM_admin
             $data = $this->db->querySelect('SELECT * FROM `'.$this->db->prefix().'madeit_form_inputs` WHERE form_id = %s', $_GET['id']);
             // output headers so that the file is downloaded rather than displayed
             header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: attachment; filename=export-madeit-forms-' . date('Y-m-d-H-i-s') . '.csv');
+            header('Content-Disposition: attachment; filename=export-madeit-forms-'.date('Y-m-d-H-i-s').'.csv');
 
             // create a file pointer connected to the output stream
             $output = fopen('php://output', 'w');
@@ -99,10 +99,10 @@ class WP_MADEIT_FORM_admin
             }
             unset($row['g-recaptcha-response']);
             $columns = array_keys($row);
-            
+
             // output the column headings
             fputcsv($output, $columns);
-            
+
             // fetch the data
             foreach($data as $d) {
                 unset($row['data']);
@@ -314,7 +314,7 @@ class WP_MADEIT_FORM_admin
             $forms = $this->db->querySelect('SELECT * FROM `'.$this->db->prefix().'madeit_forms`');
             ?>
             <form method="get" action="/wp-admin/admin.php">
-                <?php wp_nonce_field( 'export_forms' ); ?>
+                <?php wp_nonce_field('export_forms'); ?>
                 <input type="hidden" name="page" value="madeit_form_input">
                 <input type="hidden" name="action" value="export">
                 <select name="id">
@@ -325,7 +325,7 @@ class WP_MADEIT_FORM_admin
                 <input type="submit" value="Exporteer" class="button">
             </form>
             <?php
-            
+
             require_once MADEIT_FORM_DIR.'/admin/InputListTable.php';
             $list = new InputListTable($this->db);
             $list->prepare_items();
