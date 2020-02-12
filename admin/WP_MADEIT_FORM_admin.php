@@ -39,7 +39,7 @@ class WP_MADEIT_FORM_admin
         if (isset($countQry['aantal'])) {
             $count = $countQry['aantal'];
         }
-        
+
         if ($count > 0) {
             $new = "<span class='update-plugins' title='".__('Unread form submits', 'forms-by-made-it')."'><span class='update-count'>".number_format_i18n($count).'</span></span>';
         }
@@ -83,7 +83,7 @@ class WP_MADEIT_FORM_admin
 
     public function initAdmin()
     {
-        if($_GET['page'] === 'madeit_form_input' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
+        if ($_GET['page'] === 'madeit_form_input' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
             $data = $this->db->querySelect('SELECT * FROM `'.$this->db->prefix().'madeit_form_inputs` WHERE form_id = %s', $_GET['id']);
             // output headers so that the file is downloaded rather than displayed
             header('Content-Type: text/csv; charset=utf-8');
@@ -94,7 +94,7 @@ class WP_MADEIT_FORM_admin
 
             $d = $data[0];
             unset($row['data']);
-            foreach(json_decode($d['data'], true) as $k => $v) {
+            foreach (json_decode($d['data'], true) as $k => $v) {
                 $row[$k] = $v;
             }
             unset($row['g-recaptcha-response']);
@@ -104,9 +104,9 @@ class WP_MADEIT_FORM_admin
             fputcsv($output, $columns);
 
             // fetch the data
-            foreach($data as $d) {
+            foreach ($data as $d) {
                 unset($row['data']);
-                foreach(json_decode($d['data'], true) as $k => $v) {
+                foreach (json_decode($d['data'], true) as $k => $v) {
                     $row[$k] = $v;
                 }
                 unset($row['g-recaptcha-response']);
@@ -125,8 +125,7 @@ class WP_MADEIT_FORM_admin
             <?php
         }
         if (isset($_GET['action']) && $_GET['action'] == 'delete') {
-            $this->db->queryWrite('DELETE FROM '.$this->db->prefix().'madeit_forms SET `id` = %s', $_GET['id']);
-            ?>
+            $this->db->queryWrite('DELETE FROM '.$this->db->prefix().'madeit_forms SET `id` = %s', $_GET['id']); ?>
             <div class="updated"><p><strong><?php echo __('The form is deleted.', 'forms-by-made-it'); ?></strong></p></div>
             <?php
         }
@@ -135,7 +134,7 @@ class WP_MADEIT_FORM_admin
                 $this->post_edit_form();
             }
             $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $_GET['id']);
-            if(is_array($f)) {
+            if (is_array($f)) {
                 $f = json_decode(json_encode($f));
             }
             if (!isset($f->id)) {
@@ -167,7 +166,7 @@ class WP_MADEIT_FORM_admin
                 $form = $this->post_form();
             } else {
                 $this->post_edit_form();
-                $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s',  $_POST['form_id']);
+                $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $_POST['form_id']);
                 $form = ['id' => $f['id'], 'title' => $f['title'], 'form' => $f['form'], 'actions' => json_decode($f['actions'], true), 'messages' => json_decode($f['messages'], true)];
             }
         } else {
@@ -213,10 +212,9 @@ class WP_MADEIT_FORM_admin
         }
 
         if (!$error) {
-            
             $this->db->queryWrite('INSERT INTO '.$this->db->prefix().'madeit_forms (title, form, actions, messages, create_time) VALUES (%s, %s, %s, %s, %s)', $form['title'], $form['form'], json_encode($form['actions']), json_encode($form['messages']), date('Y-m-d H:i:s'));
-            
-            $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE title = %s ORDER BY id DESC',  $form['title']);
+
+            $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE title = %s ORDER BY id DESC', $form['title']);
             if (!isset($f['id'])) {
                 ?>
                 <div class="error"><p><strong><?php echo __('The form doesn\'t exist', 'forms-by-made-it'); ?></strong></p></div>
@@ -276,8 +274,7 @@ class WP_MADEIT_FORM_admin
             <div class="error"><p><strong><?php echo __($error_msg, 'forms-by-made-it'); ?></strong></p></div>
             <?php
         } else {
-            $this->db->queryWrite('UPDATE '.$this->db->prefix().'madeit_forms set title = %s, form = %s, actions = %s, messages = %s WHERE id = %s', $form['title'], $form['form'], json_encode($form['actions']), json_encode($form['messages']), $_POST['form_id']);
-            ?>
+            $this->db->queryWrite('UPDATE '.$this->db->prefix().'madeit_forms set title = %s, form = %s, actions = %s, messages = %s WHERE id = %s', $form['title'], $form['form'], json_encode($form['actions']), json_encode($form['messages']), $_POST['form_id']); ?>
             <div class="updated"><p><strong><?php echo __('The form is successfully saved.', 'forms-by-made-it'); ?></strong></p></div>
             <?php
         }
@@ -292,15 +289,14 @@ class WP_MADEIT_FORM_admin
             <?php
         }
         if (isset($_GET['action']) && $_GET['action'] == 'delete') {
-            $this->db->queryWrite('DELETE FROM '.$this->db->prefix().'madeit_form_inputs WHERE id = %s', $_GET['id']);
-            ?>
+            $this->db->queryWrite('DELETE FROM '.$this->db->prefix().'madeit_form_inputs WHERE id = %s', $_GET['id']); ?>
             <div class="updated"><p><strong><?php echo __('The submitted data is deleted.', 'forms-by-made-it'); ?></strong></p></div>
             <?php
         }
         if (isset($_GET['action']) && $_GET['action'] == 'show') {
             $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_form_inputs` WHERE id = %s', $_GET['id']);
             $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $f['form_id']);
-            
+
             $this->db->queryWrite('UPDATE '.$this->db->prefix().'madeit_form_inputs set `read` = 1 WHERE id = %s', $_GET['id']);
             if (!isset($f['id'])) {
                 ?>
@@ -309,16 +305,14 @@ class WP_MADEIT_FORM_admin
             } else {
                 include MADEIT_FORM_DIR.'/admin/forms/submitted.php';
             }
-        }
-        else {
-            $forms = $this->db->querySelect('SELECT * FROM `'.$this->db->prefix().'madeit_forms`');
-            ?>
+        } else {
+            $forms = $this->db->querySelect('SELECT * FROM `'.$this->db->prefix().'madeit_forms`'); ?>
             <form method="get" action="/wp-admin/admin.php">
                 <?php wp_nonce_field('export_forms'); ?>
                 <input type="hidden" name="page" value="madeit_form_input">
                 <input type="hidden" name="action" value="export">
                 <select name="id">
-                    <?php foreach($forms as $form) { ?>
+                    <?php foreach ($forms as $form) { ?>
                     <option value="<?php echo $form['id']; ?>"><?php echo $form['title']; ?></option>
                     <?php } ?>
                 </select>
