@@ -7,15 +7,14 @@ if (!class_exists('WP_List_Table')) {
 class InputListTable extends WP_List_Table
 {
     private $db;
-
-    public function __construct()
+    public function __construct($wp_plugin_db)
     {
         parent::__construct([
             'singular' => 'wp_list_text_link',
             'plural'   => 'wp_list_test_links',
             'ajax'     => false,
         ]);
-        $this->db = \WeDevs\ORM\Eloquent\Database::instance();
+        $this->db = $wp_plugin_db;
     }
 
     public function extra_tablenav($which)
@@ -105,7 +104,10 @@ class InputListTable extends WP_List_Table
             case 'id':
                 return $item->id;
             case 'form':
-                $form = $this->db->table('madeit_forms')->where('id', $item->form_id)->first();
+                $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $item->form_id);
+                if(is_array($form)) {
+                    $form = json_decode(json_encode($form));
+                }
 
                 return $item->title;
             case 'ip':
@@ -144,7 +146,10 @@ class InputListTable extends WP_List_Table
 
     public function column_form($item)
     {
-        $form = $this->db->table('madeit_forms')->where('id', $item->form_id)->first();
+        $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $item->form_id);
+        if(is_array($form)) {
+            $form = json_decode(json_encode($form));
+        }
         $actions = [
             //'show' => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a>', 'madeit_form', 'edit', $form->id),
         ];

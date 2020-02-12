@@ -22,13 +22,13 @@ if (!defined('ABSPATH')) {
                     <div class="handlediv" title="<?php echo __('Click to toggle', 'forms-by-made-it') ?>"><br /></div>
                     <!-- settings box title -->
                     <h3 class="hndle">
-                        <span style="vertical-align: top;"><?php echo esc_html($form->title) ?> - <?php echo $f->create_time; ?></span>
+                        <span style="vertical-align: top;"><?php echo esc_html($form['title']) ?> - <?php echo $f['create_time']; ?></span>
                     </h3>
                     <div class="inside">
                         <table class="form-table">
                             <tbody>
                                 <?php
-                                foreach (json_decode($f->data, true) as $k => $v) {
+                                foreach (json_decode($f['data'], true) as $k => $v) {
                                     ?>
                                     <tr>
                                         <th scope="row">
@@ -45,7 +45,7 @@ if (!defined('ABSPATH')) {
                                         <label><strong><?php echo __('IP', 'forms-by-made-it'); ?></strong></label>
                                     </th>
                                     <td>
-                                        <?php echo esc_html($f->ip); ?>
+                                        <?php echo esc_html($f['ip']); ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -53,7 +53,7 @@ if (!defined('ABSPATH')) {
                                         <label><strong><?php echo __('User agent', 'forms-by-made-it'); ?></strong></label>
                                     </th>
                                     <td>
-                                        <?php echo esc_html($f->user_agent); ?>
+                                        <?php echo esc_html($f['user_agent']); ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -61,7 +61,7 @@ if (!defined('ABSPATH')) {
                                         <label><strong><?php echo __('Date', 'forms-by-made-it'); ?></strong></label>
                                     </th>
                                     <td>
-                                        <?php echo esc_html($f->create_time); ?>
+                                        <?php echo esc_html($f['create_time']); ?>
                                     </td>
                                 </tr>
                             </tbody>

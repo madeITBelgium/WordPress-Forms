@@ -1,7 +1,6 @@
 {
   "require": {
       "php": ">=5.3",
-      "tareq1988/wp-eloquent": "dev-master",
       "mailchimp/mailchimp": "2.0.6"
   }
 }

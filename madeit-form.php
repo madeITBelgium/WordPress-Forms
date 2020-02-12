@@ -5,7 +5,7 @@
  * Description: Build cool, easy and flexible forms with Forms.
  * Author: Made I.T.
  * Author URI: https://www.madeit.be
- * Version: 1.8.0
+ * Version: 1.8.1
  * Text Domain: forms-by-made-it
  * Domain Path: /languages
  * License: GPLv2.
@@ -64,20 +64,24 @@ $t = new WP_MADEIT_FORM_Module_Select();
 $t = new WP_MADEIT_FORM_Module_Number();
 $t = new WP_MADEIT_FORM_Module_Submit($wp_madeit_form_settings);
 
+
+require_once MADEIT_FORM_DIR . '/WP_MadeIT_Form_DB.php';
+$wp_plugin_db = new WP_MadeIT_Form_DB();
+
 require_once MADEIT_FORM_DIR.'/DatabaseInit.php';
 $wp_plugin_dbinit = new DatabaseInit();
 $wp_plugin_dbinit->addHooks();
 
 require_once MADEIT_FORM_DIR.'/admin/WP_MADEIT_FORM_admin.php';
-$wp_madeit_form_admin = new WP_MADEIT_FORM_admin($wp_madeit_form_settings);
+$wp_madeit_form_admin = new WP_MADEIT_FORM_admin($wp_madeit_form_settings, $wp_plugin_db);
 $wp_madeit_form_admin->addHooks();
 
 require_once MADEIT_FORM_DIR.'/front/WP_Form_front.php';
-$wp_NBD_front = new WP_Form_front($wp_madeit_form_settings);
+$wp_NBD_front = new WP_Form_front($wp_madeit_form_settings, $wp_plugin_db);
 $wp_NBD_front->addHooks();
 
 require_once MADEIT_FORM_DIR.'/api/WP_Form_Api.php';
-$wp_NBD_api = new WP_Form_Api($wp_madeit_form_settings);
+$wp_NBD_api = new WP_Form_Api($wp_madeit_form_settings, $wp_plugin_db);
 $wp_NBD_api->addHooks();
 
 function wp_form_api_save_input($id, $data)

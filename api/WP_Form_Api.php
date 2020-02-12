@@ -10,11 +10,11 @@ class WP_Form_Api
     private $defaultSettings;
     private $form_id = null;
 
-    public function __construct($settings)
+    public function __construct($settings, $wp_plugin_db)
     {
         $this->settings = $settings;
         $this->defaultSettings = $this->settings->loadDefaultSettings();
-        $this->db = \WeDevs\ORM\Eloquent\Database::instance();
+        $this->db = $wp_plugin_db;
     }
 
     public function init()
@@ -32,7 +32,12 @@ class WP_Form_Api
 
     public function save($id, $data)
     {
-        $form = $this->db->table('madeit_forms')->where('id', $id)->first();
+        
+        $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $id);
+        if(is_array($form)) {
+            $form = json_decode(json_encode($form));
+        }
+        
         $formValue = $form->form;
         $formValue = str_replace('\"', '"', $formValue);
         if (isset($form->id)) {
@@ -66,17 +71,10 @@ class WP_Form_Api
             //insert into DB
             $postData = $data;
             unset($postData['form_id']);
-            $dbI = $this->db->table('madeit_form_inputs')->insert([
-                    'form_id' => $form->id,
-                    'data' => json_encode($postData),
-                    'ip' => $this->getIP(),
-                    'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN',
-                    'spam' => $spam ? 1 : 0,
-                    'read' => 0,
-                    'result' => '',
-                    'create_time' => date('Y-m-d H:i:s'),
-                ]
-            );
+            
+            
+            $this->db->queryWrite('INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', 
+                                  $form->id, json_encode($postData), $this->getIP(), (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'), $spam ? 1 : 0, 0, '', date('Y-m-d H:i:s'));
 
             //execute actions
             if (isset($form->actions) && !empty($form->actions)/* && count($form->actions) > 0*/) {
