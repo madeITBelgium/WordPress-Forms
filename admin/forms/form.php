@@ -125,7 +125,8 @@ function removeSlashes($str)
                                         '<a href="#TB_inline?width=600&height=550&inlineId=%1$s" class="thickbox button" title="%2$s">%3$s</a>',
                                         esc_attr($panel['content'].'-'.$id),
                                         esc_attr(sprintf(__('Form-tag Generator: %s', 'forms-by-made-it'), $panel['title'])),
-                                        esc_html($panel['title']));
+                                        esc_html($panel['title'])
+                                    );
                                 }
                                 ?>
                             </span>

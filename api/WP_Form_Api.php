@@ -71,8 +71,17 @@ class WP_Form_Api
             $postData = $data;
             unset($postData['form_id']);
 
-            $this->db->queryWrite('INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
-                                  $form->id, json_encode($postData), $this->getIP(), (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'), $spam ? 1 : 0, 0, '', date('Y-m-d H:i:s'));
+            $this->db->queryWrite(
+                'INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                $form->id,
+                json_encode($postData),
+                $this->getIP(),
+                (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'),
+                $spam ? 1 : 0,
+                0,
+                '',
+                date('Y-m-d H:i:s')
+            );
 
             //execute actions
             if (isset($form->actions) && !empty($form->actions)/* && count($form->actions) > 0*/) {
