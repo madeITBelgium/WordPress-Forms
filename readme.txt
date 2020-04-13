@@ -3,8 +3,8 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 5.0
-Tested up to: 5.3
-Stable tag: 1.8.1
+Tested up to: 5.4
+Stable tag: 1.9.0
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -46,6 +46,10 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
+= 1.9.0 =
+* WP 5.4 Support
+* Added radio button
+
 = 1.8.1 =
 * Fix bug that crash full wordpress installation at some servers
 * Improve database queries and code base.
