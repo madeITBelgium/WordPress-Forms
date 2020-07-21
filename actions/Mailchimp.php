@@ -35,7 +35,7 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action
                 'email'        => $data['mc_email'],
                 'merge_fields' => apply_filters('madeit_forms_mailchimp_merge_fields', [
                     'fname' => $data['mc_firstname'],
-                    'lname' => $data['mc_name']
+                    'lname' => $data['mc_name'],
                 ], $data, $actionInfo),
             ]);
 
