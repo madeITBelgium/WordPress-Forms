@@ -14,7 +14,7 @@ class WP_MADEIT_FORM_GAAdsEvent extends WP_MADEIT_FORM_Action
         $this->addHooks();
     }
 
-    public function callback($data, $messages)
+    public function callback($data, $messages, $actionInfo)
     {
         return ['type' => 'HTML', 'code' => '<script async src="https://www.googletagmanager.com/gtag/js?id='.$data['ga_ads_event_code']."\"></script>
         <script>

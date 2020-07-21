@@ -16,7 +16,7 @@ class WP_MADEIT_FORM_GAEvent extends WP_MADEIT_FORM_Action
         $this->addHooks();
     }
 
-    public function callback($data, $messages)
+    public function callback($data, $messages, $actionInfo)
     {
         return ['type' => 'JS', 'code' => "window.onload = function () { ga('send', 'event', '".$data['ga_event_category']."', '".$data['ga_event_action']."', '".$data['ga_event_label']."'); }"];
     }

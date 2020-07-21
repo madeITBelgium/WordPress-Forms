@@ -19,7 +19,7 @@ class WP_MADEIT_FORM_Mailpoet extends WP_MADEIT_FORM_Action
         $this->addHooks();
     }
 
-    public function callback($data, $messages)
+    public function callback($data, $messages, $actionInfo)
     {
         $listIDs = !empty($data['mp_list_id']) ? [$data['mp_list_id']] : [];
 

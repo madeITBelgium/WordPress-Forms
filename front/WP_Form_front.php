@@ -98,7 +98,7 @@ class WP_Form_front
 
                 //execute actions
                 if (isset($form->actions) && !empty($form->actions)/* && count($form->actions) > 0*/) {
-                    $formActions = json_decode($form->actions, true);
+                    $formActions = apply_filters('madeit_forms_submit_actions', json_decode($form->actions, true));
                     foreach ($formActions as $actID => $actionInfo) {
                         $action = $this->actions[$actionInfo['_id']];
 
@@ -109,7 +109,7 @@ class WP_Form_front
                         }
 
                         if (is_callable($action['callback'])) {
-                            $result = call_user_func($action['callback'], $data, $messages);
+                            $result = call_user_func($action['callback'], $data, $messages, $actionInfo);
                             if (is_array($result) && isset($result['type'])) {
                                 if ($result['type'] == 'JS') {
                                     echo '<script>'.$result['code'].'</script>';

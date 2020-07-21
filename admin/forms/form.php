@@ -147,7 +147,13 @@ function removeSlashes($str)
                                         <section id="action-panel-<?php echo $actID; ?>" data-id="<?php echo $actID; ?>" data-section-id="action-panel-" class="action-section">
                                             <input type="hidden" name="action_panel_<?php echo $actID; ?>" value="<?php echo $actID; ?>" data-name="action_panel_">
                                             <span style="float:right; margin: 5px;"><a href="javascript:void(0);" class="delete-section" style="text-decoration:none;"><span class="dashicons dashicons-no-alt"></span></a></span>
-                                            <h3><?php echo esc_html(__('Action', 'forms-by-made-it')); ?></h3>
+                                            <h3><?php echo esc_html(__('Action', 'forms-by-made-it')); ?>
+                                                <?php if(isset($actionInfo['key'])) {
+                                                    ?>
+                                                    <input type="hidden" name="action_key_<?php echo $actID; ?>" value="<?php echo esc_attr($actionInfo['key']); ?>" />
+                                                    <?php
+                                                    echo ' - (' . __('Key', 'forms-by-made-it') . ':' . $actionInfo['key'] . ')';
+                                                } ?></h3>
                                             <table class="form-table">
                                                 <tbody>
                                                     <tr data-name="action_type_">

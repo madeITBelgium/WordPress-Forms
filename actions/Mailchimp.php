@@ -20,7 +20,7 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action
         $this->addHooks();
     }
 
-    public function callback($data, $messages)
+    public function callback($data, $messages, $actionInfo)
     {
         $mc = null;
 
@@ -33,7 +33,10 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action
         try {
             $d = $mc->lists->subscribe($data['mc_list_id'], [
                 'email'        => $data['mc_email'],
-                'merge_fields' => ['fname' => $data['mc_firstname'], 'lname' => $data['mc_name']],
+                'merge_fields' => apply_filters('madeit_forms_mailchimp_merge_fields', [
+                    'fname' => $data['mc_firstname'],
+                    'lname' => $data['mc_name']
+                ], $data, $actionInfo),
             ]);
 
             //print_r($d);exit;

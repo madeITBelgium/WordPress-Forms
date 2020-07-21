@@ -21,7 +21,7 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
         $this->addHooks();
     }
 
-    public function callback($data, $messages)
+    public function callback($data, $messages, $actionInfo)
     {
         if (isset($data['html']) && $data['html'] == 'checked') {
             $email = stripcslashes($data['message']);

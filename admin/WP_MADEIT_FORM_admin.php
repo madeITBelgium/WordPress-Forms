@@ -201,6 +201,7 @@ class WP_MADEIT_FORM_admin
                 foreach ($action['action_fields'] as $name => $info) {
                     $form['actions'][$j][$name] = isset($_POST['action_'.$id.'_'.$name.'_'.$i]) ? $_POST['action_'.$id.'_'.$name.'_'.$i] : '';
                 }
+                $form['actions'][$j]['key'] = isset($_POST['action_key_'.$i]) ? $_POST['action_key_'.$i] : $this->generateKey();
             }
             $j++;
         }
@@ -259,6 +260,7 @@ class WP_MADEIT_FORM_admin
                 foreach ($action['action_fields'] as $name => $info) {
                     $form['actions'][$j][$name] = isset($_POST['action_'.$id.'_'.$name.'_'.$i]) ? $_POST['action_'.$id.'_'.$name.'_'.$i] : '';
                 }
+                $form['actions'][$j]['key'] = isset($_POST['action_key_'.$i]) ? $_POST['action_key_'.$i] : $this->generateKey();
             }
             $j++;
         }
@@ -458,5 +460,15 @@ class WP_MADEIT_FORM_admin
         add_action('admin_enqueue_scripts', [$this, 'initStyle']);
 
         add_action('init', [$this, 'init']);
+    }
+    
+    public function generateKey() {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < 5; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }
