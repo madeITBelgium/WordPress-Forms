@@ -112,7 +112,7 @@ class WP_MADEIT_FORM_admin
                 unset($row['g-recaptcha-response']);
                 fputcsv($output, $row);
             }
-            die();
+            exit();
         }
     }
 
@@ -178,7 +178,7 @@ class WP_MADEIT_FORM_admin
     private function post_form()
     {
         if (!wp_verify_nonce($_POST['_wpnonce'], 'madeit-form-save-contact-form')) {
-            die(__('Security check'));
+            exit(__('Security check'));
         }
         $form = ['id' => $_POST['form_id'], 'title' => $_POST['title'], 'form' => $_POST['form'], 'actions' => [], 'messages' => []];
         $error = false;
@@ -461,14 +461,16 @@ class WP_MADEIT_FORM_admin
 
         add_action('init', [$this, 'init']);
     }
-    
-    public function generateKey() {
+
+    public function generateKey()
+    {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < 5; $i++) {
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
+
         return $randomString;
     }
 }
