@@ -8,6 +8,7 @@ class WP_MADEIT_FORM_GAAdsEvent extends WP_MADEIT_FORM_Action
     public function __construct()
     {
         $this->addActionField('ga_ads_event_code', __('Google tag code', 'forms-by-made-it'), 'text', 'AW-');
+        $this->addActionField('ga_ads_event_send_to', __('Google tag event code', 'forms-by-made-it'), 'text', '');
 
         $this->addAction('GA_ADS_EVENT', __('Google Ads Event', 'forms-by-made-it'), [$this, 'callback']);
 
@@ -21,6 +22,7 @@ class WP_MADEIT_FORM_GAAdsEvent extends WP_MADEIT_FORM_Action
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments)};
         gtag('js', new Date());
-        gtag('config', '".$data['ga_ads_event_code']."');</script>"];
+        gtag('config', '".$data['ga_ads_event_code']."');
+        gtag('event', 'conversion', {'send_to': '".$data['ga_ads_event_send_to']."'});</script>"];
     }
 }

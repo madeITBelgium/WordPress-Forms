@@ -34,6 +34,7 @@ class WP_Form_front
         if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
             wp_enqueue_script('recaptcha', 'https://www.google.com/recaptcha/api.js', [], null, true);
         }
+        wp_enqueue_script('madeit-form-script', MADEIT_FORM_URL.'front/js/script.js', ['jquery'], null, true);
 
         $this->shortCodes();
     }
@@ -47,8 +48,11 @@ class WP_Form_front
     {
         extract(shortcode_atts([
             'id' => 0,
+            'ajax' => 'no',
         ], $atts));
         ob_start();
+        
+        $ajax = strtolower($ajax) == 'yes';
 
         $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $id);
         if (is_array($form)) {
@@ -134,7 +138,7 @@ class WP_Form_front
                 }
                 //return success message
             } else {
-                $this->renderForm($id, $form);
+                $this->renderForm($id, $form, $ajax);
             }
         } else {
             echo __("Can't display the form.", 'forms-by-made-it');
@@ -145,11 +149,11 @@ class WP_Form_front
         return $content;
     }
 
-    private function renderForm($id, $form)
+    private function renderForm($id, $form, $ajax = false)
     {
         $this->form_id = $id;
         add_filter('madeit_forms_form_id', [$this, 'form_id']);
-        echo '<form action="" method="post" id="form_'.$id.'">';
+        echo '<form action="" method="post" id="form_'.$id.'" ' . ($ajax ? 'class="madeit-forms-ajax"' : 'class="madeit-forms-noajax"') . '>';
         echo '<input type="hidden" name="form_id" value="'.$id.'">';
         $formValue = $form->form;
         $formValue = str_replace('\"', '"', $formValue);
@@ -248,9 +252,104 @@ class WP_Form_front
 
         return 'UNKNOWN';
     }
+    
+    public function submitAjaxForm() {
+        ob_start();
+        
+        $id = $_POST['form_id'];
+        
+        $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $id);
+        if (is_array($form)) {
+            $form = json_decode(json_encode($form));
+        }
+        $formValue = $form->form;
+        $formValue = str_replace('\"', '"', $formValue);
+        if (isset($form->id)) {
+            //validate input fields
+            $error = false;
+            $error_msg = '';
+            $messages = json_decode($form->messages, true);
+
+            //insert form input
+            foreach ($_POST as $k => $v) {
+                $tag = $this->getTagNameFromPostInput($formValue, $k);
+                if ($tag !== false) {
+                    if (is_callable($this->tags[$tag]['validation'])) {
+                        $tagOptions = $this->getOptionsFromTag($formValue, $tag, $k);
+                        $result = call_user_func($this->tags[$tag]['validation'], $tagOptions, $v, $messages);
+                        if ($result !== true) {
+                            $error = true;
+                            $error_msg = $result;
+                        }
+                    }
+                }
+            }
+
+            if ($error) {
+                echo json_encode(['success' => false, 'message' => $error_msg]);
+                wp_die();
+            }
+
+            //check spam
+            $spam = false;
+
+            //insert into DB
+            $postData = $_POST;
+            unset($postData['form_id']);
+            unset($postData['action']);
+
+            $this->db->queryWrite('INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                                  $form->id, json_encode($postData), $this->getIP(), (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'), $spam ? 1 : 0, 0, '', date('Y-m-d H:i:s'));
+
+            $outputHtml = '';
+            
+            //execute actions
+            if (isset($form->actions) && !empty($form->actions)/* && count($form->actions) > 0*/) {
+                $formActions = apply_filters('madeit_forms_submit_actions', json_decode($form->actions, true));
+                foreach ($formActions as $actID => $actionInfo) {
+                    $action = $this->actions[$actionInfo['_id']];
+
+                    $data = [];
+                    foreach ($action['action_fields'] as $name => $info) {
+                        $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value'];
+                        $data[$name] = $this->changeInputTag($inputValue);
+                    }
+
+                    if (is_callable($action['callback'])) {
+                        $result = call_user_func($action['callback'], $data, $messages, $actionInfo);
+                        if (is_array($result) && isset($result['type'])) {
+                            if ($result['type'] == 'JS') {
+                                $outputHtml .= '<script>'.$result['code'].'</script>';
+                            } elseif ($result['type'] == 'HTML') {
+                                $outputHtml .= str_replace('\"', '"', $result['code']);
+                            }
+                        } elseif ($result !== true) {
+                            $error = true;
+                            $error_msg = $result;
+                        }
+                    } else {
+                        //can't execute action ...
+                    }
+                }
+            }
+
+            if ($error) {
+                echo json_encode(['success' => false, 'message' => $error_msg]);
+                wp_die();
+            } else {
+                echo json_encode(['success' => true, 'message' => $messages['success'], 'html' => $outputHtml]);
+                wp_die();
+            }
+        }
+        echo json_encode(['success' => false, 'message' => __("Can't display the form.", 'forms-by-made-it')]);
+        wp_die();
+    }
 
     public function addHooks()
     {
         add_action('init', [$this, 'init']);
+        
+        add_action( 'wp_ajax_madeit_forms_submit', [$this, 'submitAjaxForm'] );
+        add_action( 'wp_ajax_nopriv_madeit_forms_submit', [$this, 'submitAjaxForm'] );
     }
 }

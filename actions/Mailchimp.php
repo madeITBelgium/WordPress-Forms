@@ -3,6 +3,7 @@
 if (!class_exists('WP_MADEIT_FORM_Action')) {
     require_once MADEIT_FORM_DIR.'/actions/WP_MADEIT_FORM_Action.php';
 }
+
 class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action
 {
     public function __construct()
@@ -25,22 +26,24 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action
         $mc = null;
 
         try {
-            $mc = new Mailchimp($data['mc_api_key']); //your api key here
-        } catch (Mailchimp_Error $e) {
+            $mc = new \DrewM\MailChimp\MailChimp($data['mc_api_key']); //your api key here
+        } catch (Exception $e) {
             return 'You have not set an API key.';
         }
-
+        
+        $mergeFields = apply_filters('madeit_forms_mailchimp_merge_fields', [
+            'FNAME' => $data['mc_firstname'],
+            'LNAME' => $data['mc_name']
+        ], $data, $actionInfo);
+        
         try {
-            $d = $mc->lists->subscribe($data['mc_list_id'], [
-                'email'        => $data['mc_email'],
-                'merge_fields' => apply_filters('madeit_forms_mailchimp_merge_fields', [
-                    'fname' => $data['mc_firstname'],
-                    'lname' => $data['mc_name']
-                ], $data, $actionInfo),
+            $d = $mc->post("lists/" . $data['mc_list_id'] . "/members", [
+                'email_address' => $data['mc_email'],
+                'status'        => 'subscribed',
+                'merge_fields' => $mergeFields,
             ]);
-
-            //print_r($d);exit;
-        } catch (Mailchimp_Error $e) {
+            mail('tjebbe.lievens@madeit.be', 'Test', print_r($d, true));
+        } catch (Exception $e) {
             if ($e->getMessage()) {
                 return $e->getMessage();
             } else {

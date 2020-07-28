@@ -7,7 +7,7 @@ class WP_MADEIT_FORM_Javacript extends WP_MADEIT_FORM_Action
 {
     public function __construct()
     {
-        $this->addActionField('js_event_code', __('Code', 'forms-by-made-it'), 'textarea', 'Forms');
+        $this->addActionField('js_event_code', __('Code', 'forms-by-made-it'), 'textarea', "<script>dataLayer.push({'event': 'lead'});</script>");
 
         $this->addAction('JS_EVENT', __('HTML/Javascript Event', 'forms-by-made-it'), [$this, 'callback']);
 
@@ -16,6 +16,6 @@ class WP_MADEIT_FORM_Javacript extends WP_MADEIT_FORM_Action
 
     public function callback($data, $messages, $actionInfo)
     {
-        return ['type' => 'HTML', 'code' => $data['js_event_code']];
+        return ['type' => 'HTML', 'code' => str_replace("\'", "'", $data['js_event_code'])];
     }
 }

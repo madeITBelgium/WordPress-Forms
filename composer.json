@@ -1,6 +1,6 @@
 {
   "require": {
       "php": ">=5.3",
-      "mailchimp/mailchimp": "2.0.6"
+    "drewm/mailchimp-api": "^2.5"
   }
 }

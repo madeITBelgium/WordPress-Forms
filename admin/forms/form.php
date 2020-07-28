@@ -101,9 +101,9 @@ function removeSlashes($str)
                         <h3><?php echo esc_html(__('Information', 'forms-by-made-it')); ?></h3>
                         <div class="inside">
                             <ul>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/docs/'), __('Docs', 'forms-by-made-it'), ''); ?></li>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/faq'), __('F.A.Q.', 'forms-by-made-it'), ''); ?></li>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/'), __('Support', 'forms-by-made-it'), ''); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/docs/'), __('Docs', 'forms-by-made-it'), ''); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/faq'), __('F.A.Q.', 'forms-by-made-it'), ''); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/'), __('Support', 'forms-by-made-it'), ''); ?></li>
                             </ul>
                         </div>
                     </div><!-- #informationdiv -->

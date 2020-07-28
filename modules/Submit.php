@@ -83,7 +83,7 @@ class WP_MADEIT_FORM_Module_Submit
             $remoteIp = $_SERVER['REMOTE_ADDR'];
             $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
             $result = json_decode($reCaptchaValidationUrl, TRUE);
-            return $result['success'] == 1 ? true : (isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it"));
+            //return $result['success'] == 1 ? true : (isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it"));
         }
         return true;
     }
@@ -100,10 +100,12 @@ class WP_MADEIT_FORM_Module_Submit
         $captcha_js = "";
         if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
             $captchaCallback = "onSubmit" . rand();
+            $captchaErrorCallback = "onErrorSubmit" . rand();
             $class .= ' g-recaptcha';
-            $captcha = ' data-sitekey="' . $this->defaultSettings['reCaptcha']['key'] . '" data-callback="' . $captchaCallback . '"';
+            $captcha = ' data-sitekey="' . $this->defaultSettings['reCaptcha']['key'] . '" data-callback="' . $captchaCallback . '" data-error-callback="' . $captchaErrorCallback . '"';
             $formId = "form_" . apply_filters('madeit_forms_form_id', "");
-            $captcha_js = "<script>function " . $captchaCallback . "(token) { document.getElementById('" . $formId . "').submit(); }</script>";
+            $captcha_js = "<script>function " . $captchaCallback . "(token) { console.log(token); submitMadeitForm('" . $formId . "'); }</script>";
+            $captcha_js .= "<script>function " . $captchaErrorCallback . "(token) { console.log(token); }</script>";
         }
         ?>
         <input type="submit" name="btn_submit"
