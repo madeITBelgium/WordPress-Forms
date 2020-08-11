@@ -6,7 +6,7 @@ class WP_MadeIT_Form_Settings
 
     public function __construct()
     {
-        $this->loadDefaultSettings();
+        //$this->loadDefaultSettings();
     }
 
     public function loadDefaultSettings()
