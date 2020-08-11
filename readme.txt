@@ -16,7 +16,7 @@ Forms is an easy form manager that lets you manage all your cool forms. Creating
 
 = Docs & Support =
 
-You can find [docs](https://www.madeit.be/forms-plugin/docs), [FAQ](https://www.madeit.be/forms-plugin/faq) and more detailed information about Forms on [madeit.be](https://www.madeit.be/forms-plugin/). If you were unable to find the answer to your question on the FAQ or in any of the documentation, you should check the [support forum](http://wordpress.org/support/plugin/forms-by-madeit) on WordPress.org. If you can't locate any topics that pertain to your particular issue, post a new topic for it.
+You can find [docs](https://www.madeit.be/forms-plugin/docs), [FAQ](https://www.madeit.be/forms-plugin/faq) and more detailed information about Forms on [madeit.be](https://www.madeit.be/forms-plugin/). If you were unable to find the answer to your question on the FAQ or in any of the documentation, you should check the [support forum](http://wordpress.org/support/plugin/forms-by-made-it) on WordPress.org. If you can't locate any topics that pertain to your particular issue, post a new topic for it.
 
 = Recommended Plugins =
 
