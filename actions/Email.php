@@ -13,6 +13,7 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
         $this->addActionField('header', __('Header', 'forms-by-made-it'), 'textarea', 'Reply-to: [your-email]');
         $this->addActionField('message', __('Message', 'forms-by-made-it'), 'textarea', "From: [your-name] <[your-email]>\nSubject: [your-subject]\n\nMessage:[your-message]", ['min-height' => '250px']);
         $this->addActionField('html', __('HTML', 'forms-by-made-it'), 'checkbox');
+        $this->addActionField('sync_view', __('Set viewed when reading e-mail', 'forms-by-made-it'), 'checkbox');
 
         $this->addMessageField('action_email_email_error', __('The email can\'t be send.', 'forms-by-made-it'), __('Sorry, there was an error while processing your data. The admin is contacted.', 'forms-by-made-it'));
 
@@ -27,6 +28,10 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
             $email = stripcslashes($data['message']);
         } else {
             $email = nl2br($data['message']);
+        }
+        
+        if(isset($data['sync_view']) && $data['sync_view'] == 'checked') {
+            $email .= '<img src="' . get_home_url() . '?madeit_forms_view=yes&input_id=' . $data['id'] . '" width="1" height="1">';
         }
 
         add_filter('wp_mail_from', [$this, 'my_mail_from']);

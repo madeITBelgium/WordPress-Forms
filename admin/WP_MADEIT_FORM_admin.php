@@ -14,18 +14,6 @@ class WP_MADEIT_FORM_admin
         $this->settings = $settings;
         $this->defaultSettings = $this->settings->loadDefaultSettings();
         $this->db = $wp_plugin_db;
-
-        $this->messages = [
-            ['field' => 'success',             'description' => __('Form successfully completed', 'forms-by-made-it'),                     'value' => __('Thank you for your message. It has been sent.', 'forms-by-made-it')],
-            ['field' => 'failed',              'description' => __('Form failed to complete', 'forms-by-made-it'),                         'value' => __('There was an error trying to send your message. Please try again later.', 'forms-by-made-it')],
-            ['field' => 'validation_error',    'description' => __('Validation errors occurred', 'forms-by-made-it'),                      'value' => __('One or more fields have an error. Please check and try again.', 'forms-by-made-it')],
-            ['field' => 'spam',                'description' => __('Submission was referred to as spam', 'forms-by-made-it'),              'value' => __('There was an error trying to send your message. Please try again later.', 'forms-by-made-it')],
-            ['field' => 'accept_terms',        'description' => __('There are terms that the sender must accept', 'forms-by-made-it'),     'value' => __('You must accept the terms and conditions before sending your message.', 'forms-by-made-it')],
-            ['field' => 'invalid_required',    'description' => __('There is a field that the sender must fill in', 'forms-by-made-it'),   'value' => __('The field is required.', 'forms-by-made-it')],
-            ['field' => 'invalid_too_long',    'description' => __('There is a field with input that is longer than the maximum allowed length', 'forms-by-made-it'), 'value' => __('The field is too long.', 'forms-by-made-it')],
-            ['field' => 'invalid_too_short',   'description' => __('There is a field with input that is shorter than the minimum allowed length', 'forms-by-made-it'), 'value' => __('The field is too short.', 'forms-by-made-it')],
-            //array('field' => '', 'description' => __("", 'forms-by-made-it'), 'value' => __('', 'forms-by-made-it')),
-        ];
     }
 
     public function initMenu()
@@ -442,6 +430,18 @@ class WP_MADEIT_FORM_admin
 
     public function init()
     {
+        $this->messages = [
+            ['field' => 'success',             'description' => __('Form successfully completed', 'forms-by-made-it'),                     'value' => __('Thank you for your message. It has been sent.', 'forms-by-made-it')],
+            ['field' => 'failed',              'description' => __('Form failed to complete', 'forms-by-made-it'),                         'value' => __('There was an error trying to send your message. Please try again later.', 'forms-by-made-it')],
+            ['field' => 'validation_error',    'description' => __('Validation errors occurred', 'forms-by-made-it'),                      'value' => __('One or more fields have an error. Please check and try again.', 'forms-by-made-it')],
+            ['field' => 'spam',                'description' => __('Submission was referred to as spam', 'forms-by-made-it'),              'value' => __('There was an error trying to send your message. Please try again later.', 'forms-by-made-it')],
+            ['field' => 'accept_terms',        'description' => __('There are terms that the sender must accept', 'forms-by-made-it'),     'value' => __('You must accept the terms and conditions before sending your message.', 'forms-by-made-it')],
+            ['field' => 'invalid_required',    'description' => __('There is a field that the sender must fill in', 'forms-by-made-it'),   'value' => __('The field is required.', 'forms-by-made-it')],
+            ['field' => 'invalid_too_long',    'description' => __('There is a field with input that is longer than the maximum allowed length', 'forms-by-made-it'), 'value' => __('The field is too long.', 'forms-by-made-it')],
+            ['field' => 'invalid_too_short',   'description' => __('There is a field with input that is shorter than the minimum allowed length', 'forms-by-made-it'), 'value' => __('The field is too short.', 'forms-by-made-it')],
+            //array('field' => '', 'description' => __("", 'forms-by-made-it'), 'value' => __('', 'forms-by-made-it')),
+        ];
+        
         $actions = apply_filters('madeit_forms_actions', []);
         foreach ($actions as $id => $value) {
             $this->addAction($id, $value);

@@ -46,6 +46,12 @@ class WP_MadeIT_Form_DB
             return $wpdb->query(func_get_arg(0));
         }
     }
+    
+    public function getInsertId()
+    {
+        global $wpdb;
+        return $wpdb->insert_id;
+    }
 
     public function flush()
     { //Clear cache

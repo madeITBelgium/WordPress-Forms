@@ -3,7 +3,7 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 5.0
-Tested up to: 5.4
+Tested up to: 5.5
 Stable tag: 1.10.0
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -50,6 +50,8 @@ Currently no upgrade
 * Improved mailchimp integration (Api V3)
 * Fixed mailchimp dubble opt in
 * Added ajax support (add ajax="yes" to form shortcode)
+* Fixed message translations
+* Added option to mark submitted form as read by opening the e-mail.
 
 = 1.9.0 =
 * WP 5.4 Support

@@ -100,14 +100,18 @@ class WP_Form_front
 
                 $this->db->queryWrite('INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
                                       $form->id, json_encode($postData), $this->getIP(), (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'), $spam ? 1 : 0, 0, '', date('Y-m-d H:i:s'));
-
+                
+                $inputId = $this->db->getInsertId();
+                
                 //execute actions
                 if (isset($form->actions) && !empty($form->actions)/* && count($form->actions) > 0*/) {
                     $formActions = apply_filters('madeit_forms_submit_actions', json_decode($form->actions, true));
                     foreach ($formActions as $actID => $actionInfo) {
                         $action = $this->actions[$actionInfo['_id']];
 
-                        $data = [];
+                        $data = [
+                            'id' => $inputId,
+                        ];
                         foreach ($action['action_fields'] as $name => $info) {
                             $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value'];
                             $data[$name] = $this->changeInputTag($inputValue);
@@ -303,6 +307,7 @@ class WP_Form_front
             $this->db->queryWrite('INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
                                   $form->id, json_encode($postData), $this->getIP(), (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'), $spam ? 1 : 0, 0, '', date('Y-m-d H:i:s'));
 
+            $inputId = $this->db->getInsertId();
             $outputHtml = '';
             
             //execute actions
@@ -311,7 +316,9 @@ class WP_Form_front
                 foreach ($formActions as $actID => $actionInfo) {
                     $action = $this->actions[$actionInfo['_id']];
 
-                    $data = [];
+                    $data = [
+                        'id' => $inputId,
+                    ];
                     foreach ($action['action_fields'] as $name => $info) {
                         $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value'];
                         $data[$name] = $this->changeInputTag($inputValue);
@@ -346,10 +353,25 @@ class WP_Form_front
         echo json_encode(['success' => false, 'message' => __("Can't display the form.", 'forms-by-made-it')]);
         wp_die();
     }
+    
+    
+    public function generateViewImage()
+    {
+        if(isset($_GET['madeit_forms_view']) && $_GET['madeit_forms_view'] == "yes" && isset($_GET['input_id']))
+        {
+            $formInputId = $_GET['input_id'];
+            $this->db->queryWrite('UPDATE '.$this->db->prefix().'madeit_form_inputs set `read` = 1 WHERE id = %s', $formInputId);
+            
+            header ('Content-Type: image/png');
+            echo base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=');
+            die();
+        }
+    }
 
     public function addHooks()
     {
         add_action('init', [$this, 'init']);
+        add_action('init', [$this, 'generateViewImage'], 1);
         
         add_action( 'wp_ajax_madeit_forms_submit', [$this, 'submitAjaxForm'] );
         add_action( 'wp_ajax_nopriv_madeit_forms_submit', [$this, 'submitAjaxForm'] );
