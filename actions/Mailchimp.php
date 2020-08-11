@@ -30,17 +30,17 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action
         } catch (Exception $e) {
             return 'You have not set an API key.';
         }
-        
+
         $mergeFields = apply_filters('madeit_forms_mailchimp_merge_fields', [
             'FNAME' => $data['mc_firstname'],
-            'LNAME' => $data['mc_name']
+            'LNAME' => $data['mc_name'],
         ], $data, $actionInfo);
-        
+
         try {
-            $d = $mc->post("lists/" . $data['mc_list_id'] . "/members", [
+            $d = $mc->post('lists/'.$data['mc_list_id'].'/members', [
                 'email_address' => $data['mc_email'],
                 'status'        => 'subscribed',
-                'merge_fields' => $mergeFields,
+                'merge_fields'  => $mergeFields,
             ]);
             mail('tjebbe.lievens@madeit.be', 'Test', print_r($d, true));
         } catch (Exception $e) {

@@ -29,9 +29,9 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
         } else {
             $email = nl2br($data['message']);
         }
-        
-        if(isset($data['sync_view']) && $data['sync_view'] == 'checked') {
-            $email .= '<img src="' . get_home_url() . '?madeit_forms_view=yes&input_id=' . $data['id'] . '" width="1" height="1">';
+
+        if (isset($data['sync_view']) && $data['sync_view'] == 'checked') {
+            $email .= '<img src="'.get_home_url().'?madeit_forms_view=yes&input_id='.$data['id'].'" width="1" height="1">';
         }
 
         add_filter('wp_mail_from', [$this, 'my_mail_from']);
