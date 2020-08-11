@@ -34,9 +34,10 @@ add_action('plugins_loaded', 'wp_forms_by_madeit_load_plugin_textdomain');
 require_once MADEIT_FORM_DIR.'/WP_MadeIT_Form_Settings.php';
 $wp_madeit_form_settings = new WP_MadeIT_Form_Settings();
 
-function madeit_forms_loadActions() {
+function madeit_forms_loadActions()
+{
     global $wp_madeit_form_settings;
-    
+
     require_once MADEIT_FORM_DIR.'/actions/Email.php';
     $a = new WP_MADEIT_FORM_Email();
     require_once MADEIT_FORM_DIR.'/actions/Mailchimp.php';

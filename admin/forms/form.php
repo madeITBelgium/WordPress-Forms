@@ -125,7 +125,8 @@ function removeSlashes($str)
                                         '<a href="#TB_inline?width=600&height=550&inlineId=%1$s" class="thickbox button" title="%2$s">%3$s</a>',
                                         esc_attr($panel['content'].'-'.$id),
                                         esc_attr(sprintf(__('Form-tag Generator: %s', 'forms-by-made-it'), $panel['title'])),
-                                        esc_html($panel['title']));
+                                        esc_html($panel['title'])
+                                    );
                                 }
                                 ?>
                             </span>
@@ -148,12 +149,12 @@ function removeSlashes($str)
                                             <input type="hidden" name="action_panel_<?php echo $actID; ?>" value="<?php echo $actID; ?>" data-name="action_panel_">
                                             <span style="float:right; margin: 5px;"><a href="javascript:void(0);" class="delete-section" style="text-decoration:none;"><span class="dashicons dashicons-no-alt"></span></a></span>
                                             <h3><?php echo esc_html(__('Action', 'forms-by-made-it')); ?>
-                                                <?php if(isset($actionInfo['key'])) {
-                                                    ?>
+                                                <?php if (isset($actionInfo['key'])) {
+                                            ?>
                                                     <input type="hidden" name="action_key_<?php echo $actID; ?>" value="<?php echo esc_attr($actionInfo['key']); ?>" />
                                                     <?php
-                                                    echo ' - (' . __('Key', 'forms-by-made-it') . ':' . $actionInfo['key'] . ')';
-                                                } ?></h3>
+                                                    echo ' - ('.__('Key', 'forms-by-made-it').':'.$actionInfo['key'].')';
+                                        } ?></h3>
                                             <table class="form-table">
                                                 <tbody>
                                                     <tr data-name="action_type_">
