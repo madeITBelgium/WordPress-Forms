@@ -52,6 +52,7 @@ Currently no upgrade
 * Added ajax support (add ajax="yes" to form shortcode)
 * Fixed message translations
 * Added option to mark submitted form as read by opening the e-mail.
+* WP 5.5 Support
 
 = 1.9.0 =
 * WP 5.4 Support
