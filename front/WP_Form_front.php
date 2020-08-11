@@ -29,13 +29,14 @@ class WP_Form_front
             $this->addModule($id, $value);
         }
 
-        wp_register_style('madeit-form-style', MADEIT_FORM_URL.'front/css/style.css', [], null);
-        wp_enqueue_style('madeit-form-style');
-        if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
-            wp_enqueue_script('recaptcha', 'https://www.google.com/recaptcha/api.js', [], null, true);
+        if(!is_admin()) {
+            wp_register_style('madeit-form-style', MADEIT_FORM_URL.'front/css/style.css', [], null);
+            wp_enqueue_style('madeit-form-style');
+            if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+                wp_enqueue_script('recaptcha', 'https://www.google.com/recaptcha/api.js', [], null, true);
+            }
+            wp_enqueue_script('madeit-form-script', MADEIT_FORM_URL.'front/js/script.js', ['jquery'], null, true);
         }
-        wp_enqueue_script('madeit-form-script', MADEIT_FORM_URL.'front/js/script.js', ['jquery'], null, true);
-
         $this->shortCodes();
     }
 
@@ -276,6 +277,7 @@ class WP_Form_front
                 if ($tag !== false) {
                     if (is_callable($this->tags[$tag]['validation'])) {
                         $tagOptions = $this->getOptionsFromTag($formValue, $tag, $k);
+                        $tagOptions['ajax'] = true;
                         $result = call_user_func($this->tags[$tag]['validation'], $tagOptions, $v, $messages);
                         if ($result !== true) {
                             $error = true;

@@ -54,7 +54,7 @@ class WP_MADEIT_FORM_admin
 
     public function initStyle()
     {
-        wp_register_style('madeit-form-admin-style', MADEIT_FORM_URL.'/admin/css/style.css', [], null);
+        wp_register_style('madeit-form-admin-style', MADEIT_FORM_URL.'admin/css/style.css', [], null);
         wp_register_style('madeit-tabs', MADEIT_FORM_URL.'admin/css/tabs.css', [], null);
         wp_enqueue_style('madeit-tabs');
         wp_enqueue_style('madeit-form-admin-style');

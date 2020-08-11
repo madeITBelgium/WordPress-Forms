@@ -74,6 +74,9 @@ class WP_MADEIT_FORM_Module_Submit
     }
     
     public function validation_submit($tagOptions, $value, $messages) {
+        if(isset($tagOptions['ajax']) && $tagOptions['ajax']) {
+            return true;
+        }
         if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
             $secretKey = $this->defaultSettings['reCaptcha']['secret'];
             if(!isset($_POST['g-recaptcha-response'])) {
@@ -83,7 +86,7 @@ class WP_MADEIT_FORM_Module_Submit
             $remoteIp = $_SERVER['REMOTE_ADDR'];
             $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
             $result = json_decode($reCaptchaValidationUrl, TRUE);
-            //return $result['success'] == 1 ? true : (isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it"));
+            return $result['success'] == 1 ? true : (isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it"));
         }
         return true;
     }
