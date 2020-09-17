@@ -68,7 +68,7 @@ function madeit_forms_loadActions()
     $t = new WP_MADEIT_FORM_Module_Select();
     $t = new WP_MADEIT_FORM_Module_Number();
     $t = new WP_MADEIT_FORM_Module_Radio();
-    if($wp_madeit_form_settings !== null) {
+    if ($wp_madeit_form_settings !== null) {
         $t = new WP_MADEIT_FORM_Module_Submit($wp_madeit_form_settings);
     }
 }
