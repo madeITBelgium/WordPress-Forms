@@ -25,12 +25,11 @@ class WP_MADEIT_FORM_Sendinblue extends WP_MADEIT_FORM_Action
     {
         $apiInstance = null;
         $createContact = null;
-        
+
         try {
             // Configure API key authorization: api-key
             $config = \SendinBlue\Client\Configuration::getDefaultConfiguration()->setApiKey('api-key', $data['sib_api_key']);
             $apiInstance = new \SendinBlue\Client\Api\ContactsApi(new \GuzzleHttp\Client(), $config);
-            
         } catch (Exception $e) {
             return 'You have not set an API key.';
         }
@@ -40,12 +39,11 @@ class WP_MADEIT_FORM_Sendinblue extends WP_MADEIT_FORM_Action
             'LNAME' => $data['sib_name'],
         ], $data, $actionInfo);
 
-        
         try {
             $createContact = new \SendinBlue\Client\Model\CreateContact([
-                'email' => $data['sib_email'],
+                'email'      => $data['sib_email'],
                 'attributes' => $attributes,
-                'listIds' => [$data['sib_list_id']]
+                'listIds'    => [$data['sib_list_id']],
             ]);
             $result = $apiInstance->createContact($createContact);
         } catch (Exception $e) {
@@ -55,7 +53,7 @@ class WP_MADEIT_FORM_Sendinblue extends WP_MADEIT_FORM_Action
                 return 'An unknown error occurred';
             }
         }
-        
+
         return true;
     }
 }
