@@ -42,7 +42,6 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action
                 'status'        => 'subscribed',
                 'merge_fields'  => $mergeFields,
             ]);
-            mail('tjebbe.lievens@madeit.be', 'Test', print_r($d, true));
         } catch (Exception $e) {
             if ($e->getMessage()) {
                 return $e->getMessage();
