@@ -71,7 +71,7 @@ class WP_MADEIT_FORM_admin
 
     public function initAdmin()
     {
-        if ($_GET['page'] === 'madeit_form_input' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
+        if (isset($_GET['page']) && $_GET['page'] === 'madeit_form_input' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
             $data = $this->db->querySelect('SELECT * FROM `'.$this->db->prefix().'madeit_form_inputs` WHERE form_id = %s', $_GET['id']);
             // output headers so that the file is downloaded rather than displayed
             header('Content-Type: text/csv; charset=utf-8');
