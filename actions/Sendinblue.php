@@ -36,9 +36,9 @@ class WP_MADEIT_FORM_Sendinblue extends WP_MADEIT_FORM_Action
 
         $attributes = apply_filters('madeit_forms_sendinblue_attributes', [
             'FIRSTNAME' => $data['sib_firstname'],
-            'LASTNAME' => $data['sib_name'],
-            'FNAME' => $data['sib_firstname'],
-            'LNAME' => $data['sib_name'],
+            'LASTNAME'  => $data['sib_name'],
+            'FNAME'     => $data['sib_firstname'],
+            'LNAME'     => $data['sib_name'],
         ], $data, $actionInfo);
 
         try {
