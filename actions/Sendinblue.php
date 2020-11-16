@@ -35,16 +35,17 @@ class WP_MADEIT_FORM_Sendinblue extends WP_MADEIT_FORM_Action
         }
 
         $attributes = apply_filters('madeit_forms_sendinblue_attributes', [
+            'FIRSTNAME' => $data['sib_firstname'],
+            'LASTNAME' => $data['sib_name'],
             'FNAME' => $data['sib_firstname'],
             'LNAME' => $data['sib_name'],
         ], $data, $actionInfo);
 
         try {
-            $createContact = new \SendinBlue\Client\Model\CreateContact([
-                'email'      => $data['sib_email'],
-                'attributes' => $attributes,
-                'listIds'    => [$data['sib_list_id']],
-            ]);
+            $createContact = new \SendinBlue\Client\Model\CreateContact(); // Values to create a contact
+            $createContact['email'] = $data['sib_email'];
+            $createContact['listIds'] = [intval($data['sib_list_id'])];
+            $createContact['attributes'] = $attributes;
             $result = $apiInstance->createContact($createContact);
         } catch (Exception $e) {
             if ($e->getMessage()) {
