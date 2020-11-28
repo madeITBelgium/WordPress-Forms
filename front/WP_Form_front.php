@@ -322,7 +322,7 @@ class WP_Form_front
             unset($atts['ajax']);
             unset($atts['id']);
             $postData = array_merge($atts, $postData);
-            
+
             $this->db->queryWrite(
                 'INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
                 $form->id,
