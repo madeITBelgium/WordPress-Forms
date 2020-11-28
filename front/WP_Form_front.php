@@ -322,7 +322,6 @@ class WP_Form_front
             unset($atts['ajax']);
             unset($atts['id']);
             $postData = array_merge($atts, $postData);
-            mail('tjebbe.lievens@madeit.be', 'test', print_r($postData, true) . "\n" . print_r($atts, true));
             
             $this->db->queryWrite(
                 'INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
