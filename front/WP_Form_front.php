@@ -185,7 +185,7 @@ class WP_Form_front
 
     private function changeInputTag($value, $params = [])
     {
-        if(count($params) === 0) {
+        if (count($params) === 0) {
             $params = $_POST;
         }
         foreach ($params as $k => $v) {
