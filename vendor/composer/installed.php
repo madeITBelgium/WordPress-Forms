@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'cf2b019773b7ed39c3fc5f366c8d9011f1b2d5a6',
+    'reference' => '1e9d2d16161025e11dd89124e42edf896770accc',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'cf2b019773b7ed39c3fc5f366c8d9011f1b2d5a6',
+      'reference' => '1e9d2d16161025e11dd89124e42edf896770accc',
     ),
     'drewm/mailchimp-api' => 
     array (
@@ -31,12 +31,12 @@
     ),
     'guzzlehttp/guzzle' => 
     array (
-      'pretty_version' => '7.2.0',
-      'version' => '7.2.0.0',
+      'pretty_version' => '6.5.5',
+      'version' => '6.5.5.0',
       'aliases' => 
       array (
       ),
-      'reference' => '0aa74dfb41ae110835923ef10a9d803a22d50e79',
+      'reference' => '9d4290de1cfd701f38099ef7e183b64b4b7b0c5e',
     ),
     'guzzlehttp/promises' => 
     array (
@@ -55,22 +55,6 @@
       array (
       ),
       'reference' => '53330f47520498c0ae1f61f7e2c90f55690c06a3',
-    ),
-    'psr/http-client' => 
-    array (
-      'pretty_version' => '1.0.1',
-      'version' => '1.0.1.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '2dfb5f6c5eff0e91e20e913f8c5452ed95b86621',
-    ),
-    'psr/http-client-implementation' => 
-    array (
-      'provided' => 
-      array (
-        0 => '1.0',
-      ),
     ),
     'psr/http-message' => 
     array (
@@ -105,6 +89,33 @@
       array (
       ),
       'reference' => '4b7c9b1c0aadd90d7fc24286e4247add57606e6c',
+    ),
+    'symfony/polyfill-intl-idn' => 
+    array (
+      'pretty_version' => 'v1.20.0',
+      'version' => '1.20.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '3b75acd829741c768bc8b1f84eb33265e7cc5117',
+    ),
+    'symfony/polyfill-intl-normalizer' => 
+    array (
+      'pretty_version' => 'v1.20.0',
+      'version' => '1.20.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '727d1096295d807c309fb01a851577302394c897',
+    ),
+    'symfony/polyfill-php72' => 
+    array (
+      'pretty_version' => 'v1.20.0',
+      'version' => '1.20.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'cede45fcdfabdd6043b3592e83678e42ec69e930',
     ),
   ),
 );
