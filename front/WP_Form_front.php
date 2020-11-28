@@ -45,12 +45,10 @@ class WP_Form_front
         add_shortcode('form', [$this, 'shortcode_form']);
     }
 
-    public function shortcode_form($atts)
+    public function shortcode_form($attsOrig)
     {
-        extract(shortcode_atts([
-            'id'   => 0,
-            'ajax' => 'no',
-        ], $atts));
+        $atts = shortcode_atts(['id' => 0, 'ajax' => 'no'], $attsOrig);
+        extract($atts);
         ob_start();
 
         $ajax = strtolower($ajax) == 'yes';
@@ -96,6 +94,9 @@ class WP_Form_front
 
                 //insert into DB
                 $postData = $_POST;
+                unset($attsOrig['ajax']);
+                unset($attsOrig['id']);
+                $postData = array_merge($attsOrig, $postData);
                 unset($postData['form_id']);
 
                 $this->db->queryWrite(
@@ -118,12 +119,14 @@ class WP_Form_front
                     foreach ($formActions as $actID => $actionInfo) {
                         $action = $this->actions[$actionInfo['_id']];
 
-                        $data = [
+                        unset($attsOrig['ajax']);
+                        unset($attsOrig['id']);
+                        $data = array_merge($attsOrig, [
                             'id' => $inputId,
-                        ];
+                        ]);
                         foreach ($action['action_fields'] as $name => $info) {
                             $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value'];
-                            $data[$name] = $this->changeInputTag($inputValue);
+                            $data[$name] = $this->changeInputTag($inputValue, $postData);
                         }
 
                         if (is_callable($action['callback'])) {
@@ -180,9 +183,12 @@ class WP_Form_front
         return $this->form_id;
     }
 
-    private function changeInputTag($value)
+    private function changeInputTag($value, $params = [])
     {
-        foreach ($_POST as $k => $v) {
+        if(count($params) === 0) {
+            $params = $_POST;
+        }
+        foreach ($params as $k => $v) {
             $value = str_replace('['.$k.']', $v, $value);
         }
 
@@ -313,7 +319,11 @@ class WP_Form_front
             $postData = $_POST;
             unset($postData['form_id']);
             unset($postData['action']);
-
+            unset($atts['ajax']);
+            unset($atts['id']);
+            $postData = array_merge($atts, $postData);
+            mail('tjebbe.lievens@madeit.be', 'test', print_r($postData, true) . "\n" . print_r($atts, true));
+            
             $this->db->queryWrite(
                 'INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
                 $form->id,
@@ -335,12 +345,14 @@ class WP_Form_front
                 foreach ($formActions as $actID => $actionInfo) {
                     $action = $this->actions[$actionInfo['_id']];
 
-                    $data = [
+                    unset($atts['ajax']);
+                    unset($atts['id']);
+                    $data = array_merge($atts, [
                         'id' => $inputId,
-                    ];
+                    ]);
                     foreach ($action['action_fields'] as $name => $info) {
                         $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value'];
-                        $data[$name] = $this->changeInputTag($inputValue);
+                        $data[$name] = $this->changeInputTag($inputValue, $postData);
                     }
 
                     if (is_callable($action['callback'])) {

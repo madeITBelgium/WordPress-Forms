@@ -49,7 +49,7 @@ class WP_MADEIT_FORM_Sendinblue extends WP_MADEIT_FORM_Action
             $result = $apiInstance->createContact($createContact);
         } catch (Exception $e) {
             if ($e->getMessage()) {
-                return $e->getMessage();
+                return __('You are already subscribed.', 'forms-by-made-it'); // $e->getMessage();
             } else {
                 return 'An unknown error occurred';
             }
