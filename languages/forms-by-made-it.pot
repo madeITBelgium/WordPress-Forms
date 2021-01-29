@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Forms 1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/forms-by-made-it\n"
-"POT-Creation-Date: 2020-11-28 16:02+0000\n"
+"POT-Creation-Date: 2021-01-29 11:56+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -47,7 +47,7 @@ msgstr ""
 msgid "Allow multiple selections"
 msgstr ""
 
-#: actions/Sendinblue.php:14 actions/Mailchimp.php:14
+#: actions/Mailchimp.php:14 actions/Sendinblue.php:14
 msgid "API Key"
 msgstr ""
 
@@ -55,11 +55,12 @@ msgstr ""
 msgid "Build cool, easy and flexible forms with Forms."
 msgstr ""
 
-#: actions/Mailpoet.php:15 actions/Sendinblue.php:17 actions/Mailchimp.php:17
+#: actions/Mailchimp.php:17 actions/Mailpoet.php:15 actions/Sendinblue.php:17
+#: actions/EmailService.php:17
 msgid "Can not subscribe"
 msgstr ""
 
-#: front/WP_Form_front.php:158 front/WP_Form_front.php:372
+#: front/WP_Form_front.php:161 front/WP_Form_front.php:383
 msgid "Can't display the form."
 msgstr ""
 
@@ -71,9 +72,9 @@ msgstr ""
 msgid "Checkbox"
 msgstr ""
 
-#: modules/Number.php:78 modules/Textarea.php:50 modules/Checkbox.php:50
-#: modules/Select.php:55 modules/Submit.php:60 modules/Radio.php:50
-#: modules/Text.php:71
+#: modules/Number.php:78 modules/Select.php:55 modules/Textarea.php:50
+#: modules/Radio.php:50 modules/Checkbox.php:50 modules/Text.php:71
+#: modules/Submit.php:60
 msgid "Class attribute"
 msgstr ""
 
@@ -91,7 +92,7 @@ msgid ""
 "content:"
 msgstr ""
 
-#: admin/InputListTable.php:39 admin/FormListTable.php:35
+#: admin/FormListTable.php:35 admin/InputListTable.php:39
 msgid "Create date"
 msgstr ""
 
@@ -103,8 +104,8 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: modules/Number.php:48 modules/Textarea.php:39 modules/Checkbox.php:39
-#: modules/Radio.php:39 modules/Text.php:60
+#: modules/Number.php:48 modules/Textarea.php:39 modules/Radio.php:39
+#: modules/Checkbox.php:39 modules/Text.php:60
 msgid "Default value"
 msgstr ""
 
@@ -136,13 +137,17 @@ msgstr ""
 msgid "Edit Contact Form"
 msgstr ""
 
-#: modules/Text.php:8 actions/Mailpoet.php:10 actions/Sendinblue.php:11
-#: actions/Mailchimp.php:11
+#: actions/Mailchimp.php:11 actions/Mailpoet.php:10 actions/Sendinblue.php:11
+#: actions/EmailService.php:11 modules/Text.php:8
 msgid "Email"
 msgstr ""
 
 #: modules/Text.php:13
 msgid "Email address that the sender entered is invalid"
+msgstr ""
+
+#: actions/EmailService.php:20
+msgid "Email-service.be"
 msgstr ""
 
 #: admin/forms/settings.php:56
@@ -157,10 +162,10 @@ msgstr ""
 msgid "F.A.Q."
 msgstr ""
 
-#: modules/Number.php:31 modules/Number.php:34 modules/Textarea.php:26
-#: modules/Textarea.php:29 modules/Checkbox.php:26 modules/Checkbox.php:29
-#: modules/Select.php:26 modules/Select.php:29 modules/Radio.php:26
-#: modules/Radio.php:29 modules/Text.php:47 modules/Text.php:50
+#: modules/Number.php:31 modules/Number.php:34 modules/Select.php:26
+#: modules/Select.php:29 modules/Textarea.php:26 modules/Textarea.php:29
+#: modules/Radio.php:26 modules/Radio.php:29 modules/Checkbox.php:26
+#: modules/Checkbox.php:29 modules/Text.php:47 modules/Text.php:50
 msgid "Field type"
 msgstr ""
 
@@ -168,7 +173,8 @@ msgstr ""
 msgid "File download"
 msgstr ""
 
-#: actions/Mailpoet.php:11 actions/Sendinblue.php:12 actions/Mailchimp.php:12
+#: actions/Mailchimp.php:12 actions/Mailpoet.php:11 actions/Sendinblue.php:12
+#: actions/EmailService.php:12
 msgid "Firstname"
 msgstr ""
 
@@ -307,9 +313,9 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: modules/Number.php:74 modules/Textarea.php:46 modules/Checkbox.php:46
-#: modules/Select.php:51 modules/Submit.php:56 modules/Radio.php:46
-#: modules/Text.php:67
+#: modules/Number.php:74 modules/Select.php:51 modules/Textarea.php:46
+#: modules/Radio.php:46 modules/Checkbox.php:46 modules/Text.php:67
+#: modules/Submit.php:56
 msgid "Id attribute"
 msgstr ""
 
@@ -325,10 +331,14 @@ msgstr ""
 msgid "Insert a blank item as the first option"
 msgstr ""
 
-#: modules/Number.php:88 modules/Textarea.php:60 modules/Checkbox.php:60
-#: modules/Select.php:65 modules/Submit.php:70 modules/Radio.php:60
-#: modules/Text.php:81
+#: modules/Number.php:88 modules/Select.php:65 modules/Textarea.php:60
+#: modules/Radio.php:60 modules/Checkbox.php:60 modules/Text.php:81
+#: modules/Submit.php:70
 msgid "Insert Tag"
+msgstr ""
+
+#: actions/EmailService.php:18
+msgid "Invalid emailadres"
 msgstr ""
 
 #: admin/InputListTable.php:37 admin/forms/submitted.php:45
@@ -339,11 +349,12 @@ msgstr ""
 msgid "Key"
 msgstr ""
 
-#: modules/Submit.php:50 actions/GAEvent.php:12
+#: actions/GAEvent.php:12 modules/Submit.php:50
 msgid "Label"
 msgstr ""
 
-#: actions/Mailpoet.php:13 actions/Sendinblue.php:15 actions/Mailchimp.php:15
+#: actions/Mailchimp.php:15 actions/Mailpoet.php:13 actions/Sendinblue.php:15
+#: actions/EmailService.php:15
 msgid "List ID"
 msgstr ""
 
@@ -391,9 +402,10 @@ msgstr ""
 msgid "Min"
 msgstr ""
 
-#: modules/Number.php:44 modules/Textarea.php:35 modules/Checkbox.php:35
-#: modules/Select.php:35 modules/Radio.php:35 modules/Text.php:56
-#: actions/Mailpoet.php:12 actions/Sendinblue.php:13 actions/Mailchimp.php:13
+#: actions/Mailchimp.php:13 actions/Mailpoet.php:12 actions/Sendinblue.php:13
+#: actions/EmailService.php:13 modules/Number.php:44 modules/Select.php:35
+#: modules/Textarea.php:35 modules/Radio.php:35 modules/Checkbox.php:35
+#: modules/Text.php:56
 msgid "Name"
 msgstr ""
 
@@ -445,8 +457,8 @@ msgstr ""
 msgid "Redirect to specific URL"
 msgstr ""
 
-#: modules/Number.php:39 modules/Textarea.php:30 modules/Checkbox.php:30
-#: modules/Select.php:30 modules/Radio.php:30 modules/Text.php:51
+#: modules/Number.php:39 modules/Select.php:30 modules/Textarea.php:30
+#: modules/Radio.php:30 modules/Checkbox.php:30 modules/Text.php:51
 msgid "Required field"
 msgstr ""
 
@@ -478,8 +490,8 @@ msgstr ""
 msgid "Slider"
 msgstr ""
 
-#: actions/Email.php:18 actions/Mailpoet.php:15 actions/Sendinblue.php:17
-#: actions/Mailchimp.php:17
+#: actions/Mailchimp.php:17 actions/Mailpoet.php:15 actions/Email.php:18
+#: actions/Sendinblue.php:17 actions/EmailService.php:17
 msgid ""
 "Sorry, there was an error while processing your data. The admin is contacted."
 msgstr ""
@@ -528,8 +540,8 @@ msgstr ""
 msgid "Text area"
 msgstr ""
 
-#: modules/Number.php:22 modules/Textarea.php:17 modules/Select.php:17
-#: modules/Submit.php:41 modules/Text.php:38
+#: modules/Number.php:22 modules/Select.php:17 modules/Textarea.php:17
+#: modules/Text.php:38 modules/Submit.php:41
 msgid "Text Fields"
 msgstr ""
 
@@ -551,6 +563,10 @@ msgstr ""
 
 #: modules/Text.php:13
 msgid "The e-mail address entered is invalid."
+msgstr ""
+
+#: actions/EmailService.php:18
+msgid "The email address entered seems incorrect."
 msgstr ""
 
 #: actions/Email.php:18
@@ -643,8 +659,8 @@ msgstr ""
 msgid "To"
 msgstr ""
 
-#: modules/Number.php:93 modules/Textarea.php:65 modules/Checkbox.php:65
-#: modules/Select.php:70 modules/Radio.php:65 modules/Text.php:86
+#: modules/Number.php:93 modules/Select.php:70 modules/Textarea.php:65
+#: modules/Radio.php:65 modules/Checkbox.php:65 modules/Text.php:86
 #, php-format
 msgid ""
 "To use the value input through this field in a action field, you need to "
@@ -659,7 +675,7 @@ msgstr ""
 msgid "Unread form submits"
 msgstr ""
 
-#: modules/Text.php:9 actions/Redirect.php:10
+#: actions/Redirect.php:10 modules/Text.php:9
 msgid "URL"
 msgstr ""
 
@@ -667,8 +683,8 @@ msgstr ""
 msgid "URL that the sender entered is invalid"
 msgstr ""
 
-#: modules/Number.php:51 modules/Textarea.php:42 modules/Checkbox.php:42
-#: modules/Radio.php:42 modules/Text.php:63
+#: modules/Number.php:51 modules/Textarea.php:42 modules/Radio.php:42
+#: modules/Checkbox.php:42 modules/Text.php:63
 msgid "Use this text as the placeholder of the field"
 msgstr ""
 

@@ -5,7 +5,7 @@ Tags: contact, form, contact form, feedback, email, captcha, form submit, newsle
 Requires at least: 5.0
 Tested up to: 5.6
 Requires PHP: 7.2
-Stable tag: 1.11.2
+Stable tag: 1.12.0
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -47,6 +47,9 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
+= 1.12.0 =
+* Email-service.be integration
+
 = 1.11.0 =
 * Send In Blue integration
 

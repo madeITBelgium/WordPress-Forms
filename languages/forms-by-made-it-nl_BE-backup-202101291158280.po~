@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2021-01-29 11:58+0000\n"
+"PO-Revision-Date: 2020-11-28 16:04+0000\n"
 "Last-Translator: tjebbeke <support@madeit.be>\n"
 "Language-Team: Nederlands (België)\n"
 "Language: nl_BE\n"
@@ -47,7 +47,7 @@ msgstr "Voeg nieuw formulier toe"
 msgid "Allow multiple selections"
 msgstr "Meerdere selecties mogelijk maken"
 
-#: actions/Mailchimp.php:14 actions/Sendinblue.php:14
+#: actions/Sendinblue.php:14 actions/Mailchimp.php:14
 msgid "API Key"
 msgstr "API Key"
 
@@ -55,12 +55,11 @@ msgstr "API Key"
 msgid "Build cool, easy and flexible forms with Forms."
 msgstr "Bouw coole, eenvoudige en flexiebele formulieren met Forms."
 
-#: actions/Mailchimp.php:17 actions/Mailpoet.php:15 actions/Sendinblue.php:17
-#: actions/EmailService.php:17
+#: actions/Mailpoet.php:15 actions/Sendinblue.php:17 actions/Mailchimp.php:17
 msgid "Can not subscribe"
 msgstr "Kan niet inschrijven"
 
-#: front/WP_Form_front.php:161 front/WP_Form_front.php:383
+#: front/WP_Form_front.php:158 front/WP_Form_front.php:372
 msgid "Can't display the form."
 msgstr "Kan het formulier niet tonen."
 
@@ -72,15 +71,15 @@ msgstr "Categorie"
 msgid "Checkbox"
 msgstr "Checkbox"
 
-#: modules/Number.php:78 modules/Select.php:55 modules/Textarea.php:50
-#: modules/Radio.php:50 modules/Checkbox.php:50 modules/Text.php:71
-#: modules/Submit.php:60
+#: modules/Number.php:78 modules/Textarea.php:50 modules/Checkbox.php:50
+#: modules/Select.php:55 modules/Submit.php:60 modules/Radio.php:50
+#: modules/Text.php:71
 msgid "Class attribute"
 msgstr "Class attribuut"
 
 #: admin/forms/submitted.php:22
 msgid "Click to toggle"
-msgstr "Click to toggle"
+msgstr ""
 
 #: actions/Javascript.php:10
 msgid "Code"
@@ -94,7 +93,7 @@ msgstr ""
 "Kopieer deze shortcode en plak deze in je bericht, pagina of tekst widget "
 "inhoud:"
 
-#: admin/FormListTable.php:35 admin/InputListTable.php:39
+#: admin/InputListTable.php:39 admin/FormListTable.php:35
 msgid "Create date"
 msgstr "Aanmaak datum"
 
@@ -106,8 +105,8 @@ msgstr "Maak je key hier aan."
 msgid "Date"
 msgstr "Datum"
 
-#: modules/Number.php:48 modules/Textarea.php:39 modules/Radio.php:39
-#: modules/Checkbox.php:39 modules/Text.php:60
+#: modules/Number.php:48 modules/Textarea.php:39 modules/Checkbox.php:39
+#: modules/Radio.php:39 modules/Text.php:60
 msgid "Default value"
 msgstr "Standaard waarde"
 
@@ -139,18 +138,14 @@ msgstr "E-mailadres"
 msgid "Edit Contact Form"
 msgstr "Wijzig formulier"
 
-#: actions/Mailchimp.php:11 actions/Mailpoet.php:10 actions/Sendinblue.php:11
-#: actions/EmailService.php:11 modules/Text.php:8
+#: modules/Text.php:8 actions/Mailpoet.php:10 actions/Sendinblue.php:11
+#: actions/Mailchimp.php:11
 msgid "Email"
 msgstr "E-mailadres"
 
 #: modules/Text.php:13
 msgid "Email address that the sender entered is invalid"
 msgstr "Het e-mailadres dat de zender heeft ingevoerd is incorrect."
-
-#: actions/EmailService.php:20
-msgid "Email-service.be"
-msgstr "Email-service.be"
 
 #: admin/forms/settings.php:56
 msgid "Enable reCaptcha"
@@ -164,10 +159,10 @@ msgstr "Voer titel hier in"
 msgid "F.A.Q."
 msgstr "F.A.Q."
 
-#: modules/Number.php:31 modules/Number.php:34 modules/Select.php:26
-#: modules/Select.php:29 modules/Textarea.php:26 modules/Textarea.php:29
-#: modules/Radio.php:26 modules/Radio.php:29 modules/Checkbox.php:26
-#: modules/Checkbox.php:29 modules/Text.php:47 modules/Text.php:50
+#: modules/Number.php:31 modules/Number.php:34 modules/Textarea.php:26
+#: modules/Textarea.php:29 modules/Checkbox.php:26 modules/Checkbox.php:29
+#: modules/Select.php:26 modules/Select.php:29 modules/Radio.php:26
+#: modules/Radio.php:29 modules/Text.php:47 modules/Text.php:50
 msgid "Field type"
 msgstr "Veld type"
 
@@ -175,8 +170,7 @@ msgstr "Veld type"
 msgid "File download"
 msgstr "Bestand download"
 
-#: actions/Mailchimp.php:12 actions/Mailpoet.php:11 actions/Sendinblue.php:12
-#: actions/EmailService.php:12
+#: actions/Mailpoet.php:11 actions/Sendinblue.php:12 actions/Mailchimp.php:12
 msgid "Firstname"
 msgstr "Voornaam"
 
@@ -321,9 +315,9 @@ msgstr "https://www.madeit.be/forms-plugin/"
 msgid "ID"
 msgstr "ID"
 
-#: modules/Number.php:74 modules/Select.php:51 modules/Textarea.php:46
-#: modules/Radio.php:46 modules/Checkbox.php:46 modules/Text.php:67
-#: modules/Submit.php:56
+#: modules/Number.php:74 modules/Textarea.php:46 modules/Checkbox.php:46
+#: modules/Select.php:51 modules/Submit.php:56 modules/Radio.php:46
+#: modules/Text.php:67
 msgid "Id attribute"
 msgstr "ID Attribuut"
 
@@ -339,15 +333,11 @@ msgstr "Informatie"
 msgid "Insert a blank item as the first option"
 msgstr "Voer een leeg item in als eerst optie"
 
-#: modules/Number.php:88 modules/Select.php:65 modules/Textarea.php:60
-#: modules/Radio.php:60 modules/Checkbox.php:60 modules/Text.php:81
-#: modules/Submit.php:70
+#: modules/Number.php:88 modules/Textarea.php:60 modules/Checkbox.php:60
+#: modules/Select.php:65 modules/Submit.php:70 modules/Radio.php:60
+#: modules/Text.php:81
 msgid "Insert Tag"
 msgstr "Voeg tag toe"
-
-#: actions/EmailService.php:18
-msgid "Invalid emailadres"
-msgstr "Ongeldig e-mailadres"
 
 #: admin/InputListTable.php:37 admin/forms/submitted.php:45
 msgid "IP"
@@ -357,12 +347,11 @@ msgstr "IP"
 msgid "Key"
 msgstr "Key"
 
-#: actions/GAEvent.php:12 modules/Submit.php:50
+#: modules/Submit.php:50 actions/GAEvent.php:12
 msgid "Label"
 msgstr "Label"
 
-#: actions/Mailchimp.php:15 actions/Mailpoet.php:13 actions/Sendinblue.php:15
-#: actions/EmailService.php:15
+#: actions/Mailpoet.php:13 actions/Sendinblue.php:15 actions/Mailchimp.php:15
 msgid "List ID"
 msgstr "Lijst ID"
 
@@ -410,10 +399,9 @@ msgstr "Berichten"
 msgid "Min"
 msgstr "Min"
 
-#: actions/Mailchimp.php:13 actions/Mailpoet.php:12 actions/Sendinblue.php:13
-#: actions/EmailService.php:13 modules/Number.php:44 modules/Select.php:35
-#: modules/Textarea.php:35 modules/Radio.php:35 modules/Checkbox.php:35
-#: modules/Text.php:56
+#: modules/Number.php:44 modules/Textarea.php:35 modules/Checkbox.php:35
+#: modules/Select.php:35 modules/Radio.php:35 modules/Text.php:56
+#: actions/Mailpoet.php:12 actions/Sendinblue.php:13 actions/Mailchimp.php:13
 msgid "Name"
 msgstr "Naam"
 
@@ -467,8 +455,8 @@ msgstr "Lees"
 msgid "Redirect to specific URL"
 msgstr "Redirect naar specifieke URL"
 
-#: modules/Number.php:39 modules/Select.php:30 modules/Textarea.php:30
-#: modules/Radio.php:30 modules/Checkbox.php:30 modules/Text.php:51
+#: modules/Number.php:39 modules/Textarea.php:30 modules/Checkbox.php:30
+#: modules/Select.php:30 modules/Radio.php:30 modules/Text.php:51
 msgid "Required field"
 msgstr "Verplicht veld"
 
@@ -500,8 +488,8 @@ msgstr "Shortcode"
 msgid "Slider"
 msgstr "Slider"
 
-#: actions/Mailchimp.php:17 actions/Mailpoet.php:15 actions/Email.php:18
-#: actions/Sendinblue.php:17 actions/EmailService.php:17
+#: actions/Email.php:18 actions/Mailpoet.php:15 actions/Sendinblue.php:17
+#: actions/Mailchimp.php:17
 msgid ""
 "Sorry, there was an error while processing your data. The admin is contacted."
 msgstr "Sorry, er is een probleem bij het verzenden van je data."
@@ -550,8 +538,8 @@ msgstr "Tekst"
 msgid "Text area"
 msgstr "Tekst veld"
 
-#: modules/Number.php:22 modules/Select.php:17 modules/Textarea.php:17
-#: modules/Text.php:38 modules/Submit.php:41
+#: modules/Number.php:22 modules/Textarea.php:17 modules/Select.php:17
+#: modules/Submit.php:41 modules/Text.php:38
 msgid "Text Fields"
 msgstr "Tekst velden"
 
@@ -574,10 +562,6 @@ msgstr "Deze data is niet beschikbaar."
 #: modules/Text.php:13
 msgid "The e-mail address entered is invalid."
 msgstr "Het ingevoerde e-mailadres is incorrect."
-
-#: actions/EmailService.php:18
-msgid "The email address entered seems incorrect."
-msgstr "Het opgegeven e-mailadres is niet geldig."
 
 #: actions/Email.php:18
 msgid "The email can't be send."
@@ -671,8 +655,8 @@ msgstr "TItel"
 msgid "To"
 msgstr "Naar"
 
-#: modules/Number.php:93 modules/Select.php:70 modules/Textarea.php:65
-#: modules/Radio.php:65 modules/Checkbox.php:65 modules/Text.php:86
+#: modules/Number.php:93 modules/Textarea.php:65 modules/Checkbox.php:65
+#: modules/Select.php:70 modules/Radio.php:65 modules/Text.php:86
 #, php-format
 msgid ""
 "To use the value input through this field in a action field, you need to "
@@ -689,7 +673,7 @@ msgstr "Type"
 msgid "Unread form submits"
 msgstr "Ongelezen formulier inzendingen"
 
-#: actions/Redirect.php:10 modules/Text.php:9
+#: modules/Text.php:9 actions/Redirect.php:10
 msgid "URL"
 msgstr "URL"
 
@@ -697,8 +681,8 @@ msgstr "URL"
 msgid "URL that the sender entered is invalid"
 msgstr "De URL die de verzender invoerde is foutief"
 
-#: modules/Number.php:51 modules/Textarea.php:42 modules/Radio.php:42
-#: modules/Checkbox.php:42 modules/Text.php:63
+#: modules/Number.php:51 modules/Textarea.php:42 modules/Checkbox.php:42
+#: modules/Radio.php:42 modules/Text.php:63
 msgid "Use this text as the placeholder of the field"
 msgstr "Gebruik deze tekst als placeholder van dit veld."
 
