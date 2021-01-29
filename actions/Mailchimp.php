@@ -53,4 +53,3 @@ class WP_MADEIT_FORM_Mailchimp extends WP_MADEIT_FORM_Action
         return true;
     }
 }
-

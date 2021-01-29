@@ -24,30 +24,27 @@ class WP_MADEIT_FORM_EmailService extends WP_MADEIT_FORM_Action
 
     public function callback($data, $messages, $actionInfo)
     {
-        
         $mergeFields = apply_filters('madeit_forms_emailservice_merge_fields', [
-            'email' => $data['es_email'],
+            'email'      => $data['es_email'],
             'first_name' => $data['es_firstname'],
-            'last_name' => $data['es_name']
+            'last_name'  => $data['es_name'],
         ], $data, $actionInfo);
-        
-        
+
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://www.email-service.be/api/1.0/subscribe/" . $data['es_list_id']);
+        curl_setopt($ch, CURLOPT_URL, 'https://www.email-service.be/api/1.0/subscribe/'.$data['es_list_id']);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($mergeFields));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $server_output = curl_exec($ch);
-        curl_close ($ch);
-        
-        if($httpcode === 200) {
+        curl_close($ch);
+
+        if ($httpcode === 200) {
             return true;
-        }
-        else if($httpcode === 422) {
+        } elseif ($httpcode === 422) {
             return $messages['action_es_invalid_email'];
         }
+
         return true;
     }
 }
-
