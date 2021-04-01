@@ -3,7 +3,7 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 5.0
-Tested up to: 5.6
+Tested up to: 5.7
 Requires PHP: 7.2
 Stable tag: 1.12.0
 License: GNU GPL v3.0
