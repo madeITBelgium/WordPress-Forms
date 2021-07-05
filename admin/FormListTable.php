@@ -130,7 +130,7 @@ class FormListTable extends WP_List_Table
             'delete' => sprintf('<a href="?page=%s&action=%s&id=%s">'.esc_html(__('Delete')).'</a>', $_REQUEST['page'], 'delete', $item->id),
         ];
 
-        return sprintf('<a href="?page=%s&action=%s&id=%s">%s</a> %s', $_REQUEST['page'], 'edit', $item->id, $item->title, $this->row_actions($actions));
+        return sprintf('<a href="?page=%s&action=%s&id=%s">%s</a> %s', $_REQUEST['page'], 'edit', $item->id, esc_textarea($item->title), $this->row_actions($actions));
     }
 
     public function get_bulk_actions()

@@ -112,10 +112,11 @@ class WP_MADEIT_FORM_admin
             <h1><?php echo __('Forms', 'forms-by-made-it'); ?><a href="admin.php?page=madeit_form" class="add-new-h2"><?php echo __('Add new', 'forms-by-made-it'); ?></a></h1>
             <?php
         }
-        if (isset($_GET['action']) && $_GET['action'] == 'delete') {
-            $this->db->queryWrite('DELETE FROM '.$this->db->prefix().'madeit_forms SET `id` = %s', $_GET['id']); ?>
+        if ((isset($_GET['action']) && $_GET['action'] == 'delete') || (isset($_POST['madeit-forms-delete']) && isset($_GET['action']) && $_GET['action'] == 'edit')) {
+            $this->db->queryWrite('DELETE FROM '.$this->db->prefix().'madeit_forms WHERE `id` = %s', $_GET['id']); ?>
             <div class="updated"><p><strong><?php echo __('The form is deleted.', 'forms-by-made-it'); ?></strong></p></div>
             <?php
+            $_GET['action'] = 'delete';
         }
         if (isset($_GET['action']) && $_GET['action'] == 'edit') {
             if (isset($_POST['add_new']) && $_POST['add_new'] == 'Y') {
