@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
                     <div class="handlediv" title="<?php echo __('Click to toggle', 'forms-by-made-it') ?>"><br /></div>
                     <!-- settings box title -->
                     <h3 class="hndle">
-                        <span style="vertical-align: top;"><?php echo esc_html($form['title']) ?> - <?php echo $f['create_time']; ?></span>
+                        <span style="vertical-align: top;"><?php echo esc_textarea($form['title']) ?> - <?php echo $f['create_time']; ?></span>
                     </h3>
                     <div class="inside">
                         <table class="form-table">
@@ -32,7 +32,7 @@ if (!defined('ABSPATH')) {
                                     ?>
                                     <tr>
                                         <th scope="row">
-                                            <label><strong><?php echo esc_html($k); ?></strong></label>
+                                            <label><strong><?php echo esc_textarea($k); ?></strong></label>
                                         </th>
                                         <td>
                                             <?php echo nl2br(esc_html($v)); ?>
