@@ -99,7 +99,7 @@ class FormListTable extends WP_List_Table
     {
         switch ($column_name) {
             case 'title':
-                return $item->title;
+                return esc_textarea($item->title);
             case 'id':
                 return $item->id;
             case 'short_code':

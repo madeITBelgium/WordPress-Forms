@@ -304,7 +304,7 @@ class WP_MADEIT_FORM_admin
                 <input type="hidden" name="action" value="export">
                 <select name="id">
                     <?php foreach ($forms as $form) { ?>
-                    <option value="<?php echo $form['id']; ?>"><?php echo $form['title']; ?></option>
+                    <option value="<?php echo $form['id']; ?>"><?php echo esc_textarea($form['title']); ?></option>
                     <?php } ?>
                 </select>
                 <input type="submit" value="Exporteer" class="button">

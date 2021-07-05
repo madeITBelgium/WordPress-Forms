@@ -155,7 +155,7 @@ class InputListTable extends WP_List_Table
             //'show' => sprintf('<a href="?page=%s&action=%s&id=%s">Edit</a>', 'madeit_form', 'edit', $form->id),
         ];
 
-        return sprintf('<a href="?page=%s&action=%s&id=%s">%s</a> %s', 'madeit_form', 'edit', esc_textarea($form->title), esc_textarea($form->title), $this->row_actions($actions));
+        return sprintf('<a href="?page=%s&action=%s&id=%s">%s</a> %s', 'madeit_form', 'edit', esc_textarea($form->id), esc_textarea($form->title), $this->row_actions($actions));
     }
 
     public function get_bulk_actions()
