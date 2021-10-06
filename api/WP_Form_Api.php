@@ -31,25 +31,25 @@ class WP_Form_Api
     public function save($id, $data)
     {
         $forms = get_posts([
-            'post_type' => 'ma_forms',
-             'meta_query' => [
+            'post_type'  => 'ma_forms',
+            'meta_query' => [
                 [
-                    'key' => 'form_id',
+                    'key'   => 'form_id',
                     'value' => $id,
-                ]
+                ],
             ],
         ]);
-        
-        if(count($forms) === 1) {
+
+        if (count($forms) === 1) {
             $form = $forms[0];
         } else {
             $form = get_post($id);
         }
-        
-        if($form->post_type !== 'ma_forms') {
+
+        if ($form->post_type !== 'ma_forms') {
             return false;
         }
-        
+
         $formValue = get_post_meta($form->ID, 'form', true);
         $formValue = str_replace('\"', '"', $formValue);
         if (isset($form->id)) {
@@ -85,11 +85,11 @@ class WP_Form_Api
             unset($postData['form_id']);
 
             $inputId = -1;
-            if(get_post_meta($form->ID, 'save_inputs', true) == 1) {
+            if (get_post_meta($form->ID, 'save_inputs', true) == 1) {
                 $inputId = wp_insert_post([
-                    'post_title' => 'Form submit ' . $form->post_title . ' - ' . $this->getIP(),
+                    'post_title'  => 'Form submit '.$form->post_title.' - '.$this->getIP(),
                     'post_status' => 'publish',
-                    'post_type' => 'ma_form_inputs',
+                    'post_type'   => 'ma_form_inputs',
                 ]);
 
                 update_post_meta($inputId, 'form_id', $form->ID);
@@ -100,7 +100,7 @@ class WP_Form_Api
                 update_post_meta($inputId, 'read', 0);
                 update_post_meta($inputId, 'result', '');
             }
-            
+
             //execute actions
             $actions = json_decode(get_post_meta($form->ID, 'actions', true), true);
             if (count($actions) > 0) {

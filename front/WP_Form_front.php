@@ -47,36 +47,35 @@ class WP_Form_front
     {
         $atts = shortcode_atts(['id' => 0, 'ajax' => 'no'], $attsOrig);
         extract($atts);
-       
 
         $ajax = strtolower($ajax) == 'yes';
-        
+
         $forms = get_posts([
-            'post_type' => 'ma_forms',
-             'meta_query' => [
+            'post_type'  => 'ma_forms',
+            'meta_query' => [
                 [
-                    'key' => 'form_id',
+                    'key'   => 'form_id',
                     'value' => $id,
-                ]
+                ],
             ],
         ]);
-        
-        if(count($forms) === 1) {
+
+        if (count($forms) === 1) {
             $form = $forms[0];
         } else {
             $form = get_post($id);
         }
-        
-        if($form->post_type !== 'ma_forms') {
+
+        if ($form->post_type !== 'ma_forms') {
             return __("Can't display the form.", 'forms-by-made-it');
         }
-        
+
         ob_start();
-        
+
         if (isset($_POST['form_id']) && $_POST['form_id'] == $form->ID) {
             $formValue = get_post_meta($form->ID, 'form', true);
             $formValue = str_replace('\"', '"', $formValue);
-        
+
             //validate input fields
             $error = false;
             $error_msg = '';
@@ -116,11 +115,11 @@ class WP_Form_front
             unset($postData['form_id']);
 
             $inputId = -1;
-            if(get_post_meta($form->ID, 'save_inputs', true) == 1) {
+            if (get_post_meta($form->ID, 'save_inputs', true) == 1) {
                 $inputId = wp_insert_post([
-                    'post_title' => 'Form submit ' . $form->post_title . ' - ' . $this->getIP(),
+                    'post_title'  => 'Form submit '.$form->post_title.' - '.$this->getIP(),
                     'post_status' => 'publish',
-                    'post_type' => 'ma_form_inputs',
+                    'post_type'   => 'ma_form_inputs',
                 ]);
 
                 update_post_meta($inputId, 'form_id', $form->ID);
@@ -172,12 +171,12 @@ class WP_Form_front
                 echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
             }
             //return success message
-        }
-        else {
+        } else {
             $this->renderForm($form->ID, $form, $ajax);
         }
-        
+
         $content = ob_get_clean();
+
         return $content;
     }
 
@@ -291,17 +290,17 @@ class WP_Form_front
     public function submitAjaxForm()
     {
         $id = $_POST['form_id'];
-        
+
         $form = get_post($id);
-        
-        if($form->post_type !== 'ma_forms') {
+
+        if ($form->post_type !== 'ma_forms') {
             echo json_encode(['success' => false, 'message' => __("Can't display the form.", 'forms-by-made-it')]);
             wp_die();
         }
 
         $formValue = get_post_meta($form->ID, 'form', true);
         $formValue = str_replace('\"', '"', $formValue);
-        
+
         //validate input fields
         $error = false;
         $error_msg = '';
@@ -338,13 +337,13 @@ class WP_Form_front
         unset($atts['ajax']);
         unset($atts['id']);
         $postData = array_merge($atts, $postData);
-        
+
         $inputId = -1;
-        if(get_post_meta($form->ID, 'save_inputs', true) == 1) {
+        if (get_post_meta($form->ID, 'save_inputs', true) == 1) {
             $inputId = wp_insert_post([
-                'post_title' => 'Form submit ' . $form->post_title . ' - ' . $this->getIP(),
+                'post_title'  => 'Form submit '.$form->post_title.' - '.$this->getIP(),
                 'post_status' => 'publish',
-                'post_type' => 'ma_form_inputs',
+                'post_type'   => 'ma_form_inputs',
             ]);
 
             update_post_meta($inputId, 'form_id', $form->ID);
@@ -404,7 +403,7 @@ class WP_Form_front
         if (isset($_GET['madeit_forms_view']) && $_GET['madeit_forms_view'] == 'yes' && isset($_GET['input_id'])) {
             $formInputId = $_GET['input_id'];
             $post = get_post($formInputId);
-            if($post->post_type === 'ma_form_inputs') {
+            if ($post->post_type === 'ma_form_inputs') {
                 update_post_meta($post->ID, 'read', 1);
             }
 
