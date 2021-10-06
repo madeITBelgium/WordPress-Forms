@@ -52,44 +52,44 @@ class WP_MADEIT_FORM_admin
     {
         if (isset($_GET['post_type']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
             $data = get_posts([
-                'post_type' => 'ma_form_inputs',
+                'post_type'   => 'ma_form_inputs',
                 'numberposts' => -1,
-                 'meta_query' => [
+                'meta_query'  => [
                     [
-                        'key' => 'form_id',
+                        'key'   => 'form_id',
                         'value' => $_GET['id'],
-                    ]
+                    ],
                 ],
             ]);
-            
+
             $form = get_post($_GET['id']);
-            if($form->post_type !== 'ma_forms') {
+            if ($form->post_type !== 'ma_forms') {
                 exit();
             }
-            
+
             // output headers so that the file is downloaded rather than displayed
             header('Content-Type: text/csv; charset=utf-8');
             header('Content-Disposition: attachment; filename=export-madeit-forms-'.date('Y-m-d-H-i-s').'.csv');
 
             // create a file pointer connected to the output stream
             $output = fopen('php://output', 'w');
-            if(count($data) === 0) {
+            if (count($data) === 0) {
                 exit();
             }
-            
+
             $row = [
-                'id' => '',
+                'id'   => '',
                 'form' => '',
             ];
-            
+
             foreach (json_decode(get_post_meta($data[0]->ID, 'data', true), true) as $k => $v) {
                 $row[$k] = $v;
             }
-            
+
             $row['ip'] = '';
             $row['user_agent'] = '';
             $row['date'] = '';
-            
+
             unset($row['g-recaptcha-response']);
             $columns = array_keys($row);
 
@@ -99,18 +99,18 @@ class WP_MADEIT_FORM_admin
             // fetch the data
             foreach ($data as $d) {
                 $row = [
-                    'id' => $d->ID,
+                    'id'   => $d->ID,
                     'form' => $form->post_title,
                 ];
 
                 foreach (json_decode(get_post_meta($d->ID, 'data', true), true) as $k => $v) {
                     $row[$k] = $v;
                 }
-                
+
                 $row['ip'] = get_post_meta($d->ID, 'ip', true);
                 $row['user_agent'] = get_post_meta($d->ID, 'user_agent', true);
                 $row['date'] = $d->post_date;
-                
+
                 unset($row['g-recaptcha-response']);
                 fputcsv($output, $row);
             }
@@ -177,7 +177,6 @@ class WP_MADEIT_FORM_admin
         $res = 0;
         $errors = [];
 
-        
         $formValue = get_post_meta($id, 'form', true);
         $formValue = str_replace('\"', '"', $formValue);
 
@@ -212,6 +211,7 @@ class WP_MADEIT_FORM_admin
                 }
             }
         }
+
         return $res;
     }
 
@@ -248,24 +248,25 @@ class WP_MADEIT_FORM_admin
             $this->addModule($id, $value);
         }
     }
-    
+
     public function set_custom_edit_ma_forms_columns($columns)
     {
-        $columns['short_code'] = __( 'Shortcode', 'forms-by-made-it' );
+        $columns['short_code'] = __('Shortcode', 'forms-by-made-it');
+
         return $columns;
     }
 
     public function custom_ma_forms_column($column, $post_id)
     {
-        if($column === 'short_code') {
-            $formId = get_post_meta( $post_id , 'form_id' , true);
-            if(empty($formId)) {
+        if ($column === 'short_code') {
+            $formId = get_post_meta($post_id, 'form_id', true);
+            if (empty($formId)) {
                 $formId = $post_id;
             }
-            echo '[form id="' . $formId . '"]';
+            echo '[form id="'.$formId.'"]';
         }
     }
-    
+
     public function set_custom_edit_ma_form_inputs_columns($columns)
     {
         $date = $columns['date'];
@@ -273,29 +274,29 @@ class WP_MADEIT_FORM_admin
         $columns['form'] = __('Form', 'forms-by-made-it');
         $columns['read'] = __('Read', 'forms-by-made-it');
         $columns['date'] = $date;
+
         return $columns;
     }
 
     public function custom_ma_form_inputs_column($column, $post_id)
     {
-        if($column === 'form') {
-            $formId = get_post_meta($post_id , 'form_id' , true);
+        if ($column === 'form') {
+            $formId = get_post_meta($post_id, 'form_id', true);
             echo get_post($formId)->post_title;
-        } else if($column === 'read') {
+        } elseif ($column === 'read') {
             echo get_post_meta($post_id, 'read', true) == 1 ? __('Yes', 'forms-by-made-it') : __('No', 'forms-by-made-it');
         }
     }
-    
+
     /*
      * Show shortcode
      */
     public function edit_form_after_title($post)
     {
-        if($post->post_type === 'ma_forms') {
-            if(isset($post->ID) && $post->ID > 0) {
+        if ($post->post_type === 'ma_forms') {
+            if (isset($post->ID) && $post->ID > 0) {
                 $formId = get_post_meta($post->ID, 'form_id', true);
-                $formId = empty($formId) ? $post->ID : $formId;
-                ?>
+                $formId = empty($formId) ? $post->ID : $formId; ?>
                 <div class="inside">
                     <p class="description">
                         <label for="madeit-forms-shortcode"><?php echo esc_html(__('Copy this shortcode and paste it into your post, page, or text widget content:', 'forms-by-made-it')); ?></label>
@@ -306,33 +307,29 @@ class WP_MADEIT_FORM_admin
             }
         }
     }
-    
+
     /*
      * Form editor
      */
     public function edit_form_advanced($post)
     {
-        if($post->post_type === 'ma_forms') {
-            
+        if ($post->post_type === 'ma_forms') {
             $formValue = '<p>Your name:</p>
 [text name="your-name"]
 <p>Your email:</p>
 [email name="your-email"]
 [submit value="Send"]';
-            
-            
+
             $actions = [];
             $messages = [];
             $form = get_post_meta($post->ID, 'form', true);
-            if(!empty($form)) {
+            if (!empty($form)) {
                 $formValue = $form;
                 $messages = json_decode(get_post_meta($post->ID, 'messages', true), true);
                 $actions = json_decode(get_post_meta($post->ID, 'actions', true), true);
             }
-            
-            $formValue = str_replace('\"', '"', $formValue);
-            
-            ?>
+
+            $formValue = str_replace('\"', '"', $formValue); ?>
             <input type="hidden" name="madeit_form_editor" value="yes">
             <div id="madeit-tab">
                 <ul id="madeit-tab-tabs">
@@ -351,8 +348,7 @@ class WP_MADEIT_FORM_admin
                                 esc_attr(sprintf(__('Form-tag Generator: %s', 'forms-by-made-it'), $panel['title'])),
                                 esc_html($panel['title'])
                             );
-                        }
-                        ?>
+                        } ?>
                     </span>
                     <textarea id="madeit-forms-form" name="form" cols="100" rows="24" class="large-text code"><?php echo esc_textarea($formValue); ?></textarea>
                 </div>
@@ -438,8 +434,7 @@ class WP_MADEIT_FORM_admin
                                 </section>
                                 <?php
                             }
-                        }
-                        ?>
+                        } ?>
                     </fieldset>
                     <span style="float:right; margin: 5px"><a href="javascript:void(0);" class="add-section" style="text-decoration:none;"><span class="dashicons dashicons-plus"></span></a></span>
                     <div class="clear"></div>
@@ -457,8 +452,7 @@ class WP_MADEIT_FORM_admin
                                 </label>
                             </p>
                             <?php
-                        }
-                        ?>
+                        } ?>
                     </fieldset>
                 </div>
             </div><!-- #madeit-tab -->
@@ -533,8 +527,7 @@ class WP_MADEIT_FORM_admin
                                 </tr>
                                 <?php
                             }
-                        }
-                        ?>
+                        } ?>
                     </tbody>
                 </table>
             </section>
@@ -551,13 +544,13 @@ class WP_MADEIT_FORM_admin
             }
         }
     }
-    
+
     /*
      * Sidebar
      */
     public function submitpost_box($post)
     {
-        if($post->post_type === 'ma_forms') {
+        if ($post->post_type === 'ma_forms') {
             ?>
             <div id="informationdiv" class="postbox">
                 <h3><?php echo esc_html(__('Information', 'forms-by-made-it')); ?></h3>
@@ -579,16 +572,16 @@ class WP_MADEIT_FORM_admin
             }
         }
     }
-    
+
     public function save_form($post_id, $post, $update)
     {
         global $_POST;
-        
-        if(isset($_POST['madeit_form_editor']) && $_POST['madeit_form_editor'] == 'yes') {
+
+        if (isset($_POST['madeit_form_editor']) && $_POST['madeit_form_editor'] == 'yes') {
             update_post_meta($post_id, 'form', $_POST['form']);
             update_post_meta($post_id, 'form_type', 'html');
             update_post_meta($post_id, 'save_inputs', 1);
-            
+
             $actions = [];
             $messages = [];
             //actions
@@ -618,12 +611,12 @@ class WP_MADEIT_FORM_admin
                     $messages[substr($k, strlen('messages_'))] = $v;
                 }
             }
-            
+
             update_post_meta($post_id, 'messages', json_encode($messages));
             update_post_meta($post_id, 'actions', json_encode($actions));
         }
     }
-    
+
     public function removeSlashes($str)
     {
         while (strpos($str, "\'") !== false) {
@@ -632,19 +625,18 @@ class WP_MADEIT_FORM_admin
 
         return $str;
     }
-    
+
     public function add_meta_boxes()
     {
         add_meta_box('ma_form_inputs_data', __('Submitted form data', 'forms-by-made-it'), [$this, 'ma_form_inputs_data'], 'ma_form_inputs', 'normal', 'high');
     }
-    
+
     public function ma_form_inputs_data($post)
     {
-        if(get_post_meta($post->ID, 'read', true) == 0) {
+        if (get_post_meta($post->ID, 'read', true) == 0) {
             update_post_meta($post->ID, 'read', 1);
         }
-        $data = json_decode(get_post_meta($post->ID, 'data', true), true);
-        ?>
+        $data = json_decode(get_post_meta($post->ID, 'data', true), true); ?>
         <table class="form-table">
             <tbody>
                 <?php
@@ -688,47 +680,46 @@ class WP_MADEIT_FORM_admin
         </table>
         <?php
     }
-    
+
     public function admin_menu()
     {
         global $menu;
         global $submenu;
-        
+
         $new = '';
         $count = 0;
         $count = count(get_posts([
-            'post_type' => 'ma_form_inputs',
+            'post_type'   => 'ma_form_inputs',
             'numberposts' => -1,
-             'meta_query' => [
+            'meta_query'  => [
                 [
-                    'key' => 'read',
+                    'key'   => 'read',
                     'value' => 0,
-                ]
+                ],
             ],
         ]));
 
         if ($count > 0) {
             $new = "<span class='update-plugins' title='".__('Unread form submits', 'forms-by-made-it')."'><span class='update-count'>".number_format_i18n($count).'</span></span>';
         }
-        
-        foreach($menu as $k => $m) {
-            if($m[0] == __( 'Forms', 'forms-by-made-it' )) {
+
+        foreach ($menu as $k => $m) {
+            if ($m[0] == __('Forms', 'forms-by-made-it')) {
                 $menu[$k][0] .= $new;
             }
         }
         $submenu['edit.php?post_type=ma_forms'][11][0] .= $new;
     }
-    
+
     public function form_inputs_export_button()
     {
         $screen = get_current_screen();
-        if('edit-ma_form_inputs' === $screen->id) {
-            add_action( 'in_admin_footer', function(){
-               $forms = get_posts([
-                    'post_type' => 'ma_forms',
+        if ('edit-ma_form_inputs' === $screen->id) {
+            add_action('in_admin_footer', function () {
+                $forms = get_posts([
+                    'post_type'   => 'ma_forms',
                     'numberposts' => -1,
-                ]);
-                ?>
+                ]); ?>
                 <form method="get" action="/wp-admin/edit.php">
                     <?php wp_nonce_field('export_forms'); ?>
                     <input type="hidden" name="post_type" value="ma_form_inputs">
@@ -752,23 +743,23 @@ class WP_MADEIT_FORM_admin
         add_action('admin_enqueue_scripts', [$this, 'initStyle']);
 
         add_action('init', [$this, 'init']);
-        
+
         add_filter('manage_edit-ma_forms_columns', [$this, 'set_custom_edit_ma_forms_columns']);
-        add_action('manage_ma_forms_posts_custom_column', [$this, 'custom_ma_forms_column'], 10, 2 );
-        
+        add_action('manage_ma_forms_posts_custom_column', [$this, 'custom_ma_forms_column'], 10, 2);
+
         add_filter('manage_edit-ma_form_inputs_columns', [$this, 'set_custom_edit_ma_form_inputs_columns']);
-        add_action('manage_ma_form_inputs_posts_custom_column', [$this, 'custom_ma_form_inputs_column'], 10, 2 );
-        
+        add_action('manage_ma_form_inputs_posts_custom_column', [$this, 'custom_ma_form_inputs_column'], 10, 2);
+
         add_action('edit_form_after_title', [$this, 'edit_form_after_title'], 10, 1);
         add_action('edit_form_advanced', [$this, 'edit_form_advanced'], 10, 1);
         add_action('submitpost_box', [$this, 'submitpost_box'], 20, 1);
         add_action('admin_footer', [$this, 'admin_footer']);
-        
+
         add_action('save_post_ma_forms', [$this, 'save_form'], 10, 3);
         add_action('add_meta_boxes', [$this, 'add_meta_boxes']);
-        
+
         add_action('admin_menu', [$this, 'admin_menu']);
-        
+
         add_action('load-edit.php', [$this, 'form_inputs_export_button']);
     }
 
