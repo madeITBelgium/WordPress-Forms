@@ -1,7 +1,6 @@
 <?php
 class WP_MADEIT_FORM_admin
 {
-    private $db;
     private $cycles;
     private $tags = [];
     private $actions = [];
@@ -9,35 +8,15 @@ class WP_MADEIT_FORM_admin
     private $settings;
     private $defaultSettings;
 
-    public function __construct($settings, $wp_plugin_db)
+    public function __construct($settings)
     {
         $this->settings = $settings;
         $this->defaultSettings = $this->settings->loadDefaultSettings();
-        $this->db = $wp_plugin_db;
     }
 
     public function initMenu()
     {
-        global $_wp_last_object_menu;
-        $_wp_last_object_menu++;
-
-        $new = '';
-        $count = 0;
-        $countQry = $this->db->querySingleRecord('SELECT count(*) as aantal FROM '.$this->db->prefix().'madeit_form_inputs WHERE `read` = 0');
-        if (isset($countQry['aantal'])) {
-            $count = $countQry['aantal'];
-        }
-
-        if ($count > 0) {
-            $new = "<span class='update-plugins' title='".__('Unread form submits', 'forms-by-made-it')."'><span class='update-count'>".number_format_i18n($count).'</span></span>';
-        }
-
-        add_menu_page(__('Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it').' '.$new, 'manage_options', 'madeit_forms', [$this, 'show_all'], 'dashicons-email', $_wp_last_object_menu);
-        add_submenu_page('madeit_forms', __('Made I.T. Forms', 'forms-by-made-it'), __('Forms', 'forms-by-made-it'), 'manage_options', 'madeit_forms', [$this, 'show_all']);
-        add_submenu_page('madeit_forms', __('Made I.T. Forms - New', 'forms-by-made-it'), __('Add new', 'forms-by-made-it'), 'manage_options', 'madeit_form', [$this, 'new_form']);
-        add_submenu_page('madeit_forms', __('Made I.T. Forms - Settings', 'forms-by-made-it'), __('Settings', 'forms-by-made-it'), 'manage_options', 'madeit_forms_settings', [$this, 'settings']);
-
-        add_submenu_page('madeit_forms', __('Made I.T. Forms - Inputs', 'forms-by-made-it'), __('Submitted forms', 'forms-by-made-it').' '.$new, 'manage_options', 'madeit_form_input', [$this, 'all_inputs']);
+        add_submenu_page('edit.php?post_type=ma_forms', __('Made I.T. Forms - Settings', 'forms-by-made-it'), __('Settings', 'forms-by-made-it'), 'manage_options', 'madeit_forms_settings', [$this, 'settings']);
     }
 
     public function initStyle()
@@ -71,20 +50,46 @@ class WP_MADEIT_FORM_admin
 
     public function initAdmin()
     {
-        if (isset($_GET['page']) && $_GET['page'] === 'madeit_form_input' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
-            $data = $this->db->querySelect('SELECT * FROM `'.$this->db->prefix().'madeit_form_inputs` WHERE form_id = %s', $_GET['id']);
+        if (isset($_GET['post_type']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
+            $data = get_posts([
+                'post_type' => 'ma_form_inputs',
+                'numberposts' => -1,
+                 'meta_query' => [
+                    [
+                        'key' => 'form_id',
+                        'value' => $_GET['id'],
+                    ]
+                ],
+            ]);
+            
+            $form = get_post($_GET['id']);
+            if($form->post_type !== 'ma_forms') {
+                exit();
+            }
+            
             // output headers so that the file is downloaded rather than displayed
             header('Content-Type: text/csv; charset=utf-8');
             header('Content-Disposition: attachment; filename=export-madeit-forms-'.date('Y-m-d-H-i-s').'.csv');
 
             // create a file pointer connected to the output stream
             $output = fopen('php://output', 'w');
-
-            $d = $data[0];
-            unset($row['data']);
-            foreach (json_decode($d['data'], true) as $k => $v) {
+            if(count($data) === 0) {
+                exit();
+            }
+            
+            $row = [
+                'id' => '',
+                'form' => '',
+            ];
+            
+            foreach (json_decode(get_post_meta($data[0]->ID, 'data', true), true) as $k => $v) {
                 $row[$k] = $v;
             }
+            
+            $row['ip'] = '';
+            $row['user_agent'] = '';
+            $row['date'] = '';
+            
             unset($row['g-recaptcha-response']);
             $columns = array_keys($row);
 
@@ -93,230 +98,24 @@ class WP_MADEIT_FORM_admin
 
             // fetch the data
             foreach ($data as $d) {
-                unset($row['data']);
-                foreach (json_decode($d['data'], true) as $k => $v) {
+                $row = [
+                    'id' => $d->ID,
+                    'form' => $form->post_title,
+                ];
+
+                foreach (json_decode(get_post_meta($d->ID, 'data', true), true) as $k => $v) {
                     $row[$k] = $v;
                 }
+                
+                $row['ip'] = get_post_meta($d->ID, 'ip', true);
+                $row['user_agent'] = get_post_meta($d->ID, 'user_agent', true);
+                $row['date'] = $d->post_date;
+                
                 unset($row['g-recaptcha-response']);
                 fputcsv($output, $row);
             }
             exit();
         }
-    }
-
-    public function show_all()
-    {
-        echo '<div class="wrap">';
-        if (!isset($_GET['action']) || $_GET['action'] != 'edit') {
-            ?>
-            <h1><?php echo __('Forms', 'forms-by-made-it'); ?><a href="admin.php?page=madeit_form" class="add-new-h2"><?php echo __('Add new', 'forms-by-made-it'); ?></a></h1>
-            <?php
-        }
-        if ((isset($_GET['action']) && $_GET['action'] == 'delete') || (isset($_POST['madeit-forms-delete']) && isset($_GET['action']) && $_GET['action'] == 'edit')) {
-            $this->db->queryWrite('DELETE FROM '.$this->db->prefix().'madeit_forms WHERE `id` = %s', $_GET['id']); ?>
-            <div class="updated"><p><strong><?php echo __('The form is deleted.', 'forms-by-made-it'); ?></strong></p></div>
-            <?php
-            $_GET['action'] = 'delete';
-        }
-        if (isset($_GET['action']) && $_GET['action'] == 'edit') {
-            if (isset($_POST['add_new']) && $_POST['add_new'] == 'Y') {
-                $this->post_edit_form();
-            }
-            $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $_GET['id']);
-            if (is_array($f)) {
-                $f = json_decode(json_encode($f));
-            }
-            if (!isset($f->id)) {
-                ?>
-                <div class="error"><p><strong><?php echo __('The form isn\'t available', 'forms-by-made-it'); ?></strong></p></div>
-                <?php
-            } else {
-                $form = ['id' => $f->id, 'title' => $f->title, 'form' => $f->form, 'actions' => json_decode($f->actions, true), 'messages' => json_decode($f->messages, true)];
-                include MADEIT_FORM_DIR.'/admin/forms/form.php';
-            }
-        } else {
-            require_once MADEIT_FORM_DIR.'/admin/FormListTable.php';
-            $list = new FormListTable();
-            $list->prepare_items();
-            $list->display();
-        }
-        echo '</div>';
-    }
-
-    public function new_form()
-    {
-        $from = '<p>Your name:</p>
-[text name="your-name"]
-<p>Your email:</p>
-[email name="your-email"]
-[submit value="Send"]';
-        if (isset($_POST['add_new'])) {
-            if ($_POST['form_id'] == 0) {
-                $form = $this->post_form();
-            } else {
-                $this->post_edit_form();
-                $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $_POST['form_id']);
-                $form = ['id' => $f['id'], 'title' => $f['title'], 'form' => $f['form'], 'actions' => json_decode($f['actions'], true), 'messages' => json_decode($f['messages'], true)];
-            }
-        } else {
-            $form = ['id' => 0, 'title' => '', 'form' => $from, 'actions' => [], 'messages' => []];
-        }
-        include_once MADEIT_FORM_ADMIN.'/forms/form.php';
-    }
-
-    private function post_form()
-    {
-        if (!wp_verify_nonce($_POST['_wpnonce'], 'madeit-form-save-contact-form')) {
-            exit(__('Security check'));
-        }
-        $form = ['id' => $_POST['form_id'], 'title' => $_POST['title'], 'form' => $_POST['form'], 'actions' => [], 'messages' => []];
-        $error = false;
-        $error_msg = '';
-
-        //actions
-        $countActions = 0;
-        foreach ($_POST as $k => $v) {
-            if (substr($k, 0, strlen('action_panel_')) == 'action_panel_' && is_numeric($v) && $v > $countActions) {
-                $countActions = $v;
-            }
-        }
-
-        $j = 1;
-        for ($i = 1; $i <= $countActions; $i++) {
-            $id = $_POST['action_type_'.$i];
-            if (isset($this->actions[$id])) {
-                $action = $this->actions[$id];
-                $form['actions'][$j] = ['_id' => $id];
-                foreach ($action['action_fields'] as $name => $info) {
-                    $form['actions'][$j][$name] = isset($_POST['action_'.$id.'_'.$name.'_'.$i]) ? $_POST['action_'.$id.'_'.$name.'_'.$i] : '';
-                }
-                $form['actions'][$j]['key'] = isset($_POST['action_key_'.$i]) ? $_POST['action_key_'.$i] : $this->generateKey();
-            }
-            $j++;
-        }
-
-        foreach ($_POST as $k => $v) {
-            if (substr($k, 0, strlen('messages_')) == 'messages_') {
-                $form['messages'][substr($k, strlen('messages_'))] = $v;
-            }
-        }
-
-        if (!$error) {
-            $this->db->queryWrite('INSERT INTO '.$this->db->prefix().'madeit_forms (title, form, actions, messages, create_time) VALUES (%s, %s, %s, %s, %s)', $form['title'], $form['form'], json_encode($form['actions']), json_encode($form['messages']), date('Y-m-d H:i:s'));
-
-            $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE title = %s ORDER BY id DESC', $form['title']);
-            if (!isset($f['id'])) {
-                ?>
-                <div class="error"><p><strong><?php echo __('The form doesn\'t exist', 'forms-by-made-it'); ?></strong></p></div>
-                <?php
-            } else {
-                $form = ['id' => $f['id'], 'title' => $f['title'], 'form' => $f['form'], 'actions' => json_decode($f['actions'], true), 'messages' => json_decode($f['messages'], true)];
-            } ?>
-            <div class="updated"><p><strong><?php echo __('The form is successfully saved.', 'forms-by-made-it'); ?></strong></p></div>
-            <?php
-        } else {
-            ?>
-            <div class="error"><p><strong><?php echo __($error, 'forms-by-made-it'); ?></strong></p></div>
-            <?php
-        }
-
-        return $form;
-    }
-
-    private function post_edit_form()
-    {
-        if (!wp_verify_nonce($_POST['_wpnonce'], 'madeit-form-save-contact-form')) {
-            wp_die(__('Security check'));
-        }
-        $form = ['id' => $_POST['form_id'], 'title' => $_POST['title'], 'form' => $_POST['form'], 'actions' => [], 'messages' => []];
-        $error = false;
-        $error_msg = '';
-
-        //actions
-        $countActions = 0;
-        foreach ($_POST as $k => $v) {
-            if (substr($k, 0, strlen('action_panel_')) == 'action_panel_' && is_numeric($v) && $v > $countActions) {
-                $countActions = $v;
-            }
-        }
-
-        $j = 1;
-        for ($i = 1; $i <= $countActions; $i++) {
-            $id = $_POST['action_type_'.$i];
-            if (isset($this->actions[$id])) {
-                $action = $this->actions[$id];
-                $form['actions'][$j] = ['_id' => $id];
-                foreach ($action['action_fields'] as $name => $info) {
-                    $form['actions'][$j][$name] = isset($_POST['action_'.$id.'_'.$name.'_'.$i]) ? $_POST['action_'.$id.'_'.$name.'_'.$i] : '';
-                }
-                $form['actions'][$j]['key'] = isset($_POST['action_key_'.$i]) ? $_POST['action_key_'.$i] : $this->generateKey();
-            }
-            $j++;
-        }
-
-        foreach ($_POST as $k => $v) {
-            if (substr($k, 0, strlen('messages_')) == 'messages_') {
-                $form['messages'][substr($k, strlen('messages_'))] = $v;
-            }
-        }
-
-        if ($error) {
-            ?>
-            <div class="error"><p><strong><?php echo __($error_msg, 'forms-by-made-it'); ?></strong></p></div>
-            <?php
-        } else {
-            $this->db->queryWrite('UPDATE '.$this->db->prefix().'madeit_forms set title = %s, form = %s, actions = %s, messages = %s WHERE id = %s', $form['title'], $form['form'], json_encode($form['actions']), json_encode($form['messages']), $_POST['form_id']); ?>
-            <div class="updated"><p><strong><?php echo __('The form is successfully saved.', 'forms-by-made-it'); ?></strong></p></div>
-            <?php
-        }
-    }
-
-    public function all_inputs()
-    {
-        echo '<div class="wrap">';
-        if (!isset($_GET['action']) || $_GET['action'] != 'edit') {
-            ?>
-            <h1><?php echo __('Submitted forms', 'forms-by-made-it'); ?></h1>
-            <?php
-        }
-        if (isset($_GET['action']) && $_GET['action'] == 'delete') {
-            $this->db->queryWrite('DELETE FROM '.$this->db->prefix().'madeit_form_inputs WHERE id = %s', $_GET['id']); ?>
-            <div class="updated"><p><strong><?php echo __('The submitted data is deleted.', 'forms-by-made-it'); ?></strong></p></div>
-            <?php
-        }
-        if (isset($_GET['action']) && $_GET['action'] == 'show') {
-            $f = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_form_inputs` WHERE id = %s', $_GET['id']);
-            $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $f['form_id']);
-
-            $this->db->queryWrite('UPDATE '.$this->db->prefix().'madeit_form_inputs set `read` = 1 WHERE id = %s', $_GET['id']);
-            if (!isset($f['id'])) {
-                ?>
-                <div class="error"><p><strong><?php echo __('The data isn\'t available', 'forms-by-made-it'); ?></strong></p></div>
-                <?php
-            } else {
-                include MADEIT_FORM_DIR.'/admin/forms/submitted.php';
-            }
-        } else {
-            $forms = $this->db->querySelect('SELECT * FROM `'.$this->db->prefix().'madeit_forms`'); ?>
-            <form method="get" action="/wp-admin/admin.php">
-                <?php wp_nonce_field('export_forms'); ?>
-                <input type="hidden" name="page" value="madeit_form_input">
-                <input type="hidden" name="action" value="export">
-                <select name="id">
-                    <?php foreach ($forms as $form) { ?>
-                    <option value="<?php echo $form['id']; ?>"><?php echo esc_textarea($form['title']); ?></option>
-                    <?php } ?>
-                </select>
-                <input type="submit" value="Exporteer" class="button">
-            </form>
-            <?php
-
-            require_once MADEIT_FORM_DIR.'/admin/InputListTable.php';
-            $list = new InputListTable($this->db);
-            $list->prepare_items();
-            $list->display();
-        }
-        echo '</div>';
     }
 
     public function settings()
@@ -378,45 +177,41 @@ class WP_MADEIT_FORM_admin
         $res = 0;
         $errors = [];
 
-        $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $id);
-        if (isset($form['id'])) {
-            $formValue = $form->form;
-            $formValue = str_replace('\"', '"', $formValue);
-            if (isset($form['id'])) {
-                $tags = $this->getTags($formValue);
-                $t = [];
-                foreach ($tags as $a) {
-                    $t[$a] = 'a';
+        
+        $formValue = get_post_meta($id, 'form', true);
+        $formValue = str_replace('\"', '"', $formValue);
+
+        $tags = $this->getTags($formValue);
+        $t = [];
+        foreach ($tags as $a) {
+            $t[$a] = 'a';
+        }
+
+        //execute actions
+        $formActions = json_decode(get_post_meta($id, 'actions', true), true);
+        if (!empty($formActions) && count($formActions) > 0) {
+            foreach ($formActions as $actID => $actionInfo) {
+                $action = $this->actions[$actionInfo['_id']];
+
+                $data = [];
+                foreach ($action['action_fields'] as $name => $info) {
+                    $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value'];
+                    $data[$name] = $this->changeInputTag($t, $inputValue);
                 }
 
-                //execute actions
-                if (isset($form['actions']) && !empty($form['actions'])/* && count($form->actions) > 0*/) {
-                    $formActions = json_decode($form['actions'], true);
-                    foreach ($formActions as $actID => $actionInfo) {
-                        $action = $this->actions[$actionInfo['_id']];
-
-                        $data = [];
-                        foreach ($action['action_fields'] as $name => $info) {
-                            $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value'];
-                            $data[$name] = $this->changeInputTag($t, $inputValue);
-                        }
-
-                        foreach ($data as $key => $val) {
-                            $pos = strpos($val, '[');
-                            if ($pos !== false) {
-                                $posN = strpos($val, ']', $pos);
-                                $space = strpos($val, ' ', $pos);
-                                if ($posN !== false) {
-                                    $res++;
-                                    $errors[] = $key;
-                                }
-                            }
+                foreach ($data as $key => $val) {
+                    $pos = strpos($val, '[');
+                    if ($pos !== false) {
+                        $posN = strpos($val, ']', $pos);
+                        $space = strpos($val, ' ', $pos);
+                        if ($posN !== false) {
+                            $res++;
+                            $errors[] = $key;
                         }
                     }
                 }
             }
         }
-        //print_r($errors);
         return $res;
     }
 
@@ -453,6 +248,502 @@ class WP_MADEIT_FORM_admin
             $this->addModule($id, $value);
         }
     }
+    
+    public function set_custom_edit_ma_forms_columns($columns)
+    {
+        $columns['short_code'] = __( 'Shortcode', 'forms-by-made-it' );
+        return $columns;
+    }
+
+    public function custom_ma_forms_column($column, $post_id)
+    {
+        if($column === 'short_code') {
+            $formId = get_post_meta( $post_id , 'form_id' , true);
+            if(empty($formId)) {
+                $formId = $post_id;
+            }
+            echo '[form id="' . $formId . '"]';
+        }
+    }
+    
+    public function set_custom_edit_ma_form_inputs_columns($columns)
+    {
+        $date = $columns['date'];
+        unset($columns['date']);
+        $columns['form'] = __('Form', 'forms-by-made-it');
+        $columns['read'] = __('Read', 'forms-by-made-it');
+        $columns['date'] = $date;
+        return $columns;
+    }
+
+    public function custom_ma_form_inputs_column($column, $post_id)
+    {
+        if($column === 'form') {
+            $formId = get_post_meta($post_id , 'form_id' , true);
+            echo get_post($formId)->post_title;
+        } else if($column === 'read') {
+            echo get_post_meta($post_id, 'read', true) == 1 ? __('Yes', 'forms-by-made-it') : __('No', 'forms-by-made-it');
+        }
+    }
+    
+    /*
+     * Show shortcode
+     */
+    public function edit_form_after_title($post)
+    {
+        if($post->post_type === 'ma_forms') {
+            if(isset($post->ID) && $post->ID > 0) {
+                $formId = get_post_meta($post->ID, 'form_id', true);
+                $formId = empty($formId) ? $post->ID : $formId;
+                ?>
+                <div class="inside">
+                    <p class="description">
+                        <label for="madeit-forms-shortcode"><?php echo esc_html(__('Copy this shortcode and paste it into your post, page, or text widget content:', 'forms-by-made-it')); ?></label>
+                        <span class="shortcode wp-ui-highlight"><input type="text" id="madeit-forms-shortcode" onfocus="this.select();" readonly="readonly" class="large-text code" value="<?php echo esc_attr('[form id="'.$formId.'"]'); ?>" /></span>
+                    </p>
+                </div>
+                <?php
+            }
+        }
+    }
+    
+    /*
+     * Form editor
+     */
+    public function edit_form_advanced($post)
+    {
+        if($post->post_type === 'ma_forms') {
+            
+            $formValue = '<p>Your name:</p>
+[text name="your-name"]
+<p>Your email:</p>
+[email name="your-email"]
+[submit value="Send"]';
+            
+            
+            $actions = [];
+            $messages = [];
+            $form = get_post_meta($post->ID, 'form', true);
+            if(!empty($form)) {
+                $formValue = $form;
+                $messages = json_decode(get_post_meta($post->ID, 'messages', true), true);
+                $actions = json_decode(get_post_meta($post->ID, 'actions', true), true);
+            }
+            
+            $formValue = str_replace('\"', '"', $formValue);
+            
+            ?>
+            <input type="hidden" name="madeit_form_editor" value="yes">
+            <div id="madeit-tab">
+                <ul id="madeit-tab-tabs">
+                    <li id="form-panels-tab"><a href="#form-panel"><?php echo esc_html(__('Form', 'forms-by-made-it')); ?></a></li>
+                    <li id="actions-panels-tab"><a href="#actions-panel"><?php echo esc_html(__('Actions', 'forms-by-made-it')); ?></a></li>
+                    <li id="messages-panels-tab"><a href="#messages-panel"><?php echo esc_html(__('Messages', 'forms-by-made-it')); ?></a></li>
+                </ul>
+                <div class="madeit-tab-panel" id="form-panel">
+                    <h2><?php echo esc_html(__('Form', 'forms-by-made-it')); ?></h2>
+                    <span id="tag-generator-list">
+                        <?php
+                        foreach ($this->tags as $id => $panel) {
+                            echo sprintf(
+                                '<a href="#TB_inline?width=600&height=550&inlineId=%1$s" class="thickbox button" title="%2$s">%3$s</a>',
+                                esc_attr($panel['content'].'-'.$id),
+                                esc_attr(sprintf(__('Form-tag Generator: %s', 'forms-by-made-it'), $panel['title'])),
+                                esc_html($panel['title'])
+                            );
+                        }
+                        ?>
+                    </span>
+                    <textarea id="madeit-forms-form" name="form" cols="100" rows="24" class="large-text code"><?php echo esc_textarea($formValue); ?></textarea>
+                </div>
+                <div class="madeit-tab-panel" id="actions-panel">
+                   <h2><?php echo esc_html(__('Actions', 'forms-by-made-it')); ?></h2>
+                    <fieldset>
+                        <legend><?php echo esc_html(__('In the following fields, you can use these name-tags:', 'forms-by-made-it')); ?><br /><span class="name-tags"></span></legend>
+                        <?php
+                        if (isset($actions) && count($actions) > 0) {
+                            foreach ($actions as $actID => $actionInfo) {
+                                ?>
+                                <section id="action-panel-<?php echo $actID; ?>" data-id="<?php echo $actID; ?>" data-section-id="action-panel-" class="action-section">
+                                    <input type="hidden" name="action_panel_<?php echo $actID; ?>" value="<?php echo $actID; ?>" data-name="action_panel_">
+                                    <span style="float:right; margin: 5px;"><a href="javascript:void(0);" class="delete-section" style="text-decoration:none;"><span class="dashicons dashicons-no-alt"></span></a></span>
+                                    <h3><?php echo esc_html(__('Action', 'forms-by-made-it')); ?>
+                                        <?php if (isset($actionInfo['key'])) {
+                                    ?>
+                                            <input type="hidden" name="action_key_<?php echo $actID; ?>" value="<?php echo esc_attr($actionInfo['key']); ?>" />
+                                            <?php
+                                            echo ' - ('.__('Key', 'forms-by-made-it').':'.$actionInfo['key'].')';
+                                } ?></h3>
+                                    <table class="form-table">
+                                        <tbody>
+                                            <tr data-name="action_type_">
+                                                <th scope="row">
+                                                    <label for="action_type_<?php echo $actID; ?>"><?php echo esc_html(__('Type', 'forms-by-made-it')); ?></label>
+                                                </th>
+                                                <td>
+                                                    <select name="action_type_<?php echo $actID; ?>" class="large-text code" style="width:100%">
+                                                        <?php
+                                                        foreach ($this->actions as $id => $action) {
+                                                            ?>
+                                                            <option value="<?php echo esc_html($id); ?>" <?php echo ($actionInfo['_id'] == $id) ? 'SELECTED' : ''; ?>><?php echo esc_html($action['title']); ?></option>
+                                                        <?php
+                                                        } ?>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                            foreach ($this->actions as $id => $action) {
+                                                foreach ($action['action_fields'] as $name => $info) {
+                                                    $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value']; ?>
+                                                    <tr class="ACTION_<?php echo esc_html($id); ?>" data-name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_">
+                                                        <th scope="row">
+                                                            <label for="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>"><?php echo esc_html($info['label']); ?></label>
+                                                        </th>
+                                                        <td>
+                                                            <?php
+                                                            if ($info['type'] == 'text') {
+                                                                ?>
+                                                                <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" value="<?php echo esc_attr($inputValue); ?>" />
+                                                                <?php
+                                                            } elseif ($info['type'] == 'select') {
+                                                                ?>
+                                                                <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" width="100%">
+                                                                    <?php foreach ($info['options'] as $key => $val) {
+                                                                    ?>
+                                                                        <option value="<?php echo esc_html($key); ?>" <?php if ($key == $inputValue) {
+                                                                        echo 'SELECTED';
+                                                                    } ?>><?php echo esc_html($val); ?></option>
+                                                                    <?php
+                                                                } ?> 
+                                                                </select>
+                                                                <?php
+                                                            } elseif ($info['type'] == 'textarea') {
+                                                                $value = stripcslashes($inputValue); ?>
+                                                                <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo isset($info['options']['min-height']) ? $info['options']['min-height'] : '50px'; ?>;"><?php echo $value; ?></textarea>
+                                                                <?php
+                                                            } elseif ($info['type'] == 'checkbox') {
+                                                                ?>
+                                                                <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="" value="checked" <?php if ($inputValue == 'checked') {
+                                                                    echo 'CHECKED';
+                                                                } ?>>
+                                                                <?php
+                                                            } ?>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                </section>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </fieldset>
+                    <span style="float:right; margin: 5px"><a href="javascript:void(0);" class="add-section" style="text-decoration:none;"><span class="dashicons dashicons-plus"></span></a></span>
+                    <div class="clear"></div>
+                </div>
+                <div class="madeit-tab-panel" id="messages-panel">
+                   <h2><?php echo esc_html(__('Messages', '')); ?></h2>
+                    <fieldset>
+                        <legend><?php echo esc_html(__('In the following fields, you can use these name-tags:', 'forms-by-made-it')); ?><br /><span class="name-tags"></span></legend>
+                        <?php
+                        foreach ($this->messages as $arr) {
+                            $value = isset($messages[$arr['field']]) ? $messages[$arr['field']] : $arr['value']; ?>
+                            <p class="description">
+                                <label for="<?php echo $arr['field']; ?>"><?php echo esc_html($arr['description']); ?><br />
+                                    <input type="text" id="messages_<?php echo $arr['field']; ?>" name="messages_<?php echo $arr['field']; ?>" class="large-text" size="70" value="<?php echo esc_attr($this->removeSlashes($value)); ?>" />
+                                </label>
+                            </p>
+                            <?php
+                        }
+                        ?>
+                    </fieldset>
+                </div>
+            </div><!-- #madeit-tab -->
+            <?php
+        }
+    }
+
+    public function admin_footer()
+    {
+        ?>
+        <div id="empty-actions-section" style="display: none;">
+            <section id="action-panel-" data-id="0" data-section-id="action-panel-" class="action-section">
+                <input type="hidden" name="action_panel_" value="" data-name="action_panel_">
+                <span style="float:right; margin: 5px;"><a href="javascript:void(0);" class="delete-section" style="text-decoration:none;"><span class="dashicons dashicons-no-alt"></span></a></span>
+                <h3><?php echo esc_html(__('Action', 'forms-by-made-it')); ?></h3>
+                <table class="form-table">
+                    <tbody>
+                        <tr data-name="action_type_">
+                            <th scope="row">
+                                <label for="action_type_"><?php echo esc_html(__('Type', 'forms-by-made-it')); ?></label>
+                            </th>
+                            <td>
+                                <select name="action_type_" class="large-text code" style="width:100%">
+                                    <?php
+                                    foreach ($this->actions as $id => $action) {
+                                        ?>
+                                        <option value="<?php echo esc_html($id); ?>"><?php echo esc_html($action['title']); ?></option>
+                                    <?php
+                                    } ?>
+                                </select>
+                            </td>
+                        </tr>
+                        <?php
+                        foreach ($this->actions as $id => $action) {
+                            foreach ($action['action_fields'] as $name => $info) {
+                                $inputValue = isset($info['value']) ? $info['value'] : '';
+                                $actID = $id; ?>
+                                <tr class="ACTION_<?php echo esc_html($id); ?>" data-name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_">
+                                    <th scope="row">
+                                        <label for="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_"><?php echo esc_html($info['label']); ?></label>
+                                    </th>
+                                    <td>
+                                        <?php
+                                        if ($info['type'] == 'text') {
+                                            ?>
+                                            <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" value="<?php echo esc_attr($inputValue); ?>" />
+                                            <?php
+                                        } elseif ($info['type'] == 'select') {
+                                            ?>
+                                            <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" width="100%">
+                                                <?php foreach ($info['options'] as $key => $val) {
+                                                ?>
+                                                    <option value="<?php echo esc_html($key); ?>" <?php if ($key == $inputValue) {
+                                                    echo 'SELECTED';
+                                                } ?>><?php echo esc_html($val); ?></option>
+                                                <?php
+                                            } ?> 
+                                            </select>
+                                            <?php
+                                        } elseif ($info['type'] == 'textarea') {
+                                            $value = stripcslashes($inputValue); ?>
+                                            <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo isset($info['options']['min-height']) ? $info['options']['min-height'] : '50px'; ?>;"><?php echo $value; ?></textarea>
+                                            <?php
+                                        } elseif ($info['type'] == 'checkbox') {
+                                            ?>
+                                            <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="" value="checked" <?php if ($inputValue == 'checked') {
+                                                echo 'CHECKED';
+                                            } ?>>
+                                            <?php
+                                        } ?>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+        <?php
+        add_thickbox();
+        foreach ($this->tags as $id => $panel) {
+            $callback = $panel['form'];
+            if (is_callable($callback)) {
+                echo sprintf('<div id="%s" class="hidden">', esc_attr($panel['content'].'-'.$id));
+                echo sprintf('<form action="" class="tag-generator-panel" data-id="%s">', $id);
+                call_user_func($callback, '', array_merge($panel, ['id' => $id]));
+                echo '</form></div>';
+            }
+        }
+    }
+    
+    /*
+     * Sidebar
+     */
+    public function submitpost_box($post)
+    {
+        if($post->post_type === 'ma_forms') {
+            ?>
+            <div id="informationdiv" class="postbox">
+                <h3><?php echo esc_html(__('Information', 'forms-by-made-it')); ?></h3>
+                <div class="inside">
+                    <ul>
+                        <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/docs/'), __('Docs', 'forms-by-made-it'), ''); ?></li>
+                        <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/faq'), __('F.A.Q.', 'forms-by-made-it'), ''); ?></li>
+                        <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/'), __('Support', 'forms-by-made-it'), ''); ?></li>
+                    </ul>
+                </div>
+            </div><!-- #informationdiv -->
+
+            <?php
+            $errors = $this->checkFormActions($post->ID);
+            if ($errors > 0) {
+                $message = sprintf(_n('%s configuration error found', '%s configuration errors found', $errors, 'forms-by-made-it'), $errors);
+                $link = sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#configuration-validator'), __("What's this?", 'forms-by-made-it'), '');
+                echo sprintf('<div class="misc-pub-section warning">%1$s<br />%2$s</div>', $message, $link);
+            }
+        }
+    }
+    
+    public function save_form($post_id, $post, $update)
+    {
+        global $_POST;
+        
+        if(isset($_POST['madeit_form_editor']) && $_POST['madeit_form_editor'] == 'yes') {
+            update_post_meta($post_id, 'form', $_POST['form']);
+            update_post_meta($post_id, 'form_type', 'html');
+            update_post_meta($post_id, 'save_inputs', 1);
+            
+            $actions = [];
+            $messages = [];
+            //actions
+            $countActions = 0;
+            foreach ($_POST as $k => $v) {
+                if (substr($k, 0, strlen('action_panel_')) == 'action_panel_' && is_numeric($v) && $v > $countActions) {
+                    $countActions = $v;
+                }
+            }
+
+            $j = 1;
+            for ($i = 1; $i <= $countActions; $i++) {
+                $id = $_POST['action_type_'.$i];
+                if (isset($this->actions[$id])) {
+                    $action = $this->actions[$id];
+                    $actions[$j] = ['_id' => $id];
+                    foreach ($action['action_fields'] as $name => $info) {
+                        $actions[$j][$name] = isset($_POST['action_'.$id.'_'.$name.'_'.$i]) ? $_POST['action_'.$id.'_'.$name.'_'.$i] : '';
+                    }
+                    $actions[$j]['key'] = isset($_POST['action_key_'.$i]) ? $_POST['action_key_'.$i] : $this->generateKey();
+                }
+                $j++;
+            }
+
+            foreach ($_POST as $k => $v) {
+                if (substr($k, 0, strlen('messages_')) == 'messages_') {
+                    $messages[substr($k, strlen('messages_'))] = $v;
+                }
+            }
+            
+            update_post_meta($post_id, 'messages', json_encode($messages));
+            update_post_meta($post_id, 'actions', json_encode($actions));
+        }
+    }
+    
+    public function removeSlashes($str)
+    {
+        while (strpos($str, "\'") !== false) {
+            $str = str_replace("\'", "'", $str);
+        }
+
+        return $str;
+    }
+    
+    public function add_meta_boxes()
+    {
+        add_meta_box('ma_form_inputs_data', __('Submitted form data', 'forms-by-made-it'), [$this, 'ma_form_inputs_data'], 'ma_form_inputs', 'normal', 'high');
+    }
+    
+    public function ma_form_inputs_data($post)
+    {
+        if(get_post_meta($post->ID, 'read', true) == 0) {
+            update_post_meta($post->ID, 'read', 1);
+        }
+        $data = json_decode(get_post_meta($post->ID, 'data', true), true);
+        ?>
+        <table class="form-table">
+            <tbody>
+                <?php
+                foreach ($data as $k => $v) {
+                    ?>
+                    <tr>
+                        <th scope="row">
+                            <label><strong><?php echo esc_textarea($k); ?></strong></label>
+                        </th>
+                        <td>
+                            <?php echo nl2br(esc_html($v)); ?>
+                        </td>
+                    </tr>
+                    <?php
+                } ?>
+                <tr>
+                    <th scope="row">
+                        <label><strong><?php echo __('IP', 'forms-by-made-it'); ?></strong></label>
+                    </th>
+                    <td>
+                        <?php echo esc_html(get_post_meta($post->ID, 'ip', true)); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label><strong><?php echo __('User agent', 'forms-by-made-it'); ?></strong></label>
+                    </th>
+                    <td>
+                        <?php echo esc_html(get_post_meta($post->ID, 'user_agent', true)); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label><strong><?php echo __('Date', 'forms-by-made-it'); ?></strong></label>
+                    </th>
+                    <td>
+                        <?php echo esc_html($post->post_date); ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <?php
+    }
+    
+    public function admin_menu()
+    {
+        global $menu;
+        global $submenu;
+        
+        $new = '';
+        $count = 0;
+        $count = count(get_posts([
+            'post_type' => 'ma_form_inputs',
+            'numberposts' => -1,
+             'meta_query' => [
+                [
+                    'key' => 'read',
+                    'value' => 0,
+                ]
+            ],
+        ]));
+
+        if ($count > 0) {
+            $new = "<span class='update-plugins' title='".__('Unread form submits', 'forms-by-made-it')."'><span class='update-count'>".number_format_i18n($count).'</span></span>';
+        }
+        
+        foreach($menu as $k => $m) {
+            if($m[0] == __( 'Forms', 'forms-by-made-it' )) {
+                $menu[$k][0] .= $new;
+            }
+        }
+        $submenu['edit.php?post_type=ma_forms'][11][0] .= $new;
+    }
+    
+    public function form_inputs_export_button()
+    {
+        $screen = get_current_screen();
+        if('edit-ma_form_inputs' === $screen->id) {
+            add_action( 'in_admin_footer', function(){
+               $forms = get_posts([
+                    'post_type' => 'ma_forms',
+                    'numberposts' => -1,
+                ]);
+                ?>
+                <form method="get" action="/wp-admin/edit.php">
+                    <?php wp_nonce_field('export_forms'); ?>
+                    <input type="hidden" name="post_type" value="ma_form_inputs">
+                    <input type="hidden" name="action" value="export">
+                    <select name="id">
+                        <?php foreach ($forms as $form) { ?>
+                        <option value="<?php echo $form->ID; ?>"><?php echo esc_textarea($form->post_title); ?></option>
+                        <?php } ?>
+                    </select>
+                    <input type="submit" value="Exporteer" class="button">
+                </form>
+                <?php
+            });
+        }
+    }
 
     public function addHooks()
     {
@@ -461,6 +752,24 @@ class WP_MADEIT_FORM_admin
         add_action('admin_enqueue_scripts', [$this, 'initStyle']);
 
         add_action('init', [$this, 'init']);
+        
+        add_filter('manage_edit-ma_forms_columns', [$this, 'set_custom_edit_ma_forms_columns']);
+        add_action('manage_ma_forms_posts_custom_column', [$this, 'custom_ma_forms_column'], 10, 2 );
+        
+        add_filter('manage_edit-ma_form_inputs_columns', [$this, 'set_custom_edit_ma_form_inputs_columns']);
+        add_action('manage_ma_form_inputs_posts_custom_column', [$this, 'custom_ma_form_inputs_column'], 10, 2 );
+        
+        add_action('edit_form_after_title', [$this, 'edit_form_after_title'], 10, 1);
+        add_action('edit_form_advanced', [$this, 'edit_form_advanced'], 10, 1);
+        add_action('submitpost_box', [$this, 'submitpost_box'], 20, 1);
+        add_action('admin_footer', [$this, 'admin_footer']);
+        
+        add_action('save_post_ma_forms', [$this, 'save_form'], 10, 3);
+        add_action('add_meta_boxes', [$this, 'add_meta_boxes']);
+        
+        add_action('admin_menu', [$this, 'admin_menu']);
+        
+        add_action('load-edit.php', [$this, 'form_inputs_export_button']);
     }
 
     public function generateKey()

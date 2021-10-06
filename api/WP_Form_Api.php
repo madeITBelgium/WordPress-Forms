@@ -2,7 +2,6 @@
 
 class WP_Form_Api
 {
-    private $db;
     private $tags = [];
     private $actions = [];
     private $messages = [];
@@ -10,11 +9,10 @@ class WP_Form_Api
     private $defaultSettings;
     private $form_id = null;
 
-    public function __construct($settings, $wp_plugin_db)
+    public function __construct($settings)
     {
         $this->settings = $settings;
         $this->defaultSettings = $this->settings->loadDefaultSettings();
-        $this->db = $wp_plugin_db;
     }
 
     public function init()
@@ -32,18 +30,33 @@ class WP_Form_Api
 
     public function save($id, $data)
     {
-        $form = $this->db->querySingleRecord('SELECT * FROM `'.$this->db->prefix().'madeit_forms` WHERE id = %s', $id);
-        if (is_array($form)) {
-            $form = json_decode(json_encode($form));
+        $forms = get_posts([
+            'post_type' => 'ma_forms',
+             'meta_query' => [
+                [
+                    'key' => 'form_id',
+                    'value' => $id,
+                ]
+            ],
+        ]);
+        
+        if(count($forms) === 1) {
+            $form = $forms[0];
+        } else {
+            $form = get_post($id);
         }
-
-        $formValue = $form->form;
+        
+        if($form->post_type !== 'ma_forms') {
+            return false;
+        }
+        
+        $formValue = get_post_meta($form->ID, 'form', true);
         $formValue = str_replace('\"', '"', $formValue);
         if (isset($form->id)) {
             //validate input fields
             $error = false;
             $error_msg = '';
-            $messages = json_decode($form->messages, true);
+            $messages = json_decode(get_post_meta($form->ID, 'messages', true), true);
 
             //insert form input
             foreach ($data as $k => $v) {
@@ -71,34 +84,40 @@ class WP_Form_Api
             $postData = $data;
             unset($postData['form_id']);
 
-            $this->db->queryWrite(
-                'INSERT INTO `'.$this->db->prefix().'madeit_form_inputs` (form_id, data, ip, user_agent, spam, `read`, result, create_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
-                $form->id,
-                json_encode($postData),
-                $this->getIP(),
-                (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'),
-                $spam ? 1 : 0,
-                0,
-                '',
-                date('Y-m-d H:i:s')
-            );
+            $inputId = -1;
+            if(get_post_meta($form->ID, 'save_inputs', true) == 1) {
+                $inputId = wp_insert_post([
+                    'post_title' => 'Form submit ' . $form->post_title . ' - ' . $this->getIP(),
+                    'post_status' => 'publish',
+                    'post_type' => 'ma_form_inputs',
+                ]);
 
+                update_post_meta($inputId, 'form_id', $form->ID);
+                update_post_meta($inputId, 'data', json_encode($postData));
+                update_post_meta($inputId, 'ip', $this->getIP());
+                update_post_meta($inputId, 'user_agent', (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'));
+                update_post_meta($inputId, 'spam', $spam ? 1 : 0);
+                update_post_meta($inputId, 'read', 0);
+                update_post_meta($inputId, 'result', '');
+            }
+            
             //execute actions
-            if (isset($form->actions) && !empty($form->actions)/* && count($form->actions) > 0*/) {
-                $formActions = json_decode($form->actions, true);
+            $actions = json_decode(get_post_meta($form->ID, 'actions', true), true);
+            if (count($actions) > 0) {
+                $formActions = apply_filters('madeit_forms_submit_actions', $actions);
                 foreach ($formActions as $actID => $actionInfo) {
                     $action = $this->actions[$actionInfo['_id']];
 
-                    $data = [];
+                    $data = [
+                        'id' => $inputId,
+                    ];
                     foreach ($action['action_fields'] as $name => $info) {
                         $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value'];
-                        $data[$name] = $this->changeInputTag($inputValue);
+                        $data[$name] = $this->changeInputTag($inputValue, $postData);
                     }
 
                     if (is_callable($action['callback'])) {
-                        $result = call_user_func($action['callback'], $data, $messages);
-                    } else {
-                        //can't execute action ...
+                        $result = call_user_func($action['callback'], $data, $messages, $actionInfo);
                     }
                 }
             }
