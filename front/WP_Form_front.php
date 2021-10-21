@@ -80,7 +80,6 @@ class WP_Form_front
             $error = false;
             $error_msg = '';
             $messages = json_decode(str_replace("\'", "'", get_post_meta($form->ID, 'messages', true)), true);
-            
 
             //insert form input
             foreach ($_POST as $k => $v) {

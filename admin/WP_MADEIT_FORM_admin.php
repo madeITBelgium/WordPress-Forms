@@ -329,30 +329,30 @@ class WP_MADEIT_FORM_admin
                 $messages = json_decode(str_replace("\'", "'", get_post_meta($post->ID, 'messages', true)), true);
                 $actions = json_decode(str_replace("\'", "'", get_post_meta($post->ID, 'actions', true)), true);
             }
-            
-            if(empty($formData)) {
+
+            if (empty($formData)) {
                 $formData = [
                     [
-                        'type' => 'text',
-                        'name' => 'your-name',
-                        'required' => false,
-                        'value' => null,
+                        'type'        => 'text',
+                        'name'        => 'your-name',
+                        'required'    => false,
+                        'value'       => null,
                         'placeholder' => null,
-                        'label' => 'Your name:',
+                        'label'       => 'Your name:',
                     ],
                     [
-                        'type' => 'email',
-                        'name' => 'your-email',
-                        'required' => false,
-                        'value' => null,
+                        'type'        => 'email',
+                        'name'        => 'your-email',
+                        'required'    => false,
+                        'value'       => null,
                         'placeholder' => null,
-                        'label' => 'Your email:',
+                        'label'       => 'Your email:',
                     ],
                     [
-                        'type' => 'submit',
+                        'type'  => 'submit',
                         'value' => 'Send',
                         'label' => '',
-                    ]
+                    ],
                 ];
             }
 
@@ -391,7 +391,7 @@ class WP_MADEIT_FORM_admin
                     </div>
                     <div id="madeit-form-visual" <?php echo get_post_meta($post->ID, 'form_type', true) === 'html' ? 'style="display: none;"' : ''; ?>>
                         <?php
-                        foreach($formData as $k => $formField) {
+                        foreach ($formData as $k => $formField) {
                             ?>
                             <div style="display: flex; background: white; border: 1px solid #ddd;padding: 20px;">
                                 <div style="padding: 0px 10px; display: flex; align-items: center;">
@@ -403,7 +403,7 @@ class WP_MADEIT_FORM_admin
                                             <option value="">Selecteer type</option>
                                             <?php
                                             foreach ($this->tags as $id => $panel) {
-                                                echo '<option value="' . $id . '" ' . ($id == $formField['type'] ? 'SELECTED': '') . '>' . esc_html($panel['title']) . '</option>';
+                                                echo '<option value="'.$id.'" '.($id == $formField['type'] ? 'SELECTED' : '').'>'.esc_html($panel['title']).'</option>';
                                             } ?>
                                         </select>
                                     </div>
@@ -414,8 +414,7 @@ class WP_MADEIT_FORM_admin
                                 </div>
                             </div>
                             <?php
-                        }
-                        ?>
+                        } ?>
                     </div>
                 </div>
                 <div class="madeit-tab-panel" id="actions-panel">
