@@ -1,6 +1,6 @@
 <?php
 /**
- * SendEmailAttachmentTest
+ * GetBlockedDomainsTest
  *
  * PHP version 5
  *
@@ -30,15 +30,15 @@
 namespace SendinBlue\Client;
 
 /**
- * SendEmailAttachmentTest Class Doc Comment
+ * GetBlockedDomainsTest Class Doc Comment
  *
  * @category    Class
- * @description SendEmailAttachment
+ * @description list of blocked domains
  * @package     SendinBlue\Client
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
  */
-class SendEmailAttachmentTest extends \PHPUnit_Framework_TestCase
+class GetBlockedDomainsTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -70,23 +70,16 @@ class SendEmailAttachmentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test "SendEmailAttachment"
+     * Test "GetBlockedDomains"
      */
-    public function testSendEmailAttachment()
+    public function testGetBlockedDomains()
     {
     }
 
     /**
-     * Test attribute "content"
+     * Test attribute "domains"
      */
-    public function testPropertyContent()
-    {
-    }
-
-    /**
-     * Test attribute "name"
-     */
-    public function testPropertyName()
+    public function testPropertyDomains()
     {
     }
 }

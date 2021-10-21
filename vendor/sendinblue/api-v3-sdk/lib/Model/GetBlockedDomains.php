@@ -1,6 +1,6 @@
 <?php
 /**
- * SendEmailAttachment
+ * GetBlockedDomains
  *
  * PHP version 5
  *
@@ -33,14 +33,15 @@ use \ArrayAccess;
 use \SendinBlue\Client\ObjectSerializer;
 
 /**
- * SendEmailAttachment Class Doc Comment
+ * GetBlockedDomains Class Doc Comment
  *
  * @category Class
+ * @description list of blocked domains
  * @package  SendinBlue\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class SendEmailAttachment implements ModelInterface, ArrayAccess
+class GetBlockedDomains implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +50,7 @@ class SendEmailAttachment implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'sendEmail_attachment';
+    protected static $swaggerModelName = 'getBlockedDomains';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,8 +58,7 @@ class SendEmailAttachment implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'content' => 'string',
-        'name' => 'string'
+        'domains' => 'string[]'
     ];
 
     /**
@@ -67,8 +67,7 @@ class SendEmailAttachment implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'content' => 'byte',
-        'name' => null
+        'domains' => null
     ];
 
     /**
@@ -98,8 +97,7 @@ class SendEmailAttachment implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'content' => 'content',
-        'name' => 'name'
+        'domains' => 'domains'
     ];
 
     /**
@@ -108,8 +106,7 @@ class SendEmailAttachment implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'content' => 'setContent',
-        'name' => 'setName'
+        'domains' => 'setDomains'
     ];
 
     /**
@@ -118,8 +115,7 @@ class SendEmailAttachment implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'content' => 'getContent',
-        'name' => 'getName'
+        'domains' => 'getDomains'
     ];
 
     /**
@@ -182,8 +178,7 @@ class SendEmailAttachment implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['content'] = isset($data['content']) ? $data['content'] : null;
-        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
+        $this->container['domains'] = isset($data['domains']) ? $data['domains'] : null;
     }
 
     /**
@@ -195,15 +190,8 @@ class SendEmailAttachment implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
-        if ($this->container['content'] === null) {
-            $invalidProperties[] = "'content' can't be null";
-        }
-        if (!preg_match("/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/", $this->container['content'])) {
-            $invalidProperties[] = "invalid value for 'content', must be conform to the pattern /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/.";
-        }
-
-        if ($this->container['name'] === null) {
-            $invalidProperties[] = "'name' can't be null";
+        if ($this->container['domains'] === null) {
+            $invalidProperties[] = "'domains' can't be null";
         }
         return $invalidProperties;
     }
@@ -221,54 +209,25 @@ class SendEmailAttachment implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets content
+     * Gets domains
      *
-     * @return string
+     * @return string[]
      */
-    public function getContent()
+    public function getDomains()
     {
-        return $this->container['content'];
+        return $this->container['domains'];
     }
 
     /**
-     * Sets content
+     * Sets domains
      *
-     * @param string $content Base64 encoded chunk data of the attachment generated on the fly
+     * @param string[] $domains List of all blocked domains
      *
      * @return $this
      */
-    public function setContent($content)
+    public function setDomains($domains)
     {
-
-        if ((!preg_match("/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/", $content))) {
-            throw new \InvalidArgumentException("invalid value for $content when calling SendEmailAttachment., must conform to the pattern /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/.");
-        }
-
-        $this->container['content'] = $content;
-
-        return $this;
-    }
-
-    /**
-     * Gets name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->container['name'];
-    }
-
-    /**
-     * Sets name
-     *
-     * @param string $name Required for content. Name of the attachment
-     *
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->container['name'] = $name;
+        $this->container['domains'] = $domains;
 
         return $this;
     }

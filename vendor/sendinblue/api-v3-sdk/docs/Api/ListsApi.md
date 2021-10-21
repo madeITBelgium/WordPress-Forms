@@ -188,7 +188,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getContactsFromList**
-> \SendinBlue\Client\Model\GetContacts getContactsFromList($listId, $modifiedSince, $limit, $offset)
+> \SendinBlue\Client\Model\GetContacts getContactsFromList($listId, $modifiedSince, $limit, $offset, $sort)
 
 Get contacts in a list
 
@@ -213,12 +213,13 @@ $apiInstance = new SendinBlue\Client\Api\ListsApi(
     $config
 );
 $listId = 789; // int | Id of the list
-$modifiedSince = new \DateTime("2013-10-20T19:20:30+01:00"); // \DateTime | Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result.
+$modifiedSince = "modifiedSince_example"; // string | Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result.
 $limit = 50; // int | Number of documents per page
 $offset = 0; // int | Index of the first document of the page
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
-    $result = $apiInstance->getContactsFromList($listId, $modifiedSince, $limit, $offset);
+    $result = $apiInstance->getContactsFromList($listId, $modifiedSince, $limit, $offset, $sort);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ListsApi->getContactsFromList: ', $e->getMessage(), PHP_EOL;
@@ -231,9 +232,10 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **listId** | **int**| Id of the list |
- **modifiedSince** | **\DateTime**| Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result. | [optional]
+ **modifiedSince** | **string**| Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result. | [optional]
  **limit** | **int**| Number of documents per page | [optional] [default to 50]
  **offset** | **int**| Index of the first document of the page | [optional] [default to 0]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 
@@ -251,7 +253,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getFolderLists**
-> \SendinBlue\Client\Model\GetFolderLists getFolderLists($folderId, $limit, $offset)
+> \SendinBlue\Client\Model\GetFolderLists getFolderLists($folderId, $limit, $offset, $sort)
 
 Get lists in a folder
 
@@ -278,9 +280,10 @@ $apiInstance = new SendinBlue\Client\Api\ListsApi(
 $folderId = 789; // int | Id of the folder
 $limit = 10; // int | Number of documents per page
 $offset = 0; // int | Index of the first document of the page
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
-    $result = $apiInstance->getFolderLists($folderId, $limit, $offset);
+    $result = $apiInstance->getFolderLists($folderId, $limit, $offset, $sort);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ListsApi->getFolderLists: ', $e->getMessage(), PHP_EOL;
@@ -295,6 +298,7 @@ Name | Type | Description  | Notes
  **folderId** | **int**| Id of the folder |
  **limit** | **int**| Number of documents per page | [optional] [default to 10]
  **offset** | **int**| Index of the first document of the page | [optional] [default to 0]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 
@@ -369,7 +373,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getLists**
-> \SendinBlue\Client\Model\GetLists getLists($limit, $offset)
+> \SendinBlue\Client\Model\GetLists getLists($limit, $offset, $sort)
 
 Get all the lists
 
@@ -395,9 +399,10 @@ $apiInstance = new SendinBlue\Client\Api\ListsApi(
 );
 $limit = 10; // int | Number of documents per page
 $offset = 0; // int | Index of the first document of the page
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
-    $result = $apiInstance->getLists($limit, $offset);
+    $result = $apiInstance->getLists($limit, $offset, $sort);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ListsApi->getLists: ', $e->getMessage(), PHP_EOL;
@@ -411,6 +416,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **limit** | **int**| Number of documents per page | [optional] [default to 10]
  **offset** | **int**| Index of the first document of the page | [optional] [default to 0]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 

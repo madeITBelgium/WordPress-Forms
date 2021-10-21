@@ -347,7 +347,7 @@ class ProcessApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -373,7 +373,7 @@ class ProcessApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -389,14 +389,15 @@ class ProcessApi
      *
      * @param  int $limit Number limitation for the result returned (optional, default to 10)
      * @param  int $offset Beginning point in the list to retrieve from. (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \SendinBlue\Client\Model\GetProcesses
      */
-    public function getProcesses($limit = '10', $offset = '0')
+    public function getProcesses($limit = '10', $offset = '0', $sort = 'desc')
     {
-        list($response) = $this->getProcessesWithHttpInfo($limit, $offset);
+        list($response) = $this->getProcessesWithHttpInfo($limit, $offset, $sort);
         return $response;
     }
 
@@ -407,15 +408,16 @@ class ProcessApi
      *
      * @param  int $limit Number limitation for the result returned (optional, default to 10)
      * @param  int $offset Beginning point in the list to retrieve from. (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \SendinBlue\Client\Model\GetProcesses, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getProcessesWithHttpInfo($limit = '10', $offset = '0')
+    public function getProcessesWithHttpInfo($limit = '10', $offset = '0', $sort = 'desc')
     {
         $returnType = '\SendinBlue\Client\Model\GetProcesses';
-        $request = $this->getProcessesRequest($limit, $offset);
+        $request = $this->getProcessesRequest($limit, $offset, $sort);
 
         try {
             $options = $this->createHttpClientOption();
@@ -491,13 +493,14 @@ class ProcessApi
      *
      * @param  int $limit Number limitation for the result returned (optional, default to 10)
      * @param  int $offset Beginning point in the list to retrieve from. (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getProcessesAsync($limit = '10', $offset = '0')
+    public function getProcessesAsync($limit = '10', $offset = '0', $sort = 'desc')
     {
-        return $this->getProcessesAsyncWithHttpInfo($limit, $offset)
+        return $this->getProcessesAsyncWithHttpInfo($limit, $offset, $sort)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -512,14 +515,15 @@ class ProcessApi
      *
      * @param  int $limit Number limitation for the result returned (optional, default to 10)
      * @param  int $offset Beginning point in the list to retrieve from. (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getProcessesAsyncWithHttpInfo($limit = '10', $offset = '0')
+    public function getProcessesAsyncWithHttpInfo($limit = '10', $offset = '0', $sort = 'desc')
     {
         $returnType = '\SendinBlue\Client\Model\GetProcesses';
-        $request = $this->getProcessesRequest($limit, $offset);
+        $request = $this->getProcessesRequest($limit, $offset, $sort);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -563,11 +567,12 @@ class ProcessApi
      *
      * @param  int $limit Number limitation for the result returned (optional, default to 10)
      * @param  int $offset Beginning point in the list to retrieve from. (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function getProcessesRequest($limit = '10', $offset = '0')
+    protected function getProcessesRequest($limit = '10', $offset = '0', $sort = 'desc')
     {
         if ($limit !== null && $limit > 50) {
             throw new \InvalidArgumentException('invalid value for "$limit" when calling ProcessApi.getProcesses, must be smaller than or equal to 50.');
@@ -588,6 +593,10 @@ class ProcessApi
         // query params
         if ($offset !== null) {
             $queryParams['offset'] = ObjectSerializer::toQueryValue($offset);
+        }
+        // query params
+        if ($sort !== null) {
+            $queryParams['sort'] = ObjectSerializer::toQueryValue($sort);
         }
 
 
@@ -637,7 +646,7 @@ class ProcessApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -663,7 +672,7 @@ class ProcessApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),

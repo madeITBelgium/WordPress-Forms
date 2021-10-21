@@ -1,6 +1,6 @@
 <?php
 /**
- * SendEmail
+ * SendSmtpEmailMessageVersions
  *
  * PHP version 5
  *
@@ -33,14 +33,14 @@ use \ArrayAccess;
 use \SendinBlue\Client\ObjectSerializer;
 
 /**
- * SendEmail Class Doc Comment
+ * SendSmtpEmailMessageVersions Class Doc Comment
  *
  * @category Class
  * @package  SendinBlue\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class SendEmail implements ModelInterface, ArrayAccess
+class SendSmtpEmailMessageVersions implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class SendEmail implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'sendEmail';
+    protected static $swaggerModelName = 'sendSmtpEmail_messageVersions';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,15 +57,12 @@ class SendEmail implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'emailTo' => 'string[]',
-        'emailBcc' => 'string[]',
-        'emailCc' => 'string[]',
-        'replyTo' => 'string',
-        'attachmentUrl' => 'string',
-        'attachment' => '\SendinBlue\Client\Model\SendEmailAttachment[]',
-        'headers' => 'object',
-        'attributes' => 'object',
-        'tags' => 'string[]'
+        'to' => '\SendinBlue\Client\Model\SendSmtpEmailTo1[]',
+        'params' => 'map[string,object]',
+        'bcc' => '\SendinBlue\Client\Model\SendSmtpEmailBcc[]',
+        'cc' => '\SendinBlue\Client\Model\SendSmtpEmailCc[]',
+        'replyTo' => '\SendinBlue\Client\Model\SendSmtpEmailReplyTo1',
+        'subject' => 'string'
     ];
 
     /**
@@ -74,15 +71,12 @@ class SendEmail implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'emailTo' => 'email',
-        'emailBcc' => 'email',
-        'emailCc' => 'email',
-        'replyTo' => 'email',
-        'attachmentUrl' => 'url',
-        'attachment' => null,
-        'headers' => null,
-        'attributes' => null,
-        'tags' => null
+        'to' => null,
+        'params' => null,
+        'bcc' => null,
+        'cc' => null,
+        'replyTo' => null,
+        'subject' => null
     ];
 
     /**
@@ -112,15 +106,12 @@ class SendEmail implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'emailTo' => 'emailTo',
-        'emailBcc' => 'emailBcc',
-        'emailCc' => 'emailCc',
+        'to' => 'to',
+        'params' => 'params',
+        'bcc' => 'bcc',
+        'cc' => 'cc',
         'replyTo' => 'replyTo',
-        'attachmentUrl' => 'attachmentUrl',
-        'attachment' => 'attachment',
-        'headers' => 'headers',
-        'attributes' => 'attributes',
-        'tags' => 'tags'
+        'subject' => 'subject'
     ];
 
     /**
@@ -129,15 +120,12 @@ class SendEmail implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'emailTo' => 'setEmailTo',
-        'emailBcc' => 'setEmailBcc',
-        'emailCc' => 'setEmailCc',
+        'to' => 'setTo',
+        'params' => 'setParams',
+        'bcc' => 'setBcc',
+        'cc' => 'setCc',
         'replyTo' => 'setReplyTo',
-        'attachmentUrl' => 'setAttachmentUrl',
-        'attachment' => 'setAttachment',
-        'headers' => 'setHeaders',
-        'attributes' => 'setAttributes',
-        'tags' => 'setTags'
+        'subject' => 'setSubject'
     ];
 
     /**
@@ -146,15 +134,12 @@ class SendEmail implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'emailTo' => 'getEmailTo',
-        'emailBcc' => 'getEmailBcc',
-        'emailCc' => 'getEmailCc',
+        'to' => 'getTo',
+        'params' => 'getParams',
+        'bcc' => 'getBcc',
+        'cc' => 'getCc',
         'replyTo' => 'getReplyTo',
-        'attachmentUrl' => 'getAttachmentUrl',
-        'attachment' => 'getAttachment',
-        'headers' => 'getHeaders',
-        'attributes' => 'getAttributes',
-        'tags' => 'getTags'
+        'subject' => 'getSubject'
     ];
 
     /**
@@ -217,15 +202,12 @@ class SendEmail implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['emailTo'] = isset($data['emailTo']) ? $data['emailTo'] : null;
-        $this->container['emailBcc'] = isset($data['emailBcc']) ? $data['emailBcc'] : null;
-        $this->container['emailCc'] = isset($data['emailCc']) ? $data['emailCc'] : null;
+        $this->container['to'] = isset($data['to']) ? $data['to'] : null;
+        $this->container['params'] = isset($data['params']) ? $data['params'] : null;
+        $this->container['bcc'] = isset($data['bcc']) ? $data['bcc'] : null;
+        $this->container['cc'] = isset($data['cc']) ? $data['cc'] : null;
         $this->container['replyTo'] = isset($data['replyTo']) ? $data['replyTo'] : null;
-        $this->container['attachmentUrl'] = isset($data['attachmentUrl']) ? $data['attachmentUrl'] : null;
-        $this->container['attachment'] = isset($data['attachment']) ? $data['attachment'] : null;
-        $this->container['headers'] = isset($data['headers']) ? $data['headers'] : null;
-        $this->container['attributes'] = isset($data['attributes']) ? $data['attributes'] : null;
-        $this->container['tags'] = isset($data['tags']) ? $data['tags'] : null;
+        $this->container['subject'] = isset($data['subject']) ? $data['subject'] : null;
     }
 
     /**
@@ -237,8 +219,8 @@ class SendEmail implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
-        if ($this->container['emailTo'] === null) {
-            $invalidProperties[] = "'emailTo' can't be null";
+        if ($this->container['to'] === null) {
+            $invalidProperties[] = "'to' can't be null";
         }
         return $invalidProperties;
     }
@@ -256,73 +238,97 @@ class SendEmail implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets emailTo
+     * Gets to
      *
-     * @return string[]
+     * @return \SendinBlue\Client\Model\SendSmtpEmailTo1[]
      */
-    public function getEmailTo()
+    public function getTo()
     {
-        return $this->container['emailTo'];
+        return $this->container['to'];
     }
 
     /**
-     * Sets emailTo
+     * Sets to
      *
-     * @param string[] $emailTo List of the email addresses of the recipients. For example, ['abc@example.com', 'asd@example.com'].
+     * @param \SendinBlue\Client\Model\SendSmtpEmailTo1[] $to List of email addresses and names (_optional_) of the recipients. For example, [{\"name\":\"Jimmy\", \"email\":\"jimmy98@example.com\"}, {\"name\":\"Joe\", \"email\":\"joe@example.com\"}]
      *
      * @return $this
      */
-    public function setEmailTo($emailTo)
+    public function setTo($to)
     {
-        $this->container['emailTo'] = $emailTo;
+        $this->container['to'] = $to;
 
         return $this;
     }
 
     /**
-     * Gets emailBcc
+     * Gets params
      *
-     * @return string[]
+     * @return map[string,object]
      */
-    public function getEmailBcc()
+    public function getParams()
     {
-        return $this->container['emailBcc'];
+        return $this->container['params'];
     }
 
     /**
-     * Sets emailBcc
+     * Sets params
      *
-     * @param string[] $emailBcc List of the email addresses of the recipients in bcc
+     * @param map[string,object] $params Pass the set of attributes to customize the template. For example, {\"FNAME\":\"Joe\", \"LNAME\":\"Doe\"}. It's considered only if template is in New Template Language format.
      *
      * @return $this
      */
-    public function setEmailBcc($emailBcc)
+    public function setParams($params)
     {
-        $this->container['emailBcc'] = $emailBcc;
+        $this->container['params'] = $params;
 
         return $this;
     }
 
     /**
-     * Gets emailCc
+     * Gets bcc
      *
-     * @return string[]
+     * @return \SendinBlue\Client\Model\SendSmtpEmailBcc[]
      */
-    public function getEmailCc()
+    public function getBcc()
     {
-        return $this->container['emailCc'];
+        return $this->container['bcc'];
     }
 
     /**
-     * Sets emailCc
+     * Sets bcc
      *
-     * @param string[] $emailCc List of the email addresses of the recipients in cc
+     * @param \SendinBlue\Client\Model\SendSmtpEmailBcc[] $bcc List of email addresses and names (optional) of the recipients in bcc
      *
      * @return $this
      */
-    public function setEmailCc($emailCc)
+    public function setBcc($bcc)
     {
-        $this->container['emailCc'] = $emailCc;
+        $this->container['bcc'] = $bcc;
+
+        return $this;
+    }
+
+    /**
+     * Gets cc
+     *
+     * @return \SendinBlue\Client\Model\SendSmtpEmailCc[]
+     */
+    public function getCc()
+    {
+        return $this->container['cc'];
+    }
+
+    /**
+     * Sets cc
+     *
+     * @param \SendinBlue\Client\Model\SendSmtpEmailCc[] $cc List of email addresses and names (optional) of the recipients in cc
+     *
+     * @return $this
+     */
+    public function setCc($cc)
+    {
+        $this->container['cc'] = $cc;
 
         return $this;
     }
@@ -330,7 +336,7 @@ class SendEmail implements ModelInterface, ArrayAccess
     /**
      * Gets replyTo
      *
-     * @return string
+     * @return \SendinBlue\Client\Model\SendSmtpEmailReplyTo1
      */
     public function getReplyTo()
     {
@@ -340,7 +346,7 @@ class SendEmail implements ModelInterface, ArrayAccess
     /**
      * Sets replyTo
      *
-     * @param string $replyTo Email address which shall be used by campaign recipients to reply back
+     * @param \SendinBlue\Client\Model\SendSmtpEmailReplyTo1 $replyTo replyTo
      *
      * @return $this
      */
@@ -352,121 +358,25 @@ class SendEmail implements ModelInterface, ArrayAccess
     }
 
     /**
-     * Gets attachmentUrl
+     * Gets subject
      *
      * @return string
      */
-    public function getAttachmentUrl()
+    public function getSubject()
     {
-        return $this->container['attachmentUrl'];
+        return $this->container['subject'];
     }
 
     /**
-     * Sets attachmentUrl
+     * Sets subject
      *
-     * @param string $attachmentUrl Absolute url of the attachment (no local file). Extension allowed: xlsx, xls, ods, docx, docm, doc, csv, pdf, txt, gif, jpg, jpeg, png, tif, tiff, rtf, bmp, cgm, css, shtml, html, htm, zip, xml, ppt, pptx, tar, ez, ics, mobi, msg, pub and eps
+     * @param string $subject Custom subject specific to message version
      *
      * @return $this
      */
-    public function setAttachmentUrl($attachmentUrl)
+    public function setSubject($subject)
     {
-        $this->container['attachmentUrl'] = $attachmentUrl;
-
-        return $this;
-    }
-
-    /**
-     * Gets attachment
-     *
-     * @return \SendinBlue\Client\Model\SendEmailAttachment[]
-     */
-    public function getAttachment()
-    {
-        return $this->container['attachment'];
-    }
-
-    /**
-     * Sets attachment
-     *
-     * @param \SendinBlue\Client\Model\SendEmailAttachment[] $attachment Pass the list of content (base64 encoded) and name of the attachment. For example, [{\"content\":\"base64 encoded content 1\", \"name\":\"attcahment1\"}, {\"content\":\"base64 encoded content 2\", \"name\":\"attcahment2\"}].
-     *
-     * @return $this
-     */
-    public function setAttachment($attachment)
-    {
-        $this->container['attachment'] = $attachment;
-
-        return $this;
-    }
-
-    /**
-     * Gets headers
-     *
-     * @return object
-     */
-    public function getHeaders()
-    {
-        return $this->container['headers'];
-    }
-
-    /**
-     * Sets headers
-     *
-     * @param object $headers Pass the set of headers that shall be sent along the mail headers in the original email. 'sender.ip' header can be set (only for dedicated ip users) to mention the IP to be used for sending transactional emails. Headers are allowed in `This-Case-Only` (i.e. words separated by hyphen with first letter of each word in capital letter), they will be converted to such case styling if not in this format in the request payload. For example, {\"Content-Type\":\"text/html\", \"charset\":\"iso-8859-1\", \"sender.ip\":\"1.2.3.4\"}
-     *
-     * @return $this
-     */
-    public function setHeaders($headers)
-    {
-        $this->container['headers'] = $headers;
-
-        return $this;
-    }
-
-    /**
-     * Gets attributes
-     *
-     * @return object
-     */
-    public function getAttributes()
-    {
-        return $this->container['attributes'];
-    }
-
-    /**
-     * Sets attributes
-     *
-     * @param object $attributes Pass the set of attributes to customize the template. For example, {\"FNAME\":\"Joe\", \"LNAME\":\"Doe\"}
-     *
-     * @return $this
-     */
-    public function setAttributes($attributes)
-    {
-        $this->container['attributes'] = $attributes;
-
-        return $this;
-    }
-
-    /**
-     * Gets tags
-     *
-     * @return string[]
-     */
-    public function getTags()
-    {
-        return $this->container['tags'];
-    }
-
-    /**
-     * Sets tags
-     *
-     * @param string[] $tags Tag your emails to find them more easily
-     *
-     * @return $this
-     */
-    public function setTags($tags)
-    {
-        $this->container['tags'] = $tags;
+        $this->container['subject'] = $subject;
 
         return $this;
     }

@@ -1,7 +1,15 @@
 {
+    "name": "madeitbelgium/wordpress-forms",
     "require": {
         "drewm/mailchimp-api": "^2.5",
         "sendinblue/api-v3-sdk": "^7.2",
         "guzzlehttp/guzzle": "^6.2"
+    },
+    "extra": {
+        "php-prefixer": {
+            "project-name": "Prefix Made IT Forms",
+            "namespaces-prefix": "MAFORM",
+            "global-scope-prefix": "MAFORM_"
+        }
     }
 }

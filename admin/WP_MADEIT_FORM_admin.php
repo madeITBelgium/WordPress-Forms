@@ -28,8 +28,8 @@ class WP_MADEIT_FORM_admin
 
         wp_enqueue_script('jquery-ui-core');
         wp_enqueue_script('jquery-ui-tabs');
-        wp_enqueue_script('madeit-form-script', MADEIT_FORM_URL.'admin/js/script.js', ['jquery'], 1, true);
-        wp_enqueue_script('madeit-tabs', MADEIT_FORM_URL.'admin/js/tabs.js', ['jquery'], 1, true);
+        wp_enqueue_script('madeit-form-script', MADEIT_FORM_URL.'admin/js/script.js', ['jquery'], 2, true);
+        wp_enqueue_script('madeit-tabs', MADEIT_FORM_URL.'admin/js/tabs.js', ['jquery'], 2, true);
     }
 
     public function addAction($id, $value)
@@ -187,7 +187,7 @@ class WP_MADEIT_FORM_admin
         }
 
         //execute actions
-        $formActions = json_decode(get_post_meta($id, 'actions', true), true);
+        $formActions = json_decode(str_replace("\'", "'", get_post_meta($id, 'actions', true)), true);
         if (!empty($formActions) && count($formActions) > 0) {
             foreach ($formActions as $actID => $actionInfo) {
                 $action = $this->actions[$actionInfo['_id']];
@@ -323,14 +323,44 @@ class WP_MADEIT_FORM_admin
             $actions = [];
             $messages = [];
             $form = get_post_meta($post->ID, 'form', true);
-            if (!empty($form)) {
+            $formData = json_decode(get_post_meta($post->ID, 'form_visual', true), true);
+            if (!empty($form) || !empty($formData)) {
                 $formValue = $form;
-                $messages = json_decode(get_post_meta($post->ID, 'messages', true), true);
-                $actions = json_decode(get_post_meta($post->ID, 'actions', true), true);
+                $messages = json_decode(str_replace("\'", "'", get_post_meta($post->ID, 'messages', true)), true);
+                $actions = json_decode(str_replace("\'", "'", get_post_meta($post->ID, 'actions', true)), true);
+            }
+            
+            if(empty($formData)) {
+                $formData = [
+                    [
+                        'type' => 'text',
+                        'name' => 'your-name',
+                        'required' => false,
+                        'value' => null,
+                        'placeholder' => null,
+                        'label' => 'Your name:',
+                    ],
+                    [
+                        'type' => 'email',
+                        'name' => 'your-email',
+                        'required' => false,
+                        'value' => null,
+                        'placeholder' => null,
+                        'label' => 'Your email:',
+                    ],
+                    [
+                        'type' => 'submit',
+                        'value' => 'Send',
+                        'label' => '',
+                    ]
+                ];
             }
 
             $formValue = str_replace('\"', '"', $formValue); ?>
             <input type="hidden" name="madeit_form_editor" value="yes">
+            <input type="hidden" name="save_inputs" value="<?php echo get_post_meta($post->ID, 'save_inputs', true); ?>">
+            <input type="hidden" name="form_type" value="<?php echo get_post_meta($post->ID, 'form_type', true); ?>">
+
             <div id="madeit-tab">
                 <ul id="madeit-tab-tabs">
                     <li id="form-panels-tab"><a href="#form-panel"><?php echo esc_html(__('Form', 'forms-by-made-it')); ?></a></li>
@@ -338,19 +368,55 @@ class WP_MADEIT_FORM_admin
                     <li id="messages-panels-tab"><a href="#messages-panel"><?php echo esc_html(__('Messages', 'forms-by-made-it')); ?></a></li>
                 </ul>
                 <div class="madeit-tab-panel" id="form-panel">
+                    <div id="madeit-forms-switcher-visual" style="float:right; <?php echo get_post_meta($post->ID, 'form_type', true) === 'html' ? 'display: none;' : ''; ?>">
+                        Visueel / <a href="#" class="madeit-forms-switch-editor">HTML</a>
+                    </div>
+                    <div id="madeit-forms-switcher-html" style="float:right; <?php echo get_post_meta($post->ID, 'form_type', true) === 'html' ? '' : 'display: none;'; ?>">
+                        <a href="#" class="madeit-forms-switch-editor">Visueel</a> / HTML
+                    </div>
                     <h2><?php echo esc_html(__('Form', 'forms-by-made-it')); ?></h2>
-                    <span id="tag-generator-list">
+                    <div id="madeit-form-text" <?php echo get_post_meta($post->ID, 'form_type', true) === 'html' ? '' : 'style="display: none;"'; ?>>
+                        <span id="tag-generator-list">
+                            <?php
+                            foreach ($this->tags as $id => $panel) {
+                                echo sprintf(
+                                    '<a href="#TB_inline?width=600&height=550&inlineId=%1$s" class="thickbox button" title="%2$s">%3$s</a>',
+                                    esc_attr($panel['content'].'-'.$id),
+                                    esc_attr(sprintf(__('Form-tag Generator: %s', 'forms-by-made-it'), $panel['title'])),
+                                    esc_html($panel['title'])
+                                );
+                            } ?>
+                        </span>
+                        <textarea id="madeit-forms-form" name="form" cols="100" rows="24" class="large-text code"><?php echo esc_textarea($formValue); ?></textarea>
+                    </div>
+                    <div id="madeit-form-visual" <?php echo get_post_meta($post->ID, 'form_type', true) === 'html' ? 'style="display: none;"' : ''; ?>>
                         <?php
-                        foreach ($this->tags as $id => $panel) {
-                            echo sprintf(
-                                '<a href="#TB_inline?width=600&height=550&inlineId=%1$s" class="thickbox button" title="%2$s">%3$s</a>',
-                                esc_attr($panel['content'].'-'.$id),
-                                esc_attr(sprintf(__('Form-tag Generator: %s', 'forms-by-made-it'), $panel['title'])),
-                                esc_html($panel['title'])
-                            );
-                        } ?>
-                    </span>
-                    <textarea id="madeit-forms-form" name="form" cols="100" rows="24" class="large-text code"><?php echo esc_textarea($formValue); ?></textarea>
+                        foreach($formData as $k => $formField) {
+                            ?>
+                            <div style="display: flex; background: white; border: 1px solid #ddd;padding: 20px;">
+                                <div style="padding: 0px 10px; display: flex; align-items: center;">
+                                    <?php echo $k + 1; ?>
+                                </div>
+                                <div style="display: flex; align-items: end;">
+                                    <div class="margin-right: 5px">
+                                        <select name="formdata_<?php echo $k; ?>_type">
+                                            <option value="">Selecteer type</option>
+                                            <?php
+                                            foreach ($this->tags as $id => $panel) {
+                                                echo '<option value="' . $id . '" ' . ($id == $formField['type'] ? 'SELECTED': '') . '>' . esc_html($panel['title']) . '</option>';
+                                            } ?>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        Label:<br>
+                                        <input type="text" name="formdata_<?php echo $k; ?>_label" value="<?php echo esc_attr($formField['label']); ?>">
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                        ?>
+                    </div>
                 </div>
                 <div class="madeit-tab-panel" id="actions-panel">
                    <h2><?php echo esc_html(__('Actions', 'forms-by-made-it')); ?></h2>

@@ -334,7 +334,7 @@ class FoldersApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -360,7 +360,7 @@ class FoldersApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -592,7 +592,7 @@ class FoldersApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -618,7 +618,7 @@ class FoldersApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'DELETE',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -887,7 +887,7 @@ class FoldersApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -913,7 +913,7 @@ class FoldersApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -930,14 +930,15 @@ class FoldersApi
      * @param  int $folderId Id of the folder (required)
      * @param  int $limit Number of documents per page (optional, default to 10)
      * @param  int $offset Index of the first document of the page (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \SendinBlue\Client\Model\GetFolderLists
      */
-    public function getFolderLists($folderId, $limit = '10', $offset = '0')
+    public function getFolderLists($folderId, $limit = '10', $offset = '0', $sort = 'desc')
     {
-        list($response) = $this->getFolderListsWithHttpInfo($folderId, $limit, $offset);
+        list($response) = $this->getFolderListsWithHttpInfo($folderId, $limit, $offset, $sort);
         return $response;
     }
 
@@ -949,15 +950,16 @@ class FoldersApi
      * @param  int $folderId Id of the folder (required)
      * @param  int $limit Number of documents per page (optional, default to 10)
      * @param  int $offset Index of the first document of the page (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \SendinBlue\Client\Model\GetFolderLists, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getFolderListsWithHttpInfo($folderId, $limit = '10', $offset = '0')
+    public function getFolderListsWithHttpInfo($folderId, $limit = '10', $offset = '0', $sort = 'desc')
     {
         $returnType = '\SendinBlue\Client\Model\GetFolderLists';
-        $request = $this->getFolderListsRequest($folderId, $limit, $offset);
+        $request = $this->getFolderListsRequest($folderId, $limit, $offset, $sort);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1042,13 +1044,14 @@ class FoldersApi
      * @param  int $folderId Id of the folder (required)
      * @param  int $limit Number of documents per page (optional, default to 10)
      * @param  int $offset Index of the first document of the page (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getFolderListsAsync($folderId, $limit = '10', $offset = '0')
+    public function getFolderListsAsync($folderId, $limit = '10', $offset = '0', $sort = 'desc')
     {
-        return $this->getFolderListsAsyncWithHttpInfo($folderId, $limit, $offset)
+        return $this->getFolderListsAsyncWithHttpInfo($folderId, $limit, $offset, $sort)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1064,14 +1067,15 @@ class FoldersApi
      * @param  int $folderId Id of the folder (required)
      * @param  int $limit Number of documents per page (optional, default to 10)
      * @param  int $offset Index of the first document of the page (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getFolderListsAsyncWithHttpInfo($folderId, $limit = '10', $offset = '0')
+    public function getFolderListsAsyncWithHttpInfo($folderId, $limit = '10', $offset = '0', $sort = 'desc')
     {
         $returnType = '\SendinBlue\Client\Model\GetFolderLists';
-        $request = $this->getFolderListsRequest($folderId, $limit, $offset);
+        $request = $this->getFolderListsRequest($folderId, $limit, $offset, $sort);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1116,11 +1120,12 @@ class FoldersApi
      * @param  int $folderId Id of the folder (required)
      * @param  int $limit Number of documents per page (optional, default to 10)
      * @param  int $offset Index of the first document of the page (optional, default to 0)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function getFolderListsRequest($folderId, $limit = '10', $offset = '0')
+    protected function getFolderListsRequest($folderId, $limit = '10', $offset = '0', $sort = 'desc')
     {
         // verify the required parameter 'folderId' is set
         if ($folderId === null || (is_array($folderId) && count($folderId) === 0)) {
@@ -1147,6 +1152,10 @@ class FoldersApi
         // query params
         if ($offset !== null) {
             $queryParams['offset'] = ObjectSerializer::toQueryValue($offset);
+        }
+        // query params
+        if ($sort !== null) {
+            $queryParams['sort'] = ObjectSerializer::toQueryValue($sort);
         }
 
         // path params
@@ -1204,7 +1213,7 @@ class FoldersApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -1230,7 +1239,7 @@ class FoldersApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1246,14 +1255,15 @@ class FoldersApi
      *
      * @param  int $limit Number of documents per page (required)
      * @param  int $offset Index of the first document of the page (required)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \SendinBlue\Client\Model\GetFolders
      */
-    public function getFolders($limit, $offset)
+    public function getFolders($limit, $offset, $sort = 'desc')
     {
-        list($response) = $this->getFoldersWithHttpInfo($limit, $offset);
+        list($response) = $this->getFoldersWithHttpInfo($limit, $offset, $sort);
         return $response;
     }
 
@@ -1264,15 +1274,16 @@ class FoldersApi
      *
      * @param  int $limit Number of documents per page (required)
      * @param  int $offset Index of the first document of the page (required)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \SendinBlue\Client\Model\GetFolders, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getFoldersWithHttpInfo($limit, $offset)
+    public function getFoldersWithHttpInfo($limit, $offset, $sort = 'desc')
     {
         $returnType = '\SendinBlue\Client\Model\GetFolders';
-        $request = $this->getFoldersRequest($limit, $offset);
+        $request = $this->getFoldersRequest($limit, $offset, $sort);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1348,13 +1359,14 @@ class FoldersApi
      *
      * @param  int $limit Number of documents per page (required)
      * @param  int $offset Index of the first document of the page (required)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getFoldersAsync($limit, $offset)
+    public function getFoldersAsync($limit, $offset, $sort = 'desc')
     {
-        return $this->getFoldersAsyncWithHttpInfo($limit, $offset)
+        return $this->getFoldersAsyncWithHttpInfo($limit, $offset, $sort)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1369,14 +1381,15 @@ class FoldersApi
      *
      * @param  int $limit Number of documents per page (required)
      * @param  int $offset Index of the first document of the page (required)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getFoldersAsyncWithHttpInfo($limit, $offset)
+    public function getFoldersAsyncWithHttpInfo($limit, $offset, $sort = 'desc')
     {
         $returnType = '\SendinBlue\Client\Model\GetFolders';
-        $request = $this->getFoldersRequest($limit, $offset);
+        $request = $this->getFoldersRequest($limit, $offset, $sort);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1420,11 +1433,12 @@ class FoldersApi
      *
      * @param  int $limit Number of documents per page (required)
      * @param  int $offset Index of the first document of the page (required)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function getFoldersRequest($limit, $offset)
+    protected function getFoldersRequest($limit, $offset, $sort = 'desc')
     {
         // verify the required parameter 'limit' is set
         if ($limit === null || (is_array($limit) && count($limit) === 0)) {
@@ -1457,6 +1471,10 @@ class FoldersApi
         // query params
         if ($offset !== null) {
             $queryParams['offset'] = ObjectSerializer::toQueryValue($offset);
+        }
+        // query params
+        if ($sort !== null) {
+            $queryParams['sort'] = ObjectSerializer::toQueryValue($sort);
         }
 
 
@@ -1506,7 +1524,7 @@ class FoldersApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -1532,7 +1550,7 @@ class FoldersApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1778,7 +1796,7 @@ class FoldersApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -1804,7 +1822,7 @@ class FoldersApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'PUT',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),

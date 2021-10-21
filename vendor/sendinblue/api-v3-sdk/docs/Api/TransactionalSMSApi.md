@@ -11,7 +11,7 @@ Method | HTTP request | Description
 
 
 # **getSmsEvents**
-> \SendinBlue\Client\Model\GetSmsEventReport getSmsEvents($limit, $startDate, $endDate, $offset, $days, $phoneNumber, $event, $tags)
+> \SendinBlue\Client\Model\GetSmsEventReport getSmsEvents($limit, $startDate, $endDate, $offset, $days, $phoneNumber, $event, $tags, $sort)
 
 Get all your SMS activity (unaggregated events)
 
@@ -39,13 +39,14 @@ $limit = 50; // int | Number of documents per page
 $startDate = "startDate_example"; // string | Mandatory if endDate is used. Starting date (YYYY-MM-DD) of the report
 $endDate = "endDate_example"; // string | Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the report
 $offset = 0; // int | Index of the first document of the page
-$days = 56; // int | Number of days in the past including today (positive integer). Not compatible with 'startDate' and 'endDate'
+$days = 789; // int | Number of days in the past including today (positive integer). Not compatible with 'startDate' and 'endDate'
 $phoneNumber = "phoneNumber_example"; // string | Filter the report for a specific phone number
 $event = "event_example"; // string | Filter the report for specific events
 $tags = "tags_example"; // string | Filter the report for specific tags passed as a serialized urlencoded array
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
-    $result = $apiInstance->getSmsEvents($limit, $startDate, $endDate, $offset, $days, $phoneNumber, $event, $tags);
+    $result = $apiInstance->getSmsEvents($limit, $startDate, $endDate, $offset, $days, $phoneNumber, $event, $tags, $sort);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling TransactionalSMSApi->getSmsEvents: ', $e->getMessage(), PHP_EOL;
@@ -65,6 +66,7 @@ Name | Type | Description  | Notes
  **phoneNumber** | **string**| Filter the report for a specific phone number | [optional]
  **event** | **string**| Filter the report for specific events | [optional]
  **tags** | **string**| Filter the report for specific tags passed as a serialized urlencoded array | [optional]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 
@@ -108,7 +110,7 @@ $apiInstance = new SendinBlue\Client\Api\TransactionalSMSApi(
 );
 $startDate = "startDate_example"; // string | Mandatory if endDate is used. Starting date (YYYY-MM-DD) of the report
 $endDate = "endDate_example"; // string | Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the report
-$days = 56; // int | Number of days in the past including today (positive integer). Not compatible with startDate and endDate
+$days = 789; // int | Number of days in the past including today (positive integer). Not compatible with startDate and endDate
 $tag = "tag_example"; // string | Filter on a tag
 
 try {
@@ -145,7 +147,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getTransacSmsReport**
-> \SendinBlue\Client\Model\GetTransacSmsReport getTransacSmsReport($startDate, $endDate, $days, $tag)
+> \SendinBlue\Client\Model\GetTransacSmsReport getTransacSmsReport($startDate, $endDate, $days, $tag, $sort)
 
 Get your SMS activity aggregated per day
 
@@ -171,11 +173,12 @@ $apiInstance = new SendinBlue\Client\Api\TransactionalSMSApi(
 );
 $startDate = "startDate_example"; // string | Mandatory if endDate is used. Starting date (YYYY-MM-DD) of the report
 $endDate = "endDate_example"; // string | Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the report
-$days = 56; // int | Number of days in the past including today (positive integer). Not compatible with 'startDate' and 'endDate'
+$days = 789; // int | Number of days in the past including today (positive integer). Not compatible with 'startDate' and 'endDate'
 $tag = "tag_example"; // string | Filter on a tag
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
-    $result = $apiInstance->getTransacSmsReport($startDate, $endDate, $days, $tag);
+    $result = $apiInstance->getTransacSmsReport($startDate, $endDate, $days, $tag, $sort);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling TransactionalSMSApi->getTransacSmsReport: ', $e->getMessage(), PHP_EOL;
@@ -191,6 +194,7 @@ Name | Type | Description  | Notes
  **endDate** | **string**| Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the report | [optional]
  **days** | **int**| Number of days in the past including today (positive integer). Not compatible with &#39;startDate&#39; and &#39;endDate&#39; | [optional]
  **tag** | **string**| Filter on a tag | [optional]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 

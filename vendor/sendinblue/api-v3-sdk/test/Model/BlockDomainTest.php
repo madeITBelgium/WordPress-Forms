@@ -1,6 +1,6 @@
 <?php
 /**
- * SendEmailTest
+ * BlockDomainTest
  *
  * PHP version 5
  *
@@ -30,15 +30,15 @@
 namespace SendinBlue\Client;
 
 /**
- * SendEmailTest Class Doc Comment
+ * BlockDomainTest Class Doc Comment
  *
  * @category    Class
- * @description SendEmail
+ * @description BlockDomain
  * @package     SendinBlue\Client
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
  */
-class SendEmailTest extends \PHPUnit_Framework_TestCase
+class BlockDomainTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -70,72 +70,16 @@ class SendEmailTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test "SendEmail"
+     * Test "BlockDomain"
      */
-    public function testSendEmail()
+    public function testBlockDomain()
     {
     }
 
     /**
-     * Test attribute "emailTo"
+     * Test attribute "domain"
      */
-    public function testPropertyEmailTo()
-    {
-    }
-
-    /**
-     * Test attribute "emailBcc"
-     */
-    public function testPropertyEmailBcc()
-    {
-    }
-
-    /**
-     * Test attribute "emailCc"
-     */
-    public function testPropertyEmailCc()
-    {
-    }
-
-    /**
-     * Test attribute "replyTo"
-     */
-    public function testPropertyReplyTo()
-    {
-    }
-
-    /**
-     * Test attribute "attachmentUrl"
-     */
-    public function testPropertyAttachmentUrl()
-    {
-    }
-
-    /**
-     * Test attribute "attachment"
-     */
-    public function testPropertyAttachment()
-    {
-    }
-
-    /**
-     * Test attribute "headers"
-     */
-    public function testPropertyHeaders()
-    {
-    }
-
-    /**
-     * Test attribute "attributes"
-     */
-    public function testPropertyAttributes()
-    {
-    }
-
-    /**
-     * Test attribute "tags"
-     */
-    public function testPropertyTags()
+    public function testPropertyDomain()
     {
     }
 }

@@ -28,6 +28,29 @@
         getTags();
     });
     
+    $('.madeit-forms-switch-editor').click(function(e) {
+        e.preventDefault();
+        
+        var currentType = $('[name=form_type]').val();
+        
+        if(currentType === 'html') {
+            //show visual
+            $('#madeit-forms-switcher-visual').show();
+            $('#madeit-forms-switcher-html').hide();
+            $('#madeit-form-text').hide();
+            $('#madeit-form-visual').show();
+            currentType = 'visual';
+        } else {
+            $('#madeit-forms-switcher-visual').hide();
+            $('#madeit-forms-switcher-html').show();
+            $('#madeit-form-text').show();
+            $('#madeit-form-visual').hide();
+            currentType = 'html';
+        }
+        
+        $('[name=form_type]').val(currentType);
+    });
+    
     function getTags() {
         var formData = $('#madeit-forms-form').val();
         var tags = [];

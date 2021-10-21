@@ -187,7 +187,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getSmsCampaigns**
-> \SendinBlue\Client\Model\GetSmsCampaigns getSmsCampaigns($status, $startDate, $endDate, $limit, $offset)
+> \SendinBlue\Client\Model\GetSmsCampaigns getSmsCampaigns($status, $startDate, $endDate, $limit, $offset, $sort)
 
 Returns the information for all your created SMS campaigns
 
@@ -212,13 +212,14 @@ $apiInstance = new SendinBlue\Client\Api\SMSCampaignsApi(
     $config
 );
 $status = "status_example"; // string | Status of campaign.
-$startDate = new \DateTime("2013-10-20T19:20:30+01:00"); // \DateTime | Mandatory if endDate is used. Starting (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent sms campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either 'status' not passed and if passed is set to 'sent' )
-$endDate = new \DateTime("2013-10-20T19:20:30+01:00"); // \DateTime | Mandatory if startDate is used. Ending (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent sms campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either 'status' not passed and if passed is set to 'sent' )
+$startDate = "startDate_example"; // string | Mandatory if endDate is used. Starting (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent sms campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either 'status' not passed and if passed is set to 'sent' )
+$endDate = "endDate_example"; // string | Mandatory if startDate is used. Ending (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent sms campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either 'status' not passed and if passed is set to 'sent' )
 $limit = 500; // int | Number limitation for the result returned
 $offset = 0; // int | Beginning point in the list to retrieve from.
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
-    $result = $apiInstance->getSmsCampaigns($status, $startDate, $endDate, $limit, $offset);
+    $result = $apiInstance->getSmsCampaigns($status, $startDate, $endDate, $limit, $offset, $sort);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling SMSCampaignsApi->getSmsCampaigns: ', $e->getMessage(), PHP_EOL;
@@ -231,10 +232,11 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **status** | **string**| Status of campaign. | [optional]
- **startDate** | **\DateTime**| Mandatory if endDate is used. Starting (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent sms campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either &#39;status&#39; not passed and if passed is set to &#39;sent&#39; ) | [optional]
- **endDate** | **\DateTime**| Mandatory if startDate is used. Ending (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent sms campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either &#39;status&#39; not passed and if passed is set to &#39;sent&#39; ) | [optional]
+ **startDate** | **string**| Mandatory if endDate is used. Starting (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent sms campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either &#39;status&#39; not passed and if passed is set to &#39;sent&#39; ) | [optional]
+ **endDate** | **string**| Mandatory if startDate is used. Ending (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent sms campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either &#39;status&#39; not passed and if passed is set to &#39;sent&#39; ) | [optional]
  **limit** | **int**| Number limitation for the result returned | [optional] [default to 500]
  **offset** | **int**| Beginning point in the list to retrieve from. | [optional] [default to 0]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 

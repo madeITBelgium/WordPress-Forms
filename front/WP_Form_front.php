@@ -79,7 +79,8 @@ class WP_Form_front
             //validate input fields
             $error = false;
             $error_msg = '';
-            $messages = json_decode(get_post_meta($form->ID, 'messages', true), true);
+            $messages = json_decode(str_replace("\'", "'", get_post_meta($form->ID, 'messages', true)), true);
+            
 
             //insert form input
             foreach ($_POST as $k => $v) {
@@ -132,8 +133,8 @@ class WP_Form_front
             }
 
             //execute actions
-            $actions = json_decode(get_post_meta($form->ID, 'actions', true), true);
-            if (count($actions) > 0) {
+            $actions = json_decode(str_replace("\'", "'", get_post_meta($form->ID, 'actions', true)), true);
+            if (is_array($actions) && count($actions) > 0) {
                 $formActions = apply_filters('madeit_forms_submit_actions', $actions);
                 foreach ($formActions as $actID => $actionInfo) {
                     $action = $this->actions[$actionInfo['_id']];
@@ -304,7 +305,7 @@ class WP_Form_front
         //validate input fields
         $error = false;
         $error_msg = '';
-        $messages = json_decode(get_post_meta($form->ID, 'messages', true), true);
+        $messages = json_decode(str_replace("\'", "'", get_post_meta($form->ID, 'messages', true)), true);
 
         //insert form input
         foreach ($_POST as $k => $v) {
@@ -357,7 +358,7 @@ class WP_Form_front
         $outputHtml = '';
 
         //execute actions
-        $actions = json_decode(get_post_meta($form->ID, 'actions', true), true);
+        $actions = json_decode(str_replace("\'", "'", get_post_meta($form->ID, 'actions', true)), true);
         if (count($actions) > 0) {
             $formActions = apply_filters('madeit_forms_submit_actions', $actions);
             foreach ($formActions as $actID => $actionInfo) {

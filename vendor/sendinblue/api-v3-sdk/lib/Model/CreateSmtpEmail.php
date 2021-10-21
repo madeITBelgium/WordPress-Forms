@@ -57,7 +57,8 @@ class CreateSmtpEmail implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'messageId' => 'string'
+        'messageId' => 'string',
+        'messageIds' => 'string[]'
     ];
 
     /**
@@ -66,7 +67,8 @@ class CreateSmtpEmail implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'messageId' => null
+        'messageId' => null,
+        'messageIds' => null
     ];
 
     /**
@@ -96,7 +98,8 @@ class CreateSmtpEmail implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'messageId' => 'messageId'
+        'messageId' => 'messageId',
+        'messageIds' => 'messageIds'
     ];
 
     /**
@@ -105,7 +108,8 @@ class CreateSmtpEmail implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'messageId' => 'setMessageId'
+        'messageId' => 'setMessageId',
+        'messageIds' => 'setMessageIds'
     ];
 
     /**
@@ -114,7 +118,8 @@ class CreateSmtpEmail implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'messageId' => 'getMessageId'
+        'messageId' => 'getMessageId',
+        'messageIds' => 'getMessageIds'
     ];
 
     /**
@@ -178,6 +183,7 @@ class CreateSmtpEmail implements ModelInterface, ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['messageId'] = isset($data['messageId']) ? $data['messageId'] : null;
+        $this->container['messageIds'] = isset($data['messageIds']) ? $data['messageIds'] : null;
     }
 
     /**
@@ -189,9 +195,6 @@ class CreateSmtpEmail implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
-        if ($this->container['messageId'] === null) {
-            $invalidProperties[] = "'messageId' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -227,6 +230,30 @@ class CreateSmtpEmail implements ModelInterface, ArrayAccess
     public function setMessageId($messageId)
     {
         $this->container['messageId'] = $messageId;
+
+        return $this;
+    }
+
+    /**
+     * Gets messageIds
+     *
+     * @return string[]
+     */
+    public function getMessageIds()
+    {
+        return $this->container['messageIds'];
+    }
+
+    /**
+     * Sets messageIds
+     *
+     * @param string[] $messageIds messageIds
+     *
+     * @return $this
+     */
+    public function setMessageIds($messageIds)
+    {
+        $this->container['messageIds'] = $messageIds;
 
         return $this;
     }

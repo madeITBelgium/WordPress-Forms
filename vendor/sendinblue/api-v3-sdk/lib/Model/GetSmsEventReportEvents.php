@@ -58,7 +58,7 @@ class GetSmsEventReportEvents implements ModelInterface, ArrayAccess
       */
     protected static $swaggerTypes = [
         'phoneNumber' => 'string',
-        'date' => '\DateTime',
+        'date' => 'string',
         'messageId' => 'string',
         'event' => 'string',
         'reason' => 'string',
@@ -73,7 +73,7 @@ class GetSmsEventReportEvents implements ModelInterface, ArrayAccess
       */
     protected static $swaggerFormats = [
         'phoneNumber' => null,
-        'date' => 'date-time',
+        'date' => null,
         'messageId' => null,
         'event' => null,
         'reason' => null,
@@ -254,18 +254,6 @@ class GetSmsEventReportEvents implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
-        if ($this->container['phoneNumber'] === null) {
-            $invalidProperties[] = "'phoneNumber' can't be null";
-        }
-        if ($this->container['date'] === null) {
-            $invalidProperties[] = "'date' can't be null";
-        }
-        if ($this->container['messageId'] === null) {
-            $invalidProperties[] = "'messageId' can't be null";
-        }
-        if ($this->container['event'] === null) {
-            $invalidProperties[] = "'event' can't be null";
-        }
         $allowedValues = $this->getEventAllowableValues();
         if (!is_null($this->container['event']) && !in_array($this->container['event'], $allowedValues, true)) {
             $invalidProperties[] = sprintf(
@@ -316,7 +304,7 @@ class GetSmsEventReportEvents implements ModelInterface, ArrayAccess
     /**
      * Gets date
      *
-     * @return \DateTime
+     * @return string
      */
     public function getDate()
     {
@@ -326,7 +314,7 @@ class GetSmsEventReportEvents implements ModelInterface, ArrayAccess
     /**
      * Sets date
      *
-     * @param \DateTime $date UTC date-time on which the event has been generated
+     * @param string $date UTC date-time on which the event has been generated
      *
      * @return $this
      */
@@ -381,7 +369,7 @@ class GetSmsEventReportEvents implements ModelInterface, ArrayAccess
     public function setEvent($event)
     {
         $allowedValues = $this->getEventAllowableValues();
-        if (!in_array($event, $allowedValues, true)) {
+        if (!is_null($event) && !in_array($event, $allowedValues, true)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     "Invalid value for 'event', must be one of '%s'",

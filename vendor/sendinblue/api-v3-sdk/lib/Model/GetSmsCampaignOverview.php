@@ -61,10 +61,10 @@ class GetSmsCampaignOverview implements ModelInterface, ArrayAccess
         'name' => 'string',
         'status' => 'string',
         'content' => 'string',
-        'scheduledAt' => '\DateTime',
+        'scheduledAt' => 'string',
         'sender' => 'string',
-        'createdAt' => '\DateTime',
-        'modifiedAt' => '\DateTime'
+        'createdAt' => 'string',
+        'modifiedAt' => 'string'
     ];
 
     /**
@@ -77,10 +77,10 @@ class GetSmsCampaignOverview implements ModelInterface, ArrayAccess
         'name' => null,
         'status' => null,
         'content' => null,
-        'scheduledAt' => 'date-time',
+        'scheduledAt' => null,
         'sender' => null,
-        'createdAt' => 'date-time',
-        'modifiedAt' => 'date-time'
+        'createdAt' => null,
+        'modifiedAt' => null
     ];
 
     /**
@@ -274,9 +274,6 @@ class GetSmsCampaignOverview implements ModelInterface, ArrayAccess
         if ($this->container['content'] === null) {
             $invalidProperties[] = "'content' can't be null";
         }
-        if ($this->container['scheduledAt'] === null) {
-            $invalidProperties[] = "'scheduledAt' can't be null";
-        }
         if ($this->container['sender'] === null) {
             $invalidProperties[] = "'sender' can't be null";
         }
@@ -409,7 +406,7 @@ class GetSmsCampaignOverview implements ModelInterface, ArrayAccess
     /**
      * Gets scheduledAt
      *
-     * @return \DateTime
+     * @return string
      */
     public function getScheduledAt()
     {
@@ -419,7 +416,7 @@ class GetSmsCampaignOverview implements ModelInterface, ArrayAccess
     /**
      * Sets scheduledAt
      *
-     * @param \DateTime $scheduledAt UTC date-time on which SMS campaign is scheduled. Should be in YYYY-MM-DDTHH:mm:ss.SSSZ format
+     * @param string $scheduledAt UTC date-time on which SMS campaign is scheduled. Should be in YYYY-MM-DDTHH:mm:ss.SSSZ format
      *
      * @return $this
      */
@@ -457,7 +454,7 @@ class GetSmsCampaignOverview implements ModelInterface, ArrayAccess
     /**
      * Gets createdAt
      *
-     * @return \DateTime
+     * @return string
      */
     public function getCreatedAt()
     {
@@ -467,7 +464,7 @@ class GetSmsCampaignOverview implements ModelInterface, ArrayAccess
     /**
      * Sets createdAt
      *
-     * @param \DateTime $createdAt Creation UTC date-time of the SMS campaign (YYYY-MM-DDTHH:mm:ss.SSSZ)
+     * @param string $createdAt Creation UTC date-time of the SMS campaign (YYYY-MM-DDTHH:mm:ss.SSSZ)
      *
      * @return $this
      */
@@ -481,7 +478,7 @@ class GetSmsCampaignOverview implements ModelInterface, ArrayAccess
     /**
      * Gets modifiedAt
      *
-     * @return \DateTime
+     * @return string
      */
     public function getModifiedAt()
     {
@@ -491,7 +488,7 @@ class GetSmsCampaignOverview implements ModelInterface, ArrayAccess
     /**
      * Sets modifiedAt
      *
-     * @param \DateTime $modifiedAt UTC date-time of last modification of the SMS campaign (YYYY-MM-DDTHH:mm:ss.SSSZ)
+     * @param string $modifiedAt UTC date-time of last modification of the SMS campaign (YYYY-MM-DDTHH:mm:ss.SSSZ)
      *
      * @return $this
      */

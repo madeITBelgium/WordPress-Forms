@@ -1,6 +1,6 @@
 <?php
 /**
- * SendTemplateEmailTest
+ * SendSmtpEmailReplyTo1Test
  *
  * PHP version 5
  *
@@ -30,15 +30,15 @@
 namespace SendinBlue\Client;
 
 /**
- * SendTemplateEmailTest Class Doc Comment
+ * SendSmtpEmailReplyTo1Test Class Doc Comment
  *
  * @category    Class
- * @description SendTemplateEmail
+ * @description Email (required), along with name (optional), on which transactional mail recipients will be able to reply back. For example, {\"email\":\"ann6533@example.com\", \"name\":\"Ann\"}
  * @package     SendinBlue\Client
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
  */
-class SendTemplateEmailTest extends \PHPUnit_Framework_TestCase
+class SendSmtpEmailReplyTo1Test extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -70,16 +70,23 @@ class SendTemplateEmailTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test "SendTemplateEmail"
+     * Test "SendSmtpEmailReplyTo1"
      */
-    public function testSendTemplateEmail()
+    public function testSendSmtpEmailReplyTo1()
     {
     }
 
     /**
-     * Test attribute "messageId"
+     * Test attribute "email"
      */
-    public function testPropertyMessageId()
+    public function testPropertyEmail()
+    {
+    }
+
+    /**
+     * Test attribute "name"
+     */
+    public function testPropertyName()
     {
     }
 }

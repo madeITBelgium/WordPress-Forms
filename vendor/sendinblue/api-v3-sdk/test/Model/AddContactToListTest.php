@@ -82,4 +82,11 @@ class AddContactToListTest extends \PHPUnit_Framework_TestCase
     public function testPropertyEmails()
     {
     }
+
+    /**
+     * Test attribute "ids"
+     */
+    public function testPropertyIds()
+    {
+    }
 }

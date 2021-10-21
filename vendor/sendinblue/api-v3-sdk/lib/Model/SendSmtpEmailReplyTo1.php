@@ -1,6 +1,6 @@
 <?php
 /**
- * SendTemplateEmail
+ * SendSmtpEmailReplyTo1
  *
  * PHP version 5
  *
@@ -33,14 +33,15 @@ use \ArrayAccess;
 use \SendinBlue\Client\ObjectSerializer;
 
 /**
- * SendTemplateEmail Class Doc Comment
+ * SendSmtpEmailReplyTo1 Class Doc Comment
  *
  * @category Class
+ * @description Email (required), along with name (optional), on which transactional mail recipients will be able to reply back. For example, {\&quot;email\&quot;:\&quot;ann6533@example.com\&quot;, \&quot;name\&quot;:\&quot;Ann\&quot;}
  * @package  SendinBlue\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class SendTemplateEmail implements ModelInterface, ArrayAccess
+class SendSmtpEmailReplyTo1 implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +50,7 @@ class SendTemplateEmail implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'sendTemplateEmail';
+    protected static $swaggerModelName = 'sendSmtpEmail_replyTo_1';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,7 +58,8 @@ class SendTemplateEmail implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'messageId' => 'string'
+        'email' => 'string',
+        'name' => 'string'
     ];
 
     /**
@@ -66,7 +68,8 @@ class SendTemplateEmail implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'messageId' => null
+        'email' => 'email',
+        'name' => null
     ];
 
     /**
@@ -96,7 +99,8 @@ class SendTemplateEmail implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'messageId' => 'messageId'
+        'email' => 'email',
+        'name' => 'name'
     ];
 
     /**
@@ -105,7 +109,8 @@ class SendTemplateEmail implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'messageId' => 'setMessageId'
+        'email' => 'setEmail',
+        'name' => 'setName'
     ];
 
     /**
@@ -114,7 +119,8 @@ class SendTemplateEmail implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'messageId' => 'getMessageId'
+        'email' => 'getEmail',
+        'name' => 'getName'
     ];
 
     /**
@@ -177,7 +183,8 @@ class SendTemplateEmail implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['messageId'] = isset($data['messageId']) ? $data['messageId'] : null;
+        $this->container['email'] = isset($data['email']) ? $data['email'] : null;
+        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
     }
 
     /**
@@ -189,8 +196,8 @@ class SendTemplateEmail implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
-        if ($this->container['messageId'] === null) {
-            $invalidProperties[] = "'messageId' can't be null";
+        if ($this->container['email'] === null) {
+            $invalidProperties[] = "'email' can't be null";
         }
         return $invalidProperties;
     }
@@ -208,25 +215,49 @@ class SendTemplateEmail implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets messageId
+     * Gets email
      *
      * @return string
      */
-    public function getMessageId()
+    public function getEmail()
     {
-        return $this->container['messageId'];
+        return $this->container['email'];
     }
 
     /**
-     * Sets messageId
+     * Sets email
      *
-     * @param string $messageId Message ID of the template Email sent
+     * @param string $email Email address in reply to
      *
      * @return $this
      */
-    public function setMessageId($messageId)
+    public function setEmail($email)
     {
-        $this->container['messageId'] = $messageId;
+        $this->container['email'] = $email;
+
+        return $this;
+    }
+
+    /**
+     * Gets name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->container['name'];
+    }
+
+    /**
+     * Sets name
+     *
+     * @param string $name Name in reply to. Maximum allowed characters are 70.
+     *
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->container['name'] = $name;
 
         return $this;
     }
