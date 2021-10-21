@@ -20,8 +20,42 @@ class WP_MADEIT_FORM_Module {
         foreach($this->tags as $key => $tag) {
             $ar[$key] = $tag;
             $ar[$key]['message_fields'] = isset($this->message_fields[$key]) && is_array($this->message_fields[$key]) ? $this->message_fields[$key] : array();
+            $ar[$key]['options'] = $this->tag_generator_options();
         }
         return array_merge($actions, $ar);
+    }
+    
+    public function tag_generator_options() {
+        return [
+            'label' => [
+                'text' => __('Label', 'forms-by-made-it'),
+                'type' => 'text',
+            ],
+            'id' => [
+                'text' => __('Id attribute', 'forms-by-made-it'),
+                'type' => 'text',
+            ],
+            'name' => [
+                'text' => __('Name', 'forms-by-made-it'),
+                'type' => 'text',
+            ],
+            'required' => [
+                'text' => __('Required field', 'forms-by-made-it'),
+                'type' => 'checkbox',
+            ],
+            'value' => [
+                'text' => __('Default value', 'forms-by-made-it'),
+                'type'=> 'text',
+            ],
+            'placeholder' => [
+                'text' => __('Placeholder', 'forms-by-made-it'),
+                'type' => 'text',
+            ],
+            'class' => [
+                'text' => __('Class attribute', 'forms-by-made-it'),
+                'type' => 'text',
+            ],
+        ];
     }
     
     public function addHooks() {

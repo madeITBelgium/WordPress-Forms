@@ -100,7 +100,7 @@ class WP_MADEIT_FORM_Module_Radio extends WP_MADEIT_FORM_Module {
            <?php if($name != "") { ?> name="<?php echo esc_html( $name); ?>" <?php } ?>
            <?php if($value != "") { ?> value="<?php echo esc_html( $value); ?>" <?php } ?>
            <?php if($id != "") { ?> id="<?php echo esc_html( $id); ?>" <?php } ?>
-           <?php if($class != "") { ?> class="<?php echo esc_html( $class); ?>" <?php } ?>
+           class="<?php echo esc_html( apply_filters('madeit_forms_module_class', $class, 'radio') ); ?>"
            <?php echo $required == 'yes' ? "required" : "";  ?>
            <?php echo $selected === $value ? 'CHECKED' : ''; ?>
                ><?php echo esc_html( $value); ?>

@@ -97,7 +97,7 @@ class WP_MADEIT_FORM_Module_Textarea extends WP_MADEIT_FORM_Module {
         <textarea <?php if($name != "") { ?> name="<?php echo esc_html($name); ?>" <?php } ?>
                <?php if($value != "") { ?> value="<?php echo esc_html($value); ?>" <?php } ?>
                <?php if($id != "") { ?> id="<?php echo esc_html($id); ?>" <?php } ?>
-               <?php if($class != "") { ?> class="<?php echo esc_html($class); ?>" <?php } ?>
+               class="<?php echo esc_html( apply_filters('madeit_forms_module_class', $class, 'textarea') ); ?>"
                <?php if($placeholder != "") { ?> placeholder="<?php echo esc_html($placeholder); ?>" <?php } ?>
                <?php echo $required == 'yes' ? "required" : "";  ?>
                   ><?php if($value != "") { echo esc_textarea($value); } ?></textarea>

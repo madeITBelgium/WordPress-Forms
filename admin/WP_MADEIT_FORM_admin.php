@@ -260,10 +260,10 @@ class WP_MADEIT_FORM_admin
     {
         if ($column === 'short_code') {
             $formId = get_post_meta($post_id, 'form_id', true);
-            if (empty($formId)) {
-                $formId = $post_id;
+            if (!empty($formId)) {
+                echo '<code>[form id="'.$formId.'"]</code> of ';
             }
-            echo '[form id="'.$formId.'"]';
+            echo '<code>[form id="'.$post_id.'"]</code>';
         }
     }
 
@@ -323,35 +323,41 @@ class WP_MADEIT_FORM_admin
             $actions = [];
             $messages = [];
             $form = get_post_meta($post->ID, 'form', true);
-            $formData = json_decode(get_post_meta($post->ID, 'form_visual', true), true);
+            $visualData = str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'form_visual', true)));
+            $formData = json_decode($visualData, true);
             if (!empty($form) || !empty($formData)) {
                 $formValue = $form;
-                $messages = json_decode(str_replace("\'", "'", get_post_meta($post->ID, 'messages', true)), true);
-                $actions = json_decode(str_replace("\'", "'", get_post_meta($post->ID, 'actions', true)), true);
+                $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'messages', true))), true);
+                $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'actions', true))), true);
             }
-
+            
             if (empty($formData)) {
                 $formData = [
                     [
                         'type'        => 'text',
                         'name'        => 'your-name',
-                        'required'    => false,
+                        'id'          => 'your-name',
+                        'required'    => 0,
                         'value'       => null,
                         'placeholder' => null,
                         'label'       => 'Your name:',
+                        'class'       => '',
                     ],
                     [
                         'type'        => 'email',
                         'name'        => 'your-email',
-                        'required'    => false,
+                        'id'          => 'your-email',
+                        'required'    => 0,
                         'value'       => null,
                         'placeholder' => null,
                         'label'       => 'Your email:',
+                        'class'       => '',
                     ],
                     [
                         'type'  => 'submit',
-                        'value' => 'Send',
-                        'label' => '',
+                        'label' => 'Send',
+                        'id'    => 'your-send',
+                        'class' => 'btn btn-primary',
                     ],
                 ];
             }
@@ -360,6 +366,7 @@ class WP_MADEIT_FORM_admin
             <input type="hidden" name="madeit_form_editor" value="yes">
             <input type="hidden" name="save_inputs" value="<?php echo get_post_meta($post->ID, 'save_inputs', true); ?>">
             <input type="hidden" name="form_type" value="<?php echo get_post_meta($post->ID, 'form_type', true); ?>">
+            <input type="hidden" name="form_visual_data" id="form_visual_data" value="<?php echo htmlspecialchars(json_encode($formData)); ?>">
 
             <div id="madeit-tab">
                 <ul id="madeit-tab-tabs">
@@ -390,32 +397,161 @@ class WP_MADEIT_FORM_admin
                         <textarea id="madeit-forms-form" name="form" cols="100" rows="24" class="large-text code"><?php echo esc_textarea($formValue); ?></textarea>
                     </div>
                     <div id="madeit-form-visual" <?php echo get_post_meta($post->ID, 'form_type', true) === 'html' ? 'style="display: none;"' : ''; ?>>
-                        <?php
-                        foreach ($formData as $k => $formField) {
-                            ?>
-                            <div style="display: flex; background: white; border: 1px solid #ddd;padding: 20px;">
-                                <div style="padding: 0px 10px; display: flex; align-items: center;">
-                                    <?php echo $k + 1; ?>
-                                </div>
-                                <div style="display: flex; align-items: end;">
-                                    <div class="margin-right: 5px">
-                                        <select name="formdata_<?php echo $k; ?>_type">
-                                            <option value="">Selecteer type</option>
-                                            <?php
-                                            foreach ($this->tags as $id => $panel) {
-                                                echo '<option value="'.$id.'" '.($id == $formField['type'] ? 'SELECTED' : '').'>'.esc_html($panel['title']).'</option>';
-                                            } ?>
-                                        </select>
+                        <div>
+                            <div class="madeit-form-data-row" v-for="(formField, index) in formData">
+                                <div class="madeit-form-data-row-col-1">
+                                    <div>
+                                        <a href="#" class="madeit-form-data-row-up" @click.prevent="moveUp(index)">
+                                            <svg style="width: 0.875em;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="chevron-up" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-chevron-up fa-w-14"><path fill="currentColor" d="M240.971 130.524l194.343 194.343c9.373 9.373 9.373 24.569 0 33.941l-22.667 22.667c-9.357 9.357-24.522 9.375-33.901.04L224 227.495 69.255 381.516c-9.379 9.335-24.544 9.317-33.901-.04l-22.667-22.667c-9.373-9.373-9.373-24.569 0-33.941L207.03 130.525c9.372-9.373 24.568-9.373 33.941-.001z" class=""></path></svg>
+                                        </a>
                                     </div>
                                     <div>
-                                        Label:<br>
-                                        <input type="text" name="formdata_<?php echo $k; ?>_label" value="<?php echo esc_attr($formField['label']); ?>">
+                                        <a href="#" class="madeit-form-data-row-down" @click.prevent="moveDown(index)">
+                                            <svg style="width: 0.875em;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="chevron-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-chevron-down fa-w-14"><path fill="currentColor" d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z" class=""></path></svg>
+                                        </a>                                        
+                                    </div>
+                                </div>
+                                <div class="madeit-form-data-row-col-2">
+                                    <span class="madeit-form-data-row-col-2-number">{{ index + 1 }}</span>
+                                </div>
+                                <div style="display: flex; align-items: end;">
+                                    <div style="margin-right: 10px">
+                                        <label style="display: block;">Type veld:</label>
+                                        <select v-model="formField.type" @change="updateData()">
+                                            <option value="">Selecteer type</option>
+                                            <option :value="tagId" v-for="(tag, tagId) in tags">{{ tag.title }}</option>
+                                        </select>
+                                    </div>
+                                    <div style="margin-right: 10px;" v-for="(fieldOption, fieldOptionKey) in options(formField)">
+                                        <label style="display: block;">{{ fieldOption.text }}:</label>
+
+                                        <input v-if="fieldOption.type === 'text'" type="text" v-model="formField[fieldOptionKey]" @change="updateData()">
+                                        <input v-else-if="fieldOption.type === 'checkbox'" type="checkbox" value="true" v-model="formField[fieldOptionKey]" @change="updateData()">
+
                                     </div>
                                 </div>
                             </div>
-                            <?php
-                        } ?>
+                        </div>
+                        <div style="display: flex; margin-top: 10px;">
+                            <button class="button button-primary button-large" @click.prevent="addRow()">
+                                <?php echo __('Add row', 'forms-by-made-it'); ?>
+                            </button>
+                        </div>
                     </div>
+                    <style>
+                        #madeit-form-visual .madeit-form-data-row {
+                            display: flex;
+                            background: white;
+                            border: 1px solid #ddd;
+                            padding: 20px;
+                        }
+                        
+                        #madeit-form-visual .madeit-form-data-row:first-child .madeit-form-data-row-up {
+                            display: none;
+                        }
+                        
+                        #madeit-form-visual .madeit-form-data-row:last-child .madeit-form-data-row-down {
+                            display: none;
+                        }
+                        
+                        #madeit-form-visual .madeit-form-data-row-col-1 {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                        }
+                        
+                        #madeit-form-visual .madeit-form-data-row-col-2 {
+                            padding: 0px 10px;
+                            display: flex;
+                            align-items: center;
+                        }
+                        
+                        #madeit-form-visual .madeit-form-data-row-col-2-number {
+                            background: #f0f0f1;
+                            text-align: center;
+                            height: 30px;
+                            width: 30px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 50px;
+                        }
+                    </style>
+                    
+                    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+                    <!-- Load polyfills to support older browsers -->
+                    <script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CMutationObserver" crossorigin="anonymous"></script>
+
+                    <script>
+                    Array.prototype.move = function(from, to) {
+                        this.splice(to, 0, this.splice(from, 1)[0]);
+                        return this;
+                    };
+                    
+                    var app = new Vue({
+                        el: '#madeit-form-visual',
+                        data: {
+                            tags: <?php echo json_encode($this->tags); ?>,
+                            formData: <?php echo json_encode($formData); ?>,
+                        },
+
+                        mounted() {
+                        },
+
+                        methods: {
+                            options: function(formField) {
+                                return this.tags[formField.type].options;
+                            },
+                            
+                            moveUp: function(index) {
+                                this.formData.move(index, index - 1);
+                                this.updateData();
+                            },
+                            
+                            moveDown: function(index) {
+                                this.formData.move(index, index + 1);
+                                this.updateData();
+                            },
+                            
+                            addRow: function() {
+                                var randomId = Math.floor(Math.random() * 1000);
+                                this.formData.push({
+                                    type: 'text',
+                                    name: 'your-' + randomId,
+                                    id: 'your-' + randomId,
+                                    required: 0,
+                                    value: null,
+                                    placeholder: null,
+                                    label: '',
+                                    class: '',
+                                })
+                            },
+                            
+                            updateData: function() {
+                                jQuery('#form_visual_data').val(JSON.stringify(this.formData).replace(/["]/g, function (s) { return {'"': '&quot;'}[s]; }));
+                                
+                                var tags = [];
+                                for(var i = 0; i < this.formData.length; i++) {
+                                    if(this.formData[i].name) {
+                                        tags.push(this.formData[i].name);
+                                    }
+                                }
+
+                                if(tags.length > 0) {
+                                    jQuery('.name-tags').html("[" + tags.join('], [') + "]")
+                                } else {
+                                    jQuery('.name-tags').html("");
+                                }
+                            }
+                        },
+                        
+                        watch: {
+                            formData: function(newVal, old) {
+                                this.updateData();
+                            }
+                        }
+                    })
+                    </script>
                 </div>
                 <div class="madeit-tab-panel" id="actions-panel">
                    <h2><?php echo esc_html(__('Actions', 'forms-by-made-it')); ?></h2>
@@ -643,10 +779,18 @@ class WP_MADEIT_FORM_admin
         global $_POST;
 
         if (isset($_POST['madeit_form_editor']) && $_POST['madeit_form_editor'] == 'yes') {
-            update_post_meta($post_id, 'form', $_POST['form']);
-            update_post_meta($post_id, 'form_type', 'html');
+            
             update_post_meta($post_id, 'save_inputs', 1);
-
+            if(isset($_POST['form_type']) && $_POST['form_type'] === 'visual') {
+                update_post_meta($post_id, 'form_type', 'visual');
+                $json = $this->enterToDB(str_replace('&quot;', '"', $_POST['form_visual_data']));
+                update_post_meta($post_id, 'form_visual', $json);
+            }
+            else {
+                update_post_meta($post_id, 'form', $_POST['form']);
+                update_post_meta($post_id, 'form_type', 'html');
+            }
+            
             $actions = [];
             $messages = [];
             //actions
@@ -677,8 +821,8 @@ class WP_MADEIT_FORM_admin
                 }
             }
 
-            update_post_meta($post_id, 'messages', json_encode($messages));
-            update_post_meta($post_id, 'actions', json_encode($actions));
+            update_post_meta($post_id, 'messages', $this->enterToDB(json_encode($messages)));
+            update_post_meta($post_id, 'actions', $this->enterToDB(json_encode($actions)));
         }
     }
 
@@ -698,10 +842,10 @@ class WP_MADEIT_FORM_admin
 
     public function ma_form_inputs_data($post)
     {
-        if (get_post_meta($post->ID, 'read', true) == 0) {
+        if (in_array(get_post_meta($post->ID, 'read', true), [0, '', null])) {
             update_post_meta($post->ID, 'read', 1);
         }
-        $data = json_decode(get_post_meta($post->ID, 'data', true), true); ?>
+        $data = json_decode($this->dbToEnter(get_post_meta($post->ID, 'data', true)), true); ?>
         <table class="form-table">
             <tbody>
                 <?php
@@ -838,5 +982,19 @@ class WP_MADEIT_FORM_admin
         }
 
         return $randomString;
+    }
+    
+    public function enterToDB($data) {
+        $data = str_replace('\r\n', "|--MAFORM-RN--|", $data);
+        $data = str_replace('\r', "|--MAFORM-R--|", $data);
+        $data = str_replace('\n', "|--MAFORM-N--|", $data);
+        return $data;
+    }
+    
+    public function dbToEnter($data) {
+        $data = str_replace("|--MAFORM-RN--|", '\r\n', $data);
+        $data = str_replace("|--MAFORM-R--|", '\r', $data);
+        $data = str_replace("|--MAFORM-N--|", '\n', $data);
+        return $data;
     }
 }

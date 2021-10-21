@@ -79,7 +79,7 @@ class WP_Form_front
             //validate input fields
             $error = false;
             $error_msg = '';
-            $messages = json_decode(str_replace("\'", "'", get_post_meta($form->ID, 'messages', true)), true);
+            $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'messages', true))), true);
 
             //insert form input
             foreach ($_POST as $k => $v) {
@@ -123,7 +123,7 @@ class WP_Form_front
                 ]);
 
                 update_post_meta($inputId, 'form_id', $form->ID);
-                update_post_meta($inputId, 'data', json_encode($postData));
+                update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
                 update_post_meta($inputId, 'ip', $this->getIP());
                 update_post_meta($inputId, 'user_agent', (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'));
                 update_post_meta($inputId, 'spam', $spam ? 1 : 0);
@@ -132,7 +132,7 @@ class WP_Form_front
             }
 
             //execute actions
-            $actions = json_decode(str_replace("\'", "'", get_post_meta($form->ID, 'actions', true)), true);
+            $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'actions', true))), true);
             if (is_array($actions) && count($actions) > 0) {
                 $formActions = apply_filters('madeit_forms_submit_actions', $actions);
                 foreach ($formActions as $actID => $actionInfo) {
@@ -186,9 +186,36 @@ class WP_Form_front
         add_filter('madeit_forms_form_id', [$this, 'form_id']);
         echo '<form action="" method="post" id="form_'.$id.'" '.($ajax ? 'class="madeit-forms-ajax"' : 'class="madeit-forms-noajax"').'>';
         echo '<input type="hidden" name="form_id" value="'.$id.'">';
-        $formValue = get_post_meta($form->ID, 'form', true);
-        $formValue = str_replace('\"', '"', $formValue);
-        echo do_shortcode($formValue);
+        if(get_post_meta($form->ID, 'form_type', true) === 'html') {
+            $formValue = get_post_meta($form->ID, 'form', true);
+            $formValue = str_replace('\"', '"', $formValue);
+            echo do_shortcode($formValue);
+        } else {
+            $visualData = str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'form_visual', true)));
+            $formData = json_decode($visualData, true);
+            foreach($formData as $formField) {
+                $formFieldCodeData = $formField;
+                unset($formFieldCodeData['type']);
+                unset($formFieldCodeData['label']);
+                
+                $shortcode = "[" . $formField['type'];
+                foreach($formFieldCodeData as $k => $v) {
+                    if($k === 'required') {
+                        $v = $v == '1' ? 'yes' : 'no';
+                    }
+                    $shortcode .= " " . $k . '="' . $v . '"';
+                }
+                $shortcode .= "]";
+                
+                $html = '';
+                if($formField['type'] !== 'submit') {
+                    $html = "<label>" . $formField['label'] . "</label>";
+                }
+                $html .= $shortcode . "<br>";
+                
+                echo do_shortcode(apply_filters("madeit_forms_visual_builder_element", $html, $shortcode, $formField));
+            }
+        }
         echo '</form>';
     }
 
@@ -304,7 +331,7 @@ class WP_Form_front
         //validate input fields
         $error = false;
         $error_msg = '';
-        $messages = json_decode(str_replace("\'", "'", get_post_meta($form->ID, 'messages', true)), true);
+        $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'messages', true))), true);
 
         //insert form input
         foreach ($_POST as $k => $v) {
@@ -347,7 +374,7 @@ class WP_Form_front
             ]);
 
             update_post_meta($inputId, 'form_id', $form->ID);
-            update_post_meta($inputId, 'data', json_encode($postData));
+            update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
             update_post_meta($inputId, 'ip', $this->getIP());
             update_post_meta($inputId, 'user_agent', (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'));
             update_post_meta($inputId, 'spam', $spam ? 1 : 0);
@@ -357,7 +384,7 @@ class WP_Form_front
         $outputHtml = '';
 
         //execute actions
-        $actions = json_decode(str_replace("\'", "'", get_post_meta($form->ID, 'actions', true)), true);
+        $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'actions', true))), true);
         if (count($actions) > 0) {
             $formActions = apply_filters('madeit_forms_submit_actions', $actions);
             foreach ($formActions as $actID => $actionInfo) {
@@ -420,5 +447,19 @@ class WP_Form_front
 
         add_action('wp_ajax_madeit_forms_submit', [$this, 'submitAjaxForm']);
         add_action('wp_ajax_nopriv_madeit_forms_submit', [$this, 'submitAjaxForm']);
+    }
+    
+    public function enterToDB($data) {
+        $data = str_replace('\r\n', "|--MAFORM-RN--|", $data);
+        $data = str_replace('\r', "|--MAFORM-R--|", $data);
+        $data = str_replace('\n', "|--MAFORM-N--|", $data);
+        return $data;
+    }
+    
+    public function dbToEnter($data) {
+        $data = str_replace("|--MAFORM-RN--|", '\r\n', $data);
+        $data = str_replace("|--MAFORM-R--|", '\r', $data);
+        $data = str_replace("|--MAFORM-N--|", '\n', $data);
+        return $data;
     }
 }

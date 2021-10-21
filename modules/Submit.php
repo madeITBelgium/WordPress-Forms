@@ -29,8 +29,26 @@ class WP_MADEIT_FORM_Module_Submit
         foreach($this->tags as $key => $tag) {
             $ar[$key] = $tag;
             $ar[$key]['message_fields'] = isset($this->message_fields[$key]) && is_array($this->message_fields[$key]) ? $this->message_fields[$key] : array();
+            $ar[$key]['options'] = $this->tag_generator_options();
         }
         return array_merge($actions, $ar);
+    }
+    
+    public function tag_generator_options() {
+        return [
+            'label' => [
+                'text' => __('Label', 'forms-by-made-it'),
+                'type' => 'text',
+            ],
+            'id' => [
+                'text' => __('Id attribute', 'forms-by-made-it'),
+                'type' => 'text',
+            ],
+            'class' => [
+                'text' => __('Class attribute', 'forms-by-made-it'),
+                'type' => 'text',
+            ],
+        ];
     }
     
     public function tag_generator_submit($contact_form, $args = '') {
@@ -115,7 +133,7 @@ class WP_MADEIT_FORM_Module_Submit
            <?php if($captcha != "") { echo $captcha; } ?>
            <?php if($value != "") { ?> value="<?php echo esc_html($value); ?>" <?php } ?>
            <?php if($id != "") { ?> id="<?php echo esc_html($id); ?>" <?php } ?>
-           <?php if($class != "") { ?> class="<?php echo esc_html($class); ?>" <?php } ?>
+           class="<?php echo esc_html( apply_filters('madeit_forms_module_class', $class, 'submit') ); ?>"
                >
         <?php
         if($captcha_js != "") {
