@@ -28,7 +28,7 @@ class DataInit
                     'post_type'   => 'ma_forms',
                     'post_date'   => $form['create_time'],
                 ]);
-                
+
                 update_post_meta($formId, 'form_id', $form['id']);
                 update_post_meta($formId, 'form', $form['form']);
                 update_post_meta($formId, 'messages', $this->enterToDB($form['messages']));
@@ -37,9 +37,9 @@ class DataInit
                 update_post_meta($formId, 'save_inputs', 1);
             }
         }
-        
+
         usleep(rand(100000, 1500000));
-        
+
         $inputs = $wpdb->get_results('SELECT * FROM `'.$wpdb->base_prefix.'madeit_form_inputs`', ARRAY_A);
         foreach ($inputs as $input) {
             $existingInputs = get_posts([
@@ -263,18 +263,22 @@ class DataInit
         add_filter('manage_edit-ma_forms_columns', [$this, 'yoast_seo_admin_remove_columns'], 10, 1);
         add_filter('manage_edit-ma_form_inputs_columns', [$this, 'yoast_seo_admin_remove_columns'], 10, 1);
     }
-    
-    public function enterToDB($data) {
-        $data = str_replace('\r\n', "|--MAFORM-RN--|", $data);
-        $data = str_replace('\r', "|--MAFORM-R--|", $data);
-        $data = str_replace('\n', "|--MAFORM-N--|", $data);
+
+    public function enterToDB($data)
+    {
+        $data = str_replace('\r\n', '|--MAFORM-RN--|', $data);
+        $data = str_replace('\r', '|--MAFORM-R--|', $data);
+        $data = str_replace('\n', '|--MAFORM-N--|', $data);
+
         return $data;
     }
-    
-    public function dbToEnter($data) {
-        $data = str_replace("|--MAFORM-RN--|", '\r\n', $data);
-        $data = str_replace("|--MAFORM-R--|", '\r', $data);
-        $data = str_replace("|--MAFORM-N--|", '\n', $data);
+
+    public function dbToEnter($data)
+    {
+        $data = str_replace('|--MAFORM-RN--|', '\r\n', $data);
+        $data = str_replace('|--MAFORM-R--|', '\r', $data);
+        $data = str_replace('|--MAFORM-N--|', '\n', $data);
+
         return $data;
     }
 }

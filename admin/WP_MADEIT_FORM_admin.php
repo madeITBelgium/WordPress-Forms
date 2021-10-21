@@ -330,7 +330,7 @@ class WP_MADEIT_FORM_admin
                 $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'messages', true))), true);
                 $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'actions', true))), true);
             }
-            
+
             if (empty($formData)) {
                 $formData = [
                     [
@@ -779,18 +779,16 @@ class WP_MADEIT_FORM_admin
         global $_POST;
 
         if (isset($_POST['madeit_form_editor']) && $_POST['madeit_form_editor'] == 'yes') {
-            
             update_post_meta($post_id, 'save_inputs', 1);
-            if(isset($_POST['form_type']) && $_POST['form_type'] === 'visual') {
+            if (isset($_POST['form_type']) && $_POST['form_type'] === 'visual') {
                 update_post_meta($post_id, 'form_type', 'visual');
                 $json = $this->enterToDB(str_replace('&quot;', '"', $_POST['form_visual_data']));
                 update_post_meta($post_id, 'form_visual', $json);
-            }
-            else {
+            } else {
                 update_post_meta($post_id, 'form', $_POST['form']);
                 update_post_meta($post_id, 'form_type', 'html');
             }
-            
+
             $actions = [];
             $messages = [];
             //actions
@@ -983,18 +981,22 @@ class WP_MADEIT_FORM_admin
 
         return $randomString;
     }
-    
-    public function enterToDB($data) {
-        $data = str_replace('\r\n', "|--MAFORM-RN--|", $data);
-        $data = str_replace('\r', "|--MAFORM-R--|", $data);
-        $data = str_replace('\n', "|--MAFORM-N--|", $data);
+
+    public function enterToDB($data)
+    {
+        $data = str_replace('\r\n', '|--MAFORM-RN--|', $data);
+        $data = str_replace('\r', '|--MAFORM-R--|', $data);
+        $data = str_replace('\n', '|--MAFORM-N--|', $data);
+
         return $data;
     }
-    
-    public function dbToEnter($data) {
-        $data = str_replace("|--MAFORM-RN--|", '\r\n', $data);
-        $data = str_replace("|--MAFORM-R--|", '\r', $data);
-        $data = str_replace("|--MAFORM-N--|", '\n', $data);
+
+    public function dbToEnter($data)
+    {
+        $data = str_replace('|--MAFORM-RN--|', '\r\n', $data);
+        $data = str_replace('|--MAFORM-R--|', '\r', $data);
+        $data = str_replace('|--MAFORM-N--|', '\n', $data);
+
         return $data;
     }
 }
