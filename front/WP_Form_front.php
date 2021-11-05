@@ -80,12 +80,12 @@ class WP_Form_front
                         }
                     }
                 }
-                
-                if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+
+                if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
                     $secretKey = $this->defaultSettings['reCaptcha']['secret'];
-                    if(!isset($_POST['g-recaptcha-response'])) {
+                    if (!isset($_POST['g-recaptcha-response'])) {
                         $error = true;
-                        $error_msg = __("The captcha couldn't validate you.", "forms-by-made-it");
+                        $error_msg = __("The captcha couldn't validate you.", 'forms-by-made-it');
                     }
                 }
 
