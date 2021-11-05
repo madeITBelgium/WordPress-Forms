@@ -95,6 +95,7 @@ class WP_MADEIT_FORM_Module_Submit
         if(isset($tagOptions['ajax']) && $tagOptions['ajax']) {
             return true;
         }
+        
         if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
             $secretKey = $this->defaultSettings['reCaptcha']['secret'];
             if(!isset($_POST['g-recaptcha-response'])) {
@@ -125,8 +126,8 @@ class WP_MADEIT_FORM_Module_Submit
             $class .= ' g-recaptcha';
             $captcha = ' data-sitekey="' . $this->defaultSettings['reCaptcha']['key'] . '" data-callback="' . $captchaCallback . '" data-error-callback="' . $captchaErrorCallback . '"';
             $formId = "form_" . apply_filters('madeit_forms_form_id', "");
-            $captcha_js = "<script>function " . $captchaCallback . "(token) { console.log(token); submitMadeitForm('" . $formId . "'); }</script>";
-            $captcha_js .= "<script>function " . $captchaErrorCallback . "(token) { console.log(token); }</script>";
+            $captcha_js = "<script>function " . $captchaCallback . "(token) { submitMadeitForm('" . $formId . "'); }</script>";
+            $captcha_js .= "<script>function " . $captchaErrorCallback . "(token) { }</script>";
         }
         ?>
         <input type="submit" name="btn_submit"
