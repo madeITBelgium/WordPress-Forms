@@ -3,9 +3,9 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 5.0
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 7.2
-Stable tag: 1.12.4
+Stable tag: 1.12.5
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -47,6 +47,9 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
+= 1.12.5 =
+* Fix spam issue
+
 = 1.12.1 - 1.12.4 =
 * Fix XSS bug in Title field (Credits to: Shubhangi Dawkhar & WPScan)
 * Fix delete form bug
