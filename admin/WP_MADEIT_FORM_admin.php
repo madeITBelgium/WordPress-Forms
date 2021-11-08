@@ -81,6 +81,8 @@ class WP_MADEIT_FORM_admin
             $output = fopen('php://output', 'w');
 
             $d = $data[0];
+            $row = $d;
+            unset($row['user_agent']);
             unset($row['data']);
             foreach (json_decode($d['data'], true) as $k => $v) {
                 $row[$k] = $v;
@@ -93,6 +95,8 @@ class WP_MADEIT_FORM_admin
 
             // fetch the data
             foreach ($data as $d) {
+                $row = $d;
+                unset($row['user_agent']);
                 unset($row['data']);
                 foreach (json_decode($d['data'], true) as $k => $v) {
                     $row[$k] = $v;
