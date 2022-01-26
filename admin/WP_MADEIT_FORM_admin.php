@@ -50,7 +50,10 @@ class WP_MADEIT_FORM_admin
 
     public function initAdmin()
     {
-        if (isset($_GET['post_type']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'export' && wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
+        if (isset($_GET['post_type']) && isset($_GET['action']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'export') {
+            if(!wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
+                wp_die('Security check');
+            }
             $data = get_posts([
                 'post_type'   => 'ma_form_inputs',
                 'numberposts' => -1,
@@ -115,6 +118,25 @@ class WP_MADEIT_FORM_admin
                 fputcsv($output, $row);
             }
             exit();
+        }
+        else if(isset($_GET['post_type']) && isset($_GET['action']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'mark_as_read_forms') {
+            if(!wp_verify_nonce($_GET['forms_wpnonce'], 'mark_as_read_forms')) {
+                wp_die('Security check 1');
+            }
+            
+            $p = get_posts([
+                'post_type' => 'ma_form_inputs',
+                'meta_query' => [
+                    [
+                        'meta_key' => 'read',
+                        'meta_value' => 0
+                    ]
+                ]
+            ]);
+            
+            foreach($p as $po) {
+                update_post_meta($po->ID, 'read', 1);
+            }
         }
     }
 
@@ -466,6 +488,11 @@ class WP_MADEIT_FORM_admin
 
     public function admin_footer()
     {
+        if('ma_forms' === get_current_screen()->id) {
+            ?>
+            <style>.interface-interface-skeleton__content { padding-left: 10px; padding-right: 10px; }</style>
+            <?php
+        }
         ?>
         <div id="empty-actions-section" style="display: none;">
             <section id="action-panel-" data-id="0" data-section-id="action-panel-" class="action-section">
@@ -893,17 +920,29 @@ class WP_MADEIT_FORM_admin
                     'post_type'   => 'ma_forms',
                     'numberposts' => -1,
                 ]); ?>
-                <form method="get" action="/wp-admin/edit.php">
-                    <?php wp_nonce_field('export_forms'); ?>
-                    <input type="hidden" name="post_type" value="ma_form_inputs">
-                    <input type="hidden" name="action" value="export">
-                    <select name="id">
-                        <?php foreach ($forms as $form) { ?>
-                        <option value="<?php echo $form->ID; ?>"><?php echo esc_textarea($form->post_title); ?></option>
-                        <?php } ?>
-                    </select>
-                    <input type="submit" value="Exporteer" class="button">
-                </form>
+                <div style="display:flex;">
+                    <div>
+                        <form method="get" action="/wp-admin/edit.php">
+                            <?php wp_nonce_field('export_forms'); ?>
+                            <input type="hidden" name="post_type" value="ma_form_inputs">
+                            <input type="hidden" name="action" value="export">
+                            <select name="id">
+                                <?php foreach ($forms as $form) { ?>
+                                <option value="<?php echo $form->ID; ?>"><?php echo esc_textarea($form->post_title); ?></option>
+                                <?php } ?>
+                            </select>
+                            <input type="submit" value="Exporteer" class="button">
+                        </form>
+                    </div>
+                    <div style="margin-left: 15px; padding-left: 15px; border-left: 1px solid gray;">
+                        <form method="get" action="/wp-admin/edit.php">
+                            <input type="hidden" name="post_type" value="ma_form_inputs">
+                            <input type="hidden" name="action" value="mark_as_read_forms">
+                            <input type="hidden" name="forms_wpnonce" value="<?php echo wp_create_nonce('mark_as_read_forms'); ?>">
+                            <input type="submit" value="Markeer alle inzendingen als gelezen" class="button">
+                        </form>
+                    </div>
+                </div>
                 <?php
             });
         }
@@ -933,7 +972,7 @@ class WP_MADEIT_FORM_admin
         }
     }
     
-    public function gutenberg_blocks($block_types, $post)
+    public function gutenberg_blocks($block_types, $block_editor_context)
     {
         $allowed = [
             'core/paragraph',
@@ -943,11 +982,36 @@ class WP_MADEIT_FORM_admin
             'madeitforms/submit-field',
             'madeitforms/multi-value-field',
         ];
-        if ($post->post_type == 'ma_forms') {
+        if ($block_editor_context->post->post_type == 'ma_forms') {
             return $allowed;
         }
         
         return $block_types;
+    }
+    
+    public function bulk_action_ma_form_inputs($bulk_actions)
+    {
+        $bulk_actions['mark-as-read'] = __('Mark as read', 'forms-by-made-it');
+        return $bulk_actions;
+    }
+    
+    public function handle_bulk_action_ma_form_inputs($redirect_url, $action, $post_ids)
+    {
+        if ($action == 'mark-as-read') {
+            foreach ($post_ids as $post_id) {
+                update_post_meta($post_id, 'read', 1);
+            }
+            $redirect_url = add_query_arg('changed-mark-as-read', count($post_ids), $redirect_url);
+        }
+        return $redirect_url;
+    }
+    
+    public function notice_mark_as_read()
+    {
+        if (!empty($_REQUEST['changed-mark-as-read'])) {
+            $num_changed = (int) $_REQUEST['changed-mark-as-read'];
+            printf('<div id="message" class="updated notice is-dismissable"><p>' . __('%d submits marked as read.', 'forms-by-made-it') . '</p></div>', $num_changed);
+        }
     }
     
     public function addHooks()
@@ -957,6 +1021,7 @@ class WP_MADEIT_FORM_admin
         add_action('admin_enqueue_scripts', [$this, 'initStyle']);
 
         add_action('init', [$this, 'init']);
+        add_action('admin_footer', [$this, 'admin_footer']);
 
         add_filter('manage_edit-ma_forms_columns', [$this, 'set_custom_edit_ma_forms_columns']);
         add_action('manage_ma_forms_posts_custom_column', [$this, 'custom_ma_forms_column'], 10, 2);
@@ -967,7 +1032,6 @@ class WP_MADEIT_FORM_admin
         add_action('edit_form_after_title', [$this, 'edit_form_after_title'], 10, 1);
         add_action('edit_form_advanced', [$this, 'edit_form_advanced'], 10, 1);
         add_action('submitpost_box', [$this, 'submitpost_box'], 20, 1);
-        add_action('admin_footer', [$this, 'admin_footer']);
 
         add_action('save_post_ma_forms', [$this, 'save_form'], 10, 3);
         add_action('save_post', [$this, 'save_meta'], 10, 3);
@@ -981,7 +1045,12 @@ class WP_MADEIT_FORM_admin
         add_filter( 'use_block_editor_for_post_type', [$this, 'disable_gutenberg'], 10, 2 );
         add_action( 'init', [$this, 'disable_classic'] );
         
-        add_filter('allowed_block_types', [$this, 'gutenberg_blocks'], 10, 2);
+        add_filter('allowed_block_types_all', [$this, 'gutenberg_blocks'], 10, 2);
+        
+        add_filter('bulk_actions-edit-ma_form_inputs', [$this, 'bulk_action_ma_form_inputs']);
+        add_filter('handle_bulk_actions-edit-ma_form_inputs', [$this, 'handle_bulk_action_ma_form_inputs'], 10, 3);
+
+        add_action('admin_notices', [$this, 'notice_mark_as_read']);
     }
 
     public function generateKey()

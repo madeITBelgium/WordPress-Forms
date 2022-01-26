@@ -5,7 +5,6 @@
 	"version": "0.1.0",
 	"title": "Forms Submit Field",
 	"category": "widgets",
-	"icon": "smiley",
 	"description": "Forms Submit field",
 	"supports": {
 		"html": false

@@ -5,7 +5,6 @@
 	"version": "0.1.0",
 	"title": "Forms Multi Value Field",
 	"category": "widgets",
-	"icon": "smiley",
 	"description": "Forms Multi Value field",
 	"supports": {
 		"html": false

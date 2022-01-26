@@ -5,7 +5,6 @@
 	"version": "0.1.0",
 	"title": "Forms Input Field",
 	"category": "widgets",
-	"icon": "smiley",
 	"description": "Forms Input field",
 	"supports": {
 		"html": false
