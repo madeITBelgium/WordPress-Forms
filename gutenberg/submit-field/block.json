@@ -1,0 +1,72 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "madeitforms/submit-field",
+	"version": "0.1.0",
+	"title": "Forms Submit Field",
+	"category": "widgets",
+	"icon": "smiley",
+	"description": "Forms Submit field",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "forms-by-made-it",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css",
+    "attributes": {
+        "text": {
+			"type": "string",
+			"source": "html",
+			"selector": "button"
+		},
+        "backgroundColor": {
+			"type": "string"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"gradient": {
+			"type": "string"
+		},
+		"width": {
+			"type": "number"
+		}
+    },
+    "supports": {
+		"anchor": true,
+		"align": true,
+		"alignWide": false,
+		"color": {
+			"__experimentalSkipSerialization": true,
+			"gradients": true
+		},
+		"typography": {
+			"fontSize": true,
+			"__experimentalFontFamily": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"reusable": false,
+		"spacing": {
+			"__experimentalSkipSerialization": true,
+			"padding": [ "horizontal", "vertical" ],
+			"__experimentalDefaultControls": {
+				"padding": true
+			}
+		},
+		"__experimentalBorder": {
+			"radius": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"radius": true
+			}
+		},
+		"__experimentalSelector": ".wp-block-button__link"
+	},
+	"styles": [
+		{ "name": "fill", "label": "Fill", "isDefault": true },
+		{ "name": "outline", "label": "Outline" }
+	]
+}

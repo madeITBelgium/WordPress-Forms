@@ -1,0 +1,87 @@
+
+$gray-700: #757575;
+$break-large: 960px;	// admin sidebar auto folds
+$break-medium: 782px;	// adminbar goes big
+
+.wp-block[data-align="center"] > .wp-block-madeitforms-submit-field {
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.wp-block[data-align="right"] > .wp-block-madeitforms-submit-field {
+	/*!rtl:ignore*/
+	text-align: right;
+}
+
+.wp-block-madeitforms-submit-field {
+	position: relative;
+	cursor: text;
+
+	// Make placeholder text white unless custom colors or outline versions are chosen.
+	&:not(.has-text-color):not(.is-style-outline) [data-rich-text-placeholder]::after {
+		color: white;
+	}
+
+	// Add outline to button on focus to indicate focus-state
+	&:focus {
+		box-shadow: 0 0 0 1px white, 0 0 0 3px var(--wp-admin-theme-color);
+
+		// Windows' High Contrast mode will show this outline, but not the box-shadow.
+		outline: 2px solid transparent;
+		outline-offset: -2px;
+	}
+
+	// Increase placeholder opacity to meet contrast ratios.
+	&[data-rich-text-placeholder]::after {
+		opacity: 0.8;
+	}
+}
+
+.wp-block-madeitforms-submit-field__inline-link {
+	color: $gray-700;
+	height: 0;
+	overflow: hidden;
+	max-width: 290px;
+
+	&-input__suggestions {
+		max-width: 290px;
+	}
+
+	@media (min-width: #{ ($break-medium + 1) }) {
+		max-width: 260px;
+
+		&-input__suggestions {
+			max-width: 260px;
+		}
+
+	}
+	@media (min-width: #{ ($break-large + 1) }) {
+		max-width: 290px;
+
+		&-input__suggestions {
+			max-width: 290px;
+		}
+
+	}
+
+	.is-selected & {
+		height: auto;
+		overflow: visible;
+	}
+}
+
+.wp-button-label__width {
+	.components-button-group {
+		display: block;
+	}
+
+	.components-base-control__field {
+		margin-bottom: 12px;
+	}
+}
+
+// Display "table" is used because the button container should only wrap the content and not takes the full width.
+div[data-type="madeitforms/submit-field"] {
+	display: table;
+}

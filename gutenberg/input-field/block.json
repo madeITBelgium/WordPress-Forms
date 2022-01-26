@@ -1,0 +1,48 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "madeitforms/input-field",
+	"version": "0.1.0",
+	"title": "Forms Input Field",
+	"category": "widgets",
+	"icon": "smiley",
+	"description": "Forms Input field",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "forms-by-made-it",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css",
+    "attributes": {
+        "type": {
+            "type": "string",
+            "default": "text",
+            "enum": ["text", "email", "url", "tel", "password"]
+        },
+        "required": {
+            "type": "boolean",
+            "default": false
+        },
+        "name": {
+            "type": "string"
+        },
+        "default_value": {
+            "type": "string"
+        },
+        "placeholder": {
+            "type": "string"
+        },
+        "label": {
+            "type": "string"
+        }
+    },
+    "styles": [
+        {
+            "name": "default",
+            "label": "Default",
+            "isDefault": true
+        },
+        { "name": "horizontal", "label": "Horizontaal" }
+    ]
+}

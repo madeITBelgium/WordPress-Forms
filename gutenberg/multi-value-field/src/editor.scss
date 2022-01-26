@@ -1,0 +1,22 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-madeitforms-multi-value-field .madeit-forms-multi-value-field {
+    width: 100%;
+    margin: 0;
+}
+
+.wp-block-madeitforms-multi-value-field.is-style-horizontal {
+    display: flex;
+}
+.wp-block-madeitforms-multi-value-field.is-style-horizontal > div {
+    flex-basis: 50%;
+}
+
+.ma-forms-input-error {
+    color: red;
+    font-weight: bold;
+}

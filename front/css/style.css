@@ -19,3 +19,25 @@
     border-color: #aed3bb;
     color: #488669;
 }
+
+.range-wrap {
+    position: relative;
+}
+.range-bubble {
+  background: #1FAFA9;
+  color: white;
+  padding: 4px 12px;
+  position: absolute;
+  border-radius: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.range-bubble::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #1FAFA9;
+  top: -1px;
+  left: 50%;
+}
