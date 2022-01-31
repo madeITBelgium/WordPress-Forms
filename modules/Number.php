@@ -128,7 +128,7 @@ class WP_MADEIT_FORM_Module_Number extends WP_MADEIT_FORM_Module {
                <?php if($name != "") { ?> name="<?php echo esc_html($name); ?>" <?php } ?>
                <?php if($value != "") { ?> value="<?php echo esc_html($value); ?>" <?php } ?>
                <?php if($id != "") { ?> id="<?php echo esc_html($id); ?>" <?php } ?>
-               class="<?php echo esc_html( apply_filters('madeit_forms_module_class', $class, 'number') ); ?>"
+               <?php if($class != "") { ?> class="<?php echo esc_html($class); ?>" <?php } ?>
                <?php if($placeholder != "") { ?> placeholder="<?php echo esc_html($placeholder); ?>" <?php } ?>
                <?php echo $required == 'yes' ? "required" : "";  ?>
                <?php if($min != "" && is_numeric($min)) { ?> min="<?php echo esc_html($min); ?>" <?php } ?>
@@ -156,16 +156,27 @@ class WP_MADEIT_FORM_Module_Number extends WP_MADEIT_FORM_Module {
         }
         ob_start();
         ?>
-        <input type="range" 
-               <?php if($name != "") { ?> name="<?php echo esc_html($name); ?>" <?php } ?>
-               <?php if($value != "") { ?> value="<?php echo esc_html($value); ?>" <?php } ?>
-               <?php if($id != "") { ?> id="<?php echo esc_html($id); ?>" <?php } ?>
-               class="<?php echo esc_html( apply_filters('madeit_forms_module_class', $class, 'range') ); ?>"
-               <?php if($placeholder != "") { ?> placeholder="<?php echo esc_html($placeholder); ?>" <?php } ?>
-               <?php echo $required == 'yes' ? "required" : "";  ?>
-               <?php if($min != "" && is_numeric($min)) { ?> min="<?php echo esc_html($min); ?>" <?php } ?>
-               <?php if($max != "" && is_numeric($max)) { ?> max="<?php echo esc_html($max); ?>" <?php } ?>
-               >
+        <div class="d-flex mb-5">
+            <div>
+                <?php if($min != "" && is_numeric($min)) { ?> <?php echo esc_html($min); ?> <?php } ?>
+            </div>
+            <div class="mt-1 mx-1 range-wrap">
+                <input type="range" 
+                   <?php if($name != "") { ?> name="<?php echo esc_html($name); ?>" <?php } ?>
+                   <?php if($value != "") { ?> value="<?php echo esc_html($value); ?>" <?php } ?>
+                   <?php if($id != "") { ?> id="<?php echo esc_html($id); ?>" <?php } ?>
+                   <?php if($class != "") { ?> class="range <?php echo esc_html($class); ?>" <?php } else { ?> class="range" <?php } ?>
+                   <?php if($placeholder != "") { ?> placeholder="<?php echo esc_html($placeholder); ?>" <?php } ?>
+                   <?php echo $required == 'yes' ? "required" : "";  ?>
+                   <?php if($min != "" && is_numeric($min)) { ?> min="<?php echo esc_html($min); ?>" <?php } ?>
+                   <?php if($max != "" && is_numeric($max)) { ?> max="<?php echo esc_html($max); ?>" <?php } ?>
+                   >
+                <output class="range-bubble"></output>
+            </div>
+            <div>
+                <?php if($max != "" && is_numeric($max)) { ?> <?php echo esc_html($max); ?> <?php } ?>
+            </div>
+        </div>
         <?php
         $content = ob_get_clean();
         return $content;

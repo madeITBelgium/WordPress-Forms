@@ -52,10 +52,13 @@ class WP_Form_front
 
         $forms = get_posts([
             'post_type'  => 'ma_forms',
+            'status' => 'published',
+            'numberposts' => -1,
             'meta_query' => [
                 [
                     'key'   => 'form_id',
-                    'value' => $id,
+                    'compare' => 'LIKE',
+                    'value' => '' . $id,
                 ],
             ],
         ]);
@@ -73,8 +76,6 @@ class WP_Form_front
         ob_start();
 
         if (isset($_POST['form_id']) && $_POST['form_id'] == $form->ID) {
-            $formValue = get_post_meta($form->ID, 'form', true);
-            $formValue = str_replace('\"', '"', $formValue);
 
             //validate input fields
             $error = false;
@@ -82,15 +83,57 @@ class WP_Form_front
             $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'messages', true))), true);
 
             //insert form input
-            foreach ($_POST as $k => $v) {
-                $tag = $this->getTagNameFromPostInput($formValue, $k);
-                if ($tag !== false) {
-                    if (is_callable($this->tags[$tag]['validation'])) {
-                        $tagOptions = $this->getOptionsFromTag($formValue, $tag, $k);
-                        $result = call_user_func($this->tags[$tag]['validation'], $tagOptions, $v, $messages);
-                        if ($result !== true) {
-                            $error = true;
-                            $error_msg = $result;
+            $tags = [];
+            if (get_post_meta($form->ID, 'form_type', true) === 'html') {
+                $formValue = get_post_meta($form->ID, 'form', true);
+                $formValue = str_replace('\"', '"', $formValue);
+                $formValue = str_replace("\'", "'", $formValue);
+                foreach ($_POST as $k => $v) {
+                    $tag = $this->getTagNameFromPostInput($formValue, $k);
+                    if ($tag !== false) {
+                        if (is_callable($this->tags[$tag]['validation'])) {
+                            $tagOptions = $this->getOptionsFromTag($formValue, $tag, $k);
+                            $result = call_user_func($this->tags[$tag]['validation'], $tagOptions, $v, $messages);
+                            if ($result !== true) {
+                                $error = true;
+                                $error_msg = $result;
+                            }
+                        }
+                    }
+                }
+            } else {
+                $blocks = parse_blocks( $form->post_content );
+                foreach($blocks as $block) {
+                    if(isset($block['attrs']['name'])) {
+                        $tag = $block['attrs']['name'];
+                        $tags[] = $tag;
+                        $type = $block['attrs']['type'] ?? 'text';
+                        if(isset($block['attrs']['required']) && $block['attrs']['required']) {
+                            if(!isset($_POST[$tag]) || empty($_POST[$tag])) {
+                                $error = true;
+                                $error_msg = $messages['invalid_required'] . " (" . $tag . ")";;
+                            }
+                        }
+                        
+                        if(!empty($_POST[$tag]) && $type === 'email') {
+                            if(!filter_var($_POST[$tag], FILTER_VALIDATE_EMAIL)) {
+                                $error = true;
+                                $error_msg = isset($messages['mod_text_invalid_email']) ? $messages['mod_text_invalid_email'] : $messages['validation_error'];
+                            }
+                        }
+                        
+                        if(!empty($_POST[$tag]) && $type === 'url') {
+                            if(!filter_var($_POST[$tag], FILTER_VALIDATE_URL)) {
+                                $error = true;
+                                $error_msg = isset($messages['mod_text_invalid_url']) ? $messages['mod_text_invalid_url'] : $messages['validation_error'];
+                            }
+                        }
+                        
+                        if(!empty($_POST[$tag]) && $type === 'tel') {
+                            if(!preg_match('%^[+]?[0-9()/ -]*$%', $_POST[$tag])) {
+                                $error = true;
+                                $error_msg = isset($messages['mod_text_invalid_url']) ? $messages['mod_text_invalid_url'] : $messages['validation_error'];
+                            }
                         }
                     }
                 }
@@ -121,6 +164,11 @@ class WP_Form_front
             unset($attsOrig['id']);
             $postData = array_merge($attsOrig, $postData);
             unset($postData['form_id']);
+            foreach($postData as $k => $v) {
+                if(!in_array($k, $tags)) {
+                    $postData[] = null;
+                }
+            }
 
             $inputId = -1;
             if (get_post_meta($form->ID, 'save_inputs', true) == 1) {
@@ -190,6 +238,10 @@ class WP_Form_front
 
     private function renderForm($id, $form, $ajax = false)
     {
+        if($form->post_status !== 'publish') {
+            echo __('This form is not available.', 'forms-by-made-it');
+            return;
+        }
         $this->form_id = $id;
         add_filter('madeit_forms_form_id', [$this, 'form_id']);
         echo '<form action="" method="post" id="form_'.$id.'" '.($ajax ? 'class="madeit-forms-ajax"' : 'class="madeit-forms-noajax"').'>';
@@ -197,32 +249,26 @@ class WP_Form_front
         if (get_post_meta($form->ID, 'form_type', true) === 'html') {
             $formValue = get_post_meta($form->ID, 'form', true);
             $formValue = str_replace('\"', '"', $formValue);
+            $formValue = str_replace("\'", "'", $formValue);
             echo do_shortcode($formValue);
         } else {
-            $visualData = str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'form_visual', true)));
-            $formData = json_decode($visualData, true);
-            foreach ($formData as $formField) {
-                $formFieldCodeData = $formField;
-                unset($formFieldCodeData['type']);
-                unset($formFieldCodeData['label']);
-
-                $shortcode = '['.$formField['type'];
-                foreach ($formFieldCodeData as $k => $v) {
-                    if ($k === 'required') {
-                        $v = $v == '1' ? 'yes' : 'no';
-                    }
-                    $shortcode .= ' '.$k.'="'.$v.'"';
-                }
-                $shortcode .= ']';
-
-                $html = '';
-                if ($formField['type'] !== 'submit') {
-                    $html = '<label>'.$formField['label'].'</label>';
-                }
-                $html .= $shortcode.'<br>';
-
-                echo do_shortcode(apply_filters('madeit_forms_visual_builder_element', $html, $shortcode, $formField));
+            $content = apply_filters('the_content', $form->post_content);
+            
+            if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+                $captchaCallback = "onSubmit" . rand();
+                $captchaErrorCallback = "onErrorSubmit" . rand();
+                
+                $captcha = ' data-sitekey="' . $this->defaultSettings['reCaptcha']['key'] . '" data-callback="' . $captchaCallback . '" data-error-callback="' . $captchaErrorCallback . '"';
+                $formId = "form_" . $this->form_id();
+                $captcha_js = "<script>function " . $captchaCallback . "(token) { submitMadeitForm('" . $formId . "'); }</script>";
+                $captcha_js .= "<script>function " . $captchaErrorCallback . "(token) { }</script>";
+                
+                $content = str_replace('<button class="', '<button class="g-recaptcha ', $content);
+                $content = str_replace("<button ", "<button " . $captcha, $content);
+                $content .= $captcha_js;
             }
+            
+            echo $content;
         }
         echo '</form>';
     }

@@ -155,7 +155,7 @@ class DataInit
             'label'                 => __('Form', 'forms-by-made-it'),
             'description'           => __('Made I.T. Forms data', 'forms-by-made-it'),
             'labels'                => $labels,
-            'supports'              => ['title', 'custom-fields'],
+            'supports'              => ['title', 'editor', 'custom-fields'],
             'hierarchical'          => false,
             'public'                => false,
             'show_ui'               => true,

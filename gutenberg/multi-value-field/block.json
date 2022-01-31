@@ -1,0 +1,53 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "madeitforms/multi-value-field",
+	"version": "0.1.0",
+	"title": "Forms Multi Value Field",
+	"category": "widgets",
+	"icon": "smiley",
+	"description": "Forms Multi Value field",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "forms-by-made-it",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css",
+    "attributes": {
+        "type": {
+            "type": "string",
+            "default": "select",
+            "enum": ["select", "multi-select", "radio", "checkbox"]
+        },
+        "required": {
+            "type": "boolean",
+            "default": false
+        },
+        "name": {
+            "type": "string"
+        },
+        "default_value": {
+            "type": "string"
+        },
+        "placeholder": {
+            "type": "string"
+        },
+        "label": {
+            "type": "string",
+            "default": "Label"
+        },
+        "values": {
+            "type": "string",
+            "default": "Waarde 1\nWaarde 2"
+        }
+    },
+    "styles": [
+        {
+            "name": "default",
+            "label": "Default",
+            "isDefault": true
+        },
+        { "name": "horizontal", "label": "Horizontaal" }
+    ]
+}
