@@ -51,14 +51,14 @@ class WP_Form_front
         $ajax = strtolower($ajax) == 'yes';
 
         $forms = get_posts([
-            'post_type'  => 'ma_forms',
-            'status' => 'published',
+            'post_type'   => 'ma_forms',
+            'status'      => 'published',
             'numberposts' => -1,
-            'meta_query' => [
+            'meta_query'  => [
                 [
-                    'key'   => 'form_id',
+                    'key'     => 'form_id',
                     'compare' => 'LIKE',
-                    'value' => '' . $id,
+                    'value'   => ''.$id,
                 ],
             ],
         ]);
@@ -102,35 +102,35 @@ class WP_Form_front
                     }
                 }
             } else {
-                $blocks = parse_blocks( $form->post_content );
-                foreach($blocks as $block) {
-                    if(isset($block['attrs']['name'])) {
+                $blocks = parse_blocks($form->post_content);
+                foreach ($blocks as $block) {
+                    if (isset($block['attrs']['name'])) {
                         $tag = $block['attrs']['name'];
                         $tags[] = $tag;
                         $type = $block['attrs']['type'] ?? 'text';
-                        if(isset($block['attrs']['required']) && $block['attrs']['required']) {
-                            if(!isset($_POST[$tag]) || empty($_POST[$tag])) {
+                        if (isset($block['attrs']['required']) && $block['attrs']['required']) {
+                            if (!isset($_POST[$tag]) || empty($_POST[$tag])) {
                                 $error = true;
-                                $error_msg = $messages['invalid_required'] . " (" . $tag . ")";;
+                                $error_msg = $messages['invalid_required'].' ('.$tag.')';
                             }
                         }
-                        
-                        if(!empty($_POST[$tag]) && $type === 'email') {
-                            if(!filter_var($_POST[$tag], FILTER_VALIDATE_EMAIL)) {
+
+                        if (!empty($_POST[$tag]) && $type === 'email') {
+                            if (!filter_var($_POST[$tag], FILTER_VALIDATE_EMAIL)) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_text_invalid_email']) ? $messages['mod_text_invalid_email'] : $messages['validation_error'];
                             }
                         }
-                        
-                        if(!empty($_POST[$tag]) && $type === 'url') {
-                            if(!filter_var($_POST[$tag], FILTER_VALIDATE_URL)) {
+
+                        if (!empty($_POST[$tag]) && $type === 'url') {
+                            if (!filter_var($_POST[$tag], FILTER_VALIDATE_URL)) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_text_invalid_url']) ? $messages['mod_text_invalid_url'] : $messages['validation_error'];
                             }
                         }
-                        
-                        if(!empty($_POST[$tag]) && $type === 'tel') {
-                            if(!preg_match('%^[+]?[0-9()/ -]*$%', $_POST[$tag])) {
+
+                        if (!empty($_POST[$tag]) && $type === 'tel') {
+                            if (!preg_match('%^[+]?[0-9()/ -]*$%', $_POST[$tag])) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_text_invalid_url']) ? $messages['mod_text_invalid_url'] : $messages['validation_error'];
                             }
@@ -164,8 +164,8 @@ class WP_Form_front
             unset($attsOrig['id']);
             $postData = array_merge($attsOrig, $postData);
             unset($postData['form_id']);
-            foreach($postData as $k => $v) {
-                if(!in_array($k, $tags)) {
+            foreach ($postData as $k => $v) {
+                if (!in_array($k, $tags)) {
                     $postData[] = null;
                 }
             }
@@ -238,8 +238,9 @@ class WP_Form_front
 
     private function renderForm($id, $form, $ajax = false)
     {
-        if($form->post_status !== 'publish') {
+        if ($form->post_status !== 'publish') {
             echo __('This form is not available.', 'forms-by-made-it');
+
             return;
         }
         $this->form_id = $id;
@@ -253,21 +254,21 @@ class WP_Form_front
             echo do_shortcode($formValue);
         } else {
             $content = apply_filters('the_content', $form->post_content);
-            
-            if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
-                $captchaCallback = "onSubmit" . rand();
-                $captchaErrorCallback = "onErrorSubmit" . rand();
-                
-                $captcha = ' data-sitekey="' . $this->defaultSettings['reCaptcha']['key'] . '" data-callback="' . $captchaCallback . '" data-error-callback="' . $captchaErrorCallback . '"';
-                $formId = "form_" . $this->form_id();
-                $captcha_js = "<script>function " . $captchaCallback . "(token) { submitMadeitForm('" . $formId . "'); }</script>";
-                $captcha_js .= "<script>function " . $captchaErrorCallback . "(token) { }</script>";
-                
+
+            if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+                $captchaCallback = 'onSubmit'.rand();
+                $captchaErrorCallback = 'onErrorSubmit'.rand();
+
+                $captcha = ' data-sitekey="'.$this->defaultSettings['reCaptcha']['key'].'" data-callback="'.$captchaCallback.'" data-error-callback="'.$captchaErrorCallback.'"';
+                $formId = 'form_'.$this->form_id();
+                $captcha_js = '<script>function '.$captchaCallback."(token) { submitMadeitForm('".$formId."'); }</script>";
+                $captcha_js .= '<script>function '.$captchaErrorCallback.'(token) { }</script>';
+
                 $content = str_replace('<button class="', '<button class="g-recaptcha ', $content);
-                $content = str_replace("<button ", "<button " . $captcha, $content);
+                $content = str_replace('<button ', '<button '.$captcha, $content);
                 $content .= $captcha_js;
             }
-            
+
             echo $content;
         }
         echo '</form>';
