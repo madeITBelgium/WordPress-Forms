@@ -51,7 +51,7 @@ class WP_MADEIT_FORM_admin
     public function initAdmin()
     {
         if (isset($_GET['post_type']) && isset($_GET['action']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'export') {
-            if(!wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
+            if (!wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
                 wp_die('Security check');
             }
             $data = get_posts([
@@ -118,23 +118,22 @@ class WP_MADEIT_FORM_admin
                 fputcsv($output, $row);
             }
             exit();
-        }
-        else if(isset($_GET['post_type']) && isset($_GET['action']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'mark_as_read_forms') {
-            if(!wp_verify_nonce($_GET['forms_wpnonce'], 'mark_as_read_forms')) {
+        } elseif (isset($_GET['post_type']) && isset($_GET['action']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'mark_as_read_forms') {
+            if (!wp_verify_nonce($_GET['forms_wpnonce'], 'mark_as_read_forms')) {
                 wp_die('Security check 1');
             }
-            
+
             $p = get_posts([
-                'post_type' => 'ma_form_inputs',
+                'post_type'  => 'ma_form_inputs',
                 'meta_query' => [
                     [
-                        'meta_key' => 'read',
-                        'meta_value' => 0
-                    ]
-                ]
+                        'meta_key'   => 'read',
+                        'meta_value' => 0,
+                    ],
+                ],
             ]);
-            
-            foreach($p as $po) {
+
+            foreach ($p as $po) {
                 update_post_meta($po->ID, 'read', 1);
             }
         }
@@ -350,7 +349,7 @@ class WP_MADEIT_FORM_admin
                 $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'messages', true))), true);
                 $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'actions', true))), true);
             }
-            
+
             $formValue = str_replace('\"', '"', $formValue); ?>
             <input type="hidden" name="madeit_form_editor" value="yes">
             <input type="hidden" name="save_inputs" value="<?php echo get_post_meta($post->ID, 'save_inputs', true); ?>">
@@ -488,12 +487,11 @@ class WP_MADEIT_FORM_admin
 
     public function admin_footer()
     {
-        if('ma_forms' === get_current_screen()->id) {
+        if ('ma_forms' === get_current_screen()->id) {
             ?>
             <style>.interface-interface-skeleton__content { padding-left: 10px; padding-right: 10px; }</style>
             <?php
-        }
-        ?>
+        } ?>
         <div id="empty-actions-section" style="display: none;">
             <section id="action-panel-" data-id="0" data-section-id="action-panel-" class="action-section">
                 <input type="hidden" name="action_panel_" value="" data-name="action_panel_">
@@ -607,7 +605,7 @@ class WP_MADEIT_FORM_admin
     public function save_form($post_id, $post, $update)
     {
         global $_POST;
-        
+
         if (isset($_POST['madeit_form_editor']) && $_POST['madeit_form_editor'] == 'yes') {
             update_post_meta($post_id, 'save_inputs', 1);
             update_post_meta($post_id, 'form', $_POST['form']);
@@ -648,21 +646,21 @@ class WP_MADEIT_FORM_admin
             */
         }
     }
-    
+
     public function save_meta($post_id, $post, $update)
     {
         // Do not save the data if autosave
-        if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return $post_id;
         }
-        
-        if( $post->post_type != 'ma_forms' ) {
+
+        if ($post->post_type != 'ma_forms') {
             return $post_id;
         }
-        
+
         update_post_meta($post_id, 'save_inputs', true);
-        
-        if(isset($_POST['ma_forms_save_meta_type'])) {
+
+        if (isset($_POST['ma_forms_save_meta_type'])) {
             $actions = [];
             $messages = [];
             //actions
@@ -672,7 +670,7 @@ class WP_MADEIT_FORM_admin
                     $countActions = $v;
                 }
             }
-            
+
             $j = 1;
             for ($i = 1; $i <= $countActions; $i++) {
                 $id = $_POST['action_type_'.$i];
@@ -692,11 +690,10 @@ class WP_MADEIT_FORM_admin
                     $messages[substr($k, strlen('messages_'))] = $v;
                 }
             }
-            
+
             update_post_meta($post_id, 'actions', $this->enterToDB(json_encode($actions)));
             update_post_meta($post_id, 'messages', $this->enterToDB(json_encode($messages)));
         }
-        
     }
 
     public function removeSlashes($str)
@@ -711,15 +708,14 @@ class WP_MADEIT_FORM_admin
     public function add_meta_boxes()
     {
         add_meta_box('ma_form_inputs_data', __('Submitted form data', 'forms-by-made-it'), [$this, 'ma_form_inputs_data'], 'ma_form_inputs', 'normal', 'high');
-        
+
         add_meta_box('ma_forms_actions', __('Actions', 'forms-by-made-it'), [$this, 'ma_forms_actions'], 'ma_forms', 'normal', 'high');
         add_meta_box('ma_forms_messages', __('Messages', 'forms-by-made-it'), [$this, 'ma_forms_messages'], 'ma_forms', 'normal', 'high');
     }
-    
+
     public function ma_forms_actions($post)
     {
-        $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'actions', true))), true);
-        ?>
+        $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'actions', true))), true); ?>
         <div id="actions-panel">
             <input type="hidden" name="ma_forms_save_meta_type" value="actions">
             <fieldset>
@@ -812,8 +808,7 @@ class WP_MADEIT_FORM_admin
 
     public function ma_forms_messages($post)
     {
-        $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'messages', true))), true);
-        ?>
+        $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'messages', true))), true); ?>
         <fieldset>
             <input type="hidden" name="ma_forms_save_meta_type" value="messages">
             <legend><?php echo esc_html(__('In the following fields, you can use these name-tags:', 'forms-by-made-it')); ?><br /><span class="name-tags"></span></legend>
@@ -947,31 +942,32 @@ class WP_MADEIT_FORM_admin
             });
         }
     }
-    
+
     public function disable_gutenberg($can_edit, $post_type)
     {
-        if(!$can_edit) {
+        if (!$can_edit) {
             return $can_edit;
         }
-        
-        if($post_type === 'ma_forms' && get_post_meta($_GET['post'] , 'form_type', true) === 'html') {
+
+        if ($post_type === 'ma_forms' && get_post_meta($_GET['post'], 'form_type', true) === 'html') {
             return false;
         }
-        
+
         return $can_edit;
     }
 
     public function disable_classic()
     {
-        if(!isset($_GET['post']))
+        if (!isset($_GET['post'])) {
             return;
+        }
 
         $post = get_post($_GET['post']);
-        if($post->post_type === 'ma_forms' && get_post_meta($_GET['post'], 'form_type', true) === 'html') {
+        if ($post->post_type === 'ma_forms' && get_post_meta($_GET['post'], 'form_type', true) === 'html') {
             remove_post_type_support('ma_forms', 'editor');
         }
     }
-    
+
     public function gutenberg_blocks($block_types, $block_editor_context)
     {
         $allowed = [
@@ -985,16 +981,17 @@ class WP_MADEIT_FORM_admin
         if ($block_editor_context->post->post_type == 'ma_forms') {
             return $allowed;
         }
-        
+
         return $block_types;
     }
-    
+
     public function bulk_action_ma_form_inputs($bulk_actions)
     {
         $bulk_actions['mark-as-read'] = __('Mark as read', 'forms-by-made-it');
+
         return $bulk_actions;
     }
-    
+
     public function handle_bulk_action_ma_form_inputs($redirect_url, $action, $post_ids)
     {
         if ($action == 'mark-as-read') {
@@ -1003,17 +1000,18 @@ class WP_MADEIT_FORM_admin
             }
             $redirect_url = add_query_arg('changed-mark-as-read', count($post_ids), $redirect_url);
         }
+
         return $redirect_url;
     }
-    
+
     public function notice_mark_as_read()
     {
         if (!empty($_REQUEST['changed-mark-as-read'])) {
             $num_changed = (int) $_REQUEST['changed-mark-as-read'];
-            printf('<div id="message" class="updated notice is-dismissable"><p>' . __('%d submits marked as read.', 'forms-by-made-it') . '</p></div>', $num_changed);
+            printf('<div id="message" class="updated notice is-dismissable"><p>'.__('%d submits marked as read.', 'forms-by-made-it').'</p></div>', $num_changed);
         }
     }
-    
+
     public function addHooks()
     {
         add_action('admin_init', [$this, 'initAdmin']);
@@ -1040,13 +1038,13 @@ class WP_MADEIT_FORM_admin
         add_action('admin_menu', [$this, 'admin_menu']);
 
         add_action('load-edit.php', [$this, 'form_inputs_export_button']);
-        
-        add_filter( 'gutenberg_can_edit_post_type', [$this, 'disable_gutenberg'], 10, 2 );
-        add_filter( 'use_block_editor_for_post_type', [$this, 'disable_gutenberg'], 10, 2 );
-        add_action( 'init', [$this, 'disable_classic'] );
-        
+
+        add_filter('gutenberg_can_edit_post_type', [$this, 'disable_gutenberg'], 10, 2);
+        add_filter('use_block_editor_for_post_type', [$this, 'disable_gutenberg'], 10, 2);
+        add_action('init', [$this, 'disable_classic']);
+
         add_filter('allowed_block_types_all', [$this, 'gutenberg_blocks'], 10, 2);
-        
+
         add_filter('bulk_actions-edit-ma_form_inputs', [$this, 'bulk_action_ma_form_inputs']);
         add_filter('handle_bulk_actions-edit-ma_form_inputs', [$this, 'handle_bulk_action_ma_form_inputs'], 10, 3);
 
