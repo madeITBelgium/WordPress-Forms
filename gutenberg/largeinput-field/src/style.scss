@@ -5,18 +5,18 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-.wp-block-madeitforms-input-field.is-style-horizontal {
+.wp-block-madeitforms-largeinput-field.is-style-horizontal {
     display: flex;
 }
-.wp-block-madeitforms-input-field.is-style-horizontal > div {
+.wp-block-madeitforms-largeinput-field.is-style-horizontal > div {
     flex-basis: 50%;
 }
 
-div.wp-block-madeitforms-input-field {
+div.wp-block-madeitforms-largeinput-field {
     margin-bottom: 1rem;
 }
 
-.wp-block-madeitforms-input-field input.madeit-forms-input-field {
+.wp-block-madeitforms-largeinput-field textarea.madeit-forms-largeinput-field {
     display: block;
     width: 100%;
     padding: 0.375rem 0.75rem;
@@ -34,7 +34,7 @@ div.wp-block-madeitforms-input-field {
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
-.wp-block-madeitforms-input-field input.madeit-forms-input-field:focus {
+.wp-block-madeitforms-largeinput-field textarea.madeit-forms-largeinput-field:focus {
     color: #212529;
     background-color: #fff;
     border-color: #86b7fe;
