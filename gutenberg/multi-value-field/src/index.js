@@ -4,6 +4,10 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
  */
 import { registerBlockType } from '@wordpress/blocks';
+<<<<<<< HEAD
+=======
+import { list as icon } from '@wordpress/icons';
+>>>>>>> 216aaa3744bd24a76f7d3dc559fb0ffee3b30e92
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -26,6 +30,10 @@ import save from './save';
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
  */
 registerBlockType('madeitforms/multi-value-field', {
+<<<<<<< HEAD
+=======
+    icon: icon,
+>>>>>>> 216aaa3744bd24a76f7d3dc559fb0ffee3b30e92
 	/**
 	 * @see ./edit.js
 	 */
