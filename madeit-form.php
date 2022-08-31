@@ -87,6 +87,14 @@ require_once MADEIT_FORM_DIR.'/gutenberg/largeinput-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/submit-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/multi-value-field/madeit-forms.php';
 
+add_filter( 'block_categories_all' , function($categories) {
+    $categories[] = [
+        'slug'  => 'forms',
+        'title' => 'Forms'
+    ];
+	return $categories;
+});
+
 require_once MADEIT_FORM_DIR.'/admin/WP_MADEIT_FORM_admin.php';
 $wp_madeit_form_admin = new WP_MADEIT_FORM_admin($wp_madeit_form_settings);
 $wp_madeit_form_admin->addHooks();
