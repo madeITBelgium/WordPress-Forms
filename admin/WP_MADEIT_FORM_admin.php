@@ -295,6 +295,11 @@ class WP_MADEIT_FORM_admin
         $columns['form'] = __('Form', 'forms-by-made-it');
         $columns['read'] = __('Read', 'forms-by-made-it');
         $columns['date'] = $date;
+        
+        $inputFields = min($this->getMaxInputFields(), 5);
+        for($i = 1; $i <= $inputFields; $i++) {
+            $columns['input_' . $i - 1] = sprintf(__('Field %s', 'forms-by-made-it'), $i);
+        }
 
         return $columns;
     }
@@ -306,6 +311,18 @@ class WP_MADEIT_FORM_admin
             echo get_post($formId)->post_title;
         } elseif ($column === 'read') {
             echo get_post_meta($post_id, 'read', true) == 1 ? __('Yes', 'forms-by-made-it') : __('No', 'forms-by-made-it');
+        } elseif(strpos($column, 'input_') !== false) {
+            $fieldNr = substr($column, strlen('input_'));
+            $formId = get_post_meta($post_id, 'form_id', true);
+            
+            $fields = $this->getInputFieldsOfForm($formId);
+            if(isset($fields[$fieldNr])) {
+                $fieldName = $fields[$fieldNr];
+                
+                $data = json_decode($this->dbToEnter(get_post_meta($post_id, 'data', true)), true);
+                
+                echo $data[$fieldName] ?? '';
+            }
         }
     }
 
@@ -1050,6 +1067,10 @@ class WP_MADEIT_FORM_admin
         add_filter('handle_bulk_actions-edit-ma_form_inputs', [$this, 'handle_bulk_action_ma_form_inputs'], 10, 3);
 
         add_action('admin_notices', [$this, 'notice_mark_as_read']);
+        
+        
+        add_action('restrict_manage_posts', [$this, 'add_custom_filters_to_form_inputs_table']);
+        add_action('pre_get_posts', [$this, 'filter_form_inputs']);
     }
 
     public function generateKey()
@@ -1080,5 +1101,79 @@ class WP_MADEIT_FORM_admin
         $data = str_replace('|--MAFORM-N--|', '\n', $data);
 
         return $data;
+    }
+    
+    public function add_custom_filters_to_form_inputs_table()
+    {
+        global $typenow, $_GET;
+        if( $typenow == 'ma_form_inputs') {
+            $forms = get_posts([
+                'post_type'   => 'ma_forms',
+                'numberposts' => -1,
+            ]);
+            ?>
+            <select name="ma_forms" id="ma_forms" class="postform">
+                <option value=""><?php echo __('All forms', 'forms-by-made-it'); ?></option>
+                <?php
+                foreach ($forms as $form) {
+                    ?>
+                    <option value="<?php echo $form->ID; ?>"
+                        <?php if(isset($_GET['ma_forms']) && $_GET['ma_forms'] == $form->ID) { echo "SELECTED"; } ?>
+                        ><?php echo esc_textarea($form->post_title); ?></option>
+                    <?php
+                }
+                ?>
+            </select>
+            <?php
+        }
+    }
+    
+    public function filter_form_inputs($query)
+    {
+        if (is_admin() && $query->is_main_query() && in_array($query->get('post_type'), ['ma_form_inputs'])) {
+            if(isset($_GET['ma_forms'])) {
+                $query->set('meta_key', 'form_id');
+                $query->set('meta_value', $_GET['ma_forms']);
+            }
+        }
+    }
+    
+    public function getMaxInputFields()
+    {
+        $maxValue = 0;
+        
+        $forms = get_posts([
+            'post_type'   => 'ma_forms',
+            'numberposts' => -1,
+        ]);
+        
+        foreach($forms as $form) {
+            $aantal = count($this->getInputFieldsOfForm($form->ID));
+            
+            if($aantal > $maxValue) {
+                $maxValue = $aantal;
+            }
+        }
+        
+        return $maxValue;
+    }
+    
+    public function getInputFieldsOfForm($formId)
+    {
+        $form = get_post_meta($formId, 'form', true);
+        
+        $tags = [];
+        foreach(explode('[', $form) as $i => $v) {
+            $v = trim($v);
+            if($i > 0 && strlen($v) > 0) {
+                $posName = strpos($v, 'name="');
+                if($posName > 0) {
+                    $tag = substr($v, $posName + 6);
+                    $tag = substr($tag, 0, strpos($tag, '"'));
+                    $tags[] = $tag;
+                }
+            }
+        }
+        return $tags;
     }
 }
