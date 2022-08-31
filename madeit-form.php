@@ -83,6 +83,7 @@ $wp_plugin_data_init = new DataInit();
 $wp_plugin_data_init->addHooks();
 
 require_once MADEIT_FORM_DIR.'/gutenberg/input-field/madeit-forms.php';
+require_once MADEIT_FORM_DIR.'/gutenberg/largeinput-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/submit-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/multi-value-field/madeit-forms.php';
 
