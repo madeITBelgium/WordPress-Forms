@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Forms 1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/forms-by-made-it\n"
-"POT-Creation-Date: 2021-01-29 11:56+0000\n"
+"POT-Creation-Date: 2022-08-31 16:52+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,31 +16,34 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "X-Generator: Loco https://localise.biz/"
 
-#: admin/forms/form.php:72
+#: admin/WP_MADEIT_FORM_admin.php:1012
+#, php-format
+msgid "%d submits marked as read."
+msgstr ""
+
+#: admin/WP_MADEIT_FORM_admin.php:598
 #, php-format
 msgid "%s configuration error found"
 msgid_plural "%s configuration errors found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: actions/GAEvent.php:11 admin/forms/form.php:151 admin/forms/form.php:257
+#: actions/GAEvent.php:11 admin/WP_MADEIT_FORM_admin.php:391
+#: admin/WP_MADEIT_FORM_admin.php:499 admin/WP_MADEIT_FORM_admin.php:730
 msgid "Action"
 msgstr ""
 
-#: admin/forms/form.php:116 admin/forms/form.php:141
+#: admin/WP_MADEIT_FORM_admin.php:360 admin/WP_MADEIT_FORM_admin.php:381
+#: admin/WP_MADEIT_FORM_admin.php:712
 msgid "Actions"
 msgstr ""
 
-#: admin/forms/form.php:28
+#: DataInit.php:135 DataInit.php:190
 msgid "Add New"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:37 admin/WP_MADEIT_FORM_admin.php:112
-msgid "Add new"
-msgstr ""
-
-#: admin/forms/form.php:25
-msgid "Add New Contact Form"
+#: DataInit.php:134 DataInit.php:189
+msgid "Add New Item"
 msgstr ""
 
 #: modules/Select.php:46
@@ -55,12 +58,12 @@ msgstr ""
 msgid "Build cool, easy and flexible forms with Forms."
 msgstr ""
 
-#: actions/Mailchimp.php:17 actions/Mailpoet.php:15 actions/Sendinblue.php:17
-#: actions/EmailService.php:17
+#: actions/EmailService.php:17 actions/Mailchimp.php:17 actions/Mailpoet.php:15
+#: actions/Sendinblue.php:17
 msgid "Can not subscribe"
 msgstr ""
 
-#: front/WP_Form_front.php:161 front/WP_Form_front.php:383
+#: front/WP_Form_front.php:73 front/WP_Form_front.php:379
 msgid "Can't display the form."
 msgstr ""
 
@@ -72,48 +75,38 @@ msgstr ""
 msgid "Checkbox"
 msgstr ""
 
-#: modules/Number.php:78 modules/Select.php:55 modules/Textarea.php:50
-#: modules/Radio.php:50 modules/Checkbox.php:50 modules/Text.php:71
-#: modules/Submit.php:60
+#: modules/Number.php:78 modules/WP_MADEIT_FORM_Module.php:55
+#: modules/Text.php:71 modules/Textarea.php:50 modules/Select.php:55
+#: modules/Radio.php:50 modules/Checkbox.php:50 modules/Submit.php:48
+#: modules/Submit.php:78
 msgid "Class attribute"
-msgstr ""
-
-#: admin/forms/submitted.php:22
-msgid "Click to toggle"
 msgstr ""
 
 #: actions/Javascript.php:10
 msgid "Code"
 msgstr ""
 
-#: admin/forms/form.php:46
+#: admin/WP_MADEIT_FORM_admin.php:323
 msgid ""
 "Copy this shortcode and paste it into your post, page, or text widget "
 "content:"
-msgstr ""
-
-#: admin/FormListTable.php:35 admin/InputListTable.php:39
-msgid "Create date"
 msgstr ""
 
 #: admin/forms/settings.php:71
 msgid "Create your key here."
 msgstr ""
 
-#: admin/forms/submitted.php:61
+#: admin/WP_MADEIT_FORM_admin.php:868
 msgid "Date"
 msgstr ""
 
-#: modules/Number.php:48 modules/Textarea.php:39 modules/Radio.php:39
-#: modules/Checkbox.php:39 modules/Text.php:60
+#: modules/Number.php:48 modules/WP_MADEIT_FORM_Module.php:47
+#: modules/Text.php:60 modules/Textarea.php:39 modules/Radio.php:39
+#: modules/Checkbox.php:39
 msgid "Default value"
 msgstr ""
 
-#: admin/forms/form.php:83
-msgid "Delete"
-msgstr ""
-
-#: admin/forms/settings.php:36 admin/forms/form.php:104
+#: admin/WP_MADEIT_FORM_admin.php:588 admin/forms/settings.php:36
 msgid "Docs"
 msgstr ""
 
@@ -125,20 +118,16 @@ msgstr ""
 msgid "Drop-down menu"
 msgstr ""
 
-#: admin/forms/form.php:63
-msgid "Duplicate"
-msgstr ""
-
 #: actions/Email.php:20
 msgid "E-mail"
 msgstr ""
 
-#: admin/forms/form.php:27
-msgid "Edit Contact Form"
+#: DataInit.php:137 DataInit.php:192
+msgid "Edit Item"
 msgstr ""
 
-#: actions/Mailchimp.php:11 actions/Mailpoet.php:10 actions/Sendinblue.php:11
-#: actions/EmailService.php:11 modules/Text.php:8
+#: actions/EmailService.php:11 actions/Mailchimp.php:11 actions/Mailpoet.php:10
+#: actions/Sendinblue.php:11 modules/Text.php:8
 msgid "Email"
 msgstr ""
 
@@ -154,18 +143,18 @@ msgstr ""
 msgid "Enable reCaptcha"
 msgstr ""
 
-#: admin/forms/form.php:39
-msgid "Enter title here"
-msgstr ""
-
-#: admin/forms/settings.php:37 admin/forms/form.php:105
+#: admin/WP_MADEIT_FORM_admin.php:589 admin/forms/settings.php:37
 msgid "F.A.Q."
 msgstr ""
 
-#: modules/Number.php:31 modules/Number.php:34 modules/Select.php:26
-#: modules/Select.php:29 modules/Textarea.php:26 modules/Textarea.php:29
-#: modules/Radio.php:26 modules/Radio.php:29 modules/Checkbox.php:26
-#: modules/Checkbox.php:29 modules/Text.php:47 modules/Text.php:50
+#: DataInit.php:144 DataInit.php:199
+msgid "Featured Image"
+msgstr ""
+
+#: modules/Number.php:31 modules/Number.php:34 modules/Text.php:47
+#: modules/Text.php:50 modules/Textarea.php:26 modules/Textarea.php:29
+#: modules/Select.php:26 modules/Select.php:29 modules/Radio.php:26
+#: modules/Radio.php:29 modules/Checkbox.php:26 modules/Checkbox.php:29
 msgid "Field type"
 msgstr ""
 
@@ -173,32 +162,36 @@ msgstr ""
 msgid "File download"
 msgstr ""
 
-#: actions/Mailchimp.php:12 actions/Mailpoet.php:11 actions/Sendinblue.php:12
-#: actions/EmailService.php:12
+#: DataInit.php:152 DataInit.php:207
+msgid "Filter items list"
+msgstr ""
+
+#: actions/EmailService.php:12 actions/Mailchimp.php:12 actions/Mailpoet.php:11
+#: actions/Sendinblue.php:12
 msgid "Firstname"
 msgstr ""
 
-#: admin/InputListTable.php:36 admin/forms/form.php:115
-#: admin/forms/form.php:120
+#: DataInit.php:155 admin/WP_MADEIT_FORM_admin.php:295
+#: admin/WP_MADEIT_FORM_admin.php:359 admin/WP_MADEIT_FORM_admin.php:364
 msgid "Form"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:435
+#: admin/WP_MADEIT_FORM_admin.php:252
 msgid "Form failed to complete"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:434
+#: admin/WP_MADEIT_FORM_admin.php:251
 msgid "Form successfully completed"
 msgstr ""
 
-#: admin/forms/form.php:127
+#: admin/WP_MADEIT_FORM_admin.php:372
 #, php-format
 msgid "Form-tag Generator: %s"
 msgstr ""
 
 #. Name of the plugin
-#: admin/WP_MADEIT_FORM_admin.php:35 admin/WP_MADEIT_FORM_admin.php:36
-#: admin/WP_MADEIT_FORM_admin.php:112
+#: DataInit.php:128 DataInit.php:129 DataInit.php:133
+#: admin/WP_MADEIT_FORM_admin.php:902
 msgid "Forms"
 msgstr ""
 
@@ -268,7 +261,7 @@ msgid ""
 "%s."
 msgstr ""
 
-#: modules/Submit.php:40
+#: modules/Submit.php:58
 #, php-format
 msgid "Generate a form-tag for a submit button. For more details, see %s."
 msgstr ""
@@ -309,21 +302,19 @@ msgstr ""
 msgid "https://www.madeit.be/producten/wordpress/forms-plugin/"
 msgstr ""
 
-#: admin/InputListTable.php:35
-msgid "ID"
-msgstr ""
-
-#: modules/Number.php:74 modules/Select.php:51 modules/Textarea.php:46
-#: modules/Radio.php:46 modules/Checkbox.php:46 modules/Text.php:67
-#: modules/Submit.php:56
+#: modules/Number.php:74 modules/WP_MADEIT_FORM_Module.php:35
+#: modules/Text.php:67 modules/Textarea.php:46 modules/Select.php:51
+#: modules/Radio.php:46 modules/Checkbox.php:46 modules/Submit.php:44
+#: modules/Submit.php:74
 msgid "Id attribute"
 msgstr ""
 
-#: admin/forms/form.php:143 admin/forms/form.php:231
+#: admin/WP_MADEIT_FORM_admin.php:383 admin/WP_MADEIT_FORM_admin.php:470
+#: admin/WP_MADEIT_FORM_admin.php:722 admin/WP_MADEIT_FORM_admin.php:814
 msgid "In the following fields, you can use these name-tags:"
 msgstr ""
 
-#: admin/forms/settings.php:33 admin/forms/form.php:101
+#: admin/WP_MADEIT_FORM_admin.php:585 admin/forms/settings.php:33
 msgid "Information"
 msgstr ""
 
@@ -331,9 +322,13 @@ msgstr ""
 msgid "Insert a blank item as the first option"
 msgstr ""
 
-#: modules/Number.php:88 modules/Select.php:65 modules/Textarea.php:60
-#: modules/Radio.php:60 modules/Checkbox.php:60 modules/Text.php:81
-#: modules/Submit.php:70
+#: DataInit.php:148 DataInit.php:203
+msgid "Insert into item"
+msgstr ""
+
+#: modules/Number.php:88 modules/Text.php:81 modules/Textarea.php:60
+#: modules/Select.php:65 modules/Radio.php:60 modules/Checkbox.php:60
+#: modules/Submit.php:88
 msgid "Insert Tag"
 msgstr ""
 
@@ -341,20 +336,37 @@ msgstr ""
 msgid "Invalid emailadres"
 msgstr ""
 
-#: admin/InputListTable.php:37 admin/forms/submitted.php:45
+#: admin/WP_MADEIT_FORM_admin.php:852
 msgid "IP"
 msgstr ""
 
-#: admin/forms/form.php:156
+#: DataInit.php:130 DataInit.php:185
+msgid "Item Archives"
+msgstr ""
+
+#: DataInit.php:131 DataInit.php:186
+msgid "Item Attributes"
+msgstr ""
+
+#: DataInit.php:150 DataInit.php:205
+msgid "Items list"
+msgstr ""
+
+#: DataInit.php:151 DataInit.php:206
+msgid "Items list navigation"
+msgstr ""
+
+#: admin/WP_MADEIT_FORM_admin.php:396 admin/WP_MADEIT_FORM_admin.php:735
 msgid "Key"
 msgstr ""
 
-#: actions/GAEvent.php:12 modules/Submit.php:50
+#: actions/GAEvent.php:12 modules/WP_MADEIT_FORM_Module.php:31
+#: modules/Submit.php:40 modules/Submit.php:68
 msgid "Label"
 msgstr ""
 
-#: actions/Mailchimp.php:15 actions/Mailpoet.php:13 actions/Sendinblue.php:15
-#: actions/EmailService.php:15
+#: actions/EmailService.php:15 actions/Mailchimp.php:15 actions/Mailpoet.php:13
+#: actions/Sendinblue.php:15
 msgid "List ID"
 msgstr ""
 
@@ -362,20 +374,16 @@ msgstr ""
 msgid "Made I.T."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:36
-msgid "Made I.T. Forms"
-msgstr ""
-
-#: admin/WP_MADEIT_FORM_admin.php:40
-msgid "Made I.T. Forms - Inputs"
-msgstr ""
-
-#: admin/WP_MADEIT_FORM_admin.php:37
-msgid "Made I.T. Forms - New"
-msgstr ""
-
-#: admin/WP_MADEIT_FORM_admin.php:38
+#: admin/WP_MADEIT_FORM_admin.php:19
 msgid "Made I.T. Forms - Settings"
+msgstr ""
+
+#: DataInit.php:156
+msgid "Made I.T. Forms data"
+msgstr ""
+
+#: DataInit.php:211
+msgid "Made I.T. Forms submitted data"
 msgstr ""
 
 #: actions/Mailchimp.php:19
@@ -386,6 +394,10 @@ msgstr ""
 msgid "Mailpoet"
 msgstr ""
 
+#: admin/WP_MADEIT_FORM_admin.php:991
+msgid "Mark as read"
+msgstr ""
+
 #: modules/Number.php:66
 msgid "Max"
 msgstr ""
@@ -394,7 +406,7 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#: admin/forms/form.php:117
+#: admin/WP_MADEIT_FORM_admin.php:361 admin/WP_MADEIT_FORM_admin.php:713
 msgid "Messages"
 msgstr ""
 
@@ -402,15 +414,28 @@ msgstr ""
 msgid "Min"
 msgstr ""
 
-#: actions/Mailchimp.php:13 actions/Mailpoet.php:12 actions/Sendinblue.php:13
-#: actions/EmailService.php:13 modules/Number.php:44 modules/Select.php:35
-#: modules/Textarea.php:35 modules/Radio.php:35 modules/Checkbox.php:35
-#: modules/Text.php:56
+#: actions/EmailService.php:13 actions/Mailchimp.php:13 actions/Mailpoet.php:12
+#: actions/Sendinblue.php:13 modules/Number.php:44
+#: modules/WP_MADEIT_FORM_Module.php:39 modules/Text.php:56
+#: modules/Textarea.php:35 modules/Select.php:35 modules/Radio.php:35
+#: modules/Checkbox.php:35
 msgid "Name"
 msgstr ""
 
-#: admin/InputListTable.php:117
+#: DataInit.php:136 DataInit.php:191
+msgid "New Item"
+msgstr ""
+
+#: admin/WP_MADEIT_FORM_admin.php:308
 msgid "No"
+msgstr ""
+
+#: DataInit.php:142 DataInit.php:197
+msgid "Not found"
+msgstr ""
+
+#: DataInit.php:143 DataInit.php:198
+msgid "Not found in Trash"
 msgstr ""
 
 #: modules/Number.php:7
@@ -433,12 +458,40 @@ msgstr ""
 msgid "One option per line."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:436
+#: admin/WP_MADEIT_FORM_admin.php:253
 msgid "One or more fields have an error. Please check and try again."
 msgstr ""
 
 #: modules/Select.php:40 modules/Select.php:43
 msgid "Options"
+msgstr ""
+
+#: DataInit.php:132 DataInit.php:187
+msgid "Parent Item:"
+msgstr ""
+
+#: modules/WP_MADEIT_FORM_Module.php:51
+msgid "Placeholder"
+msgstr ""
+
+#: DataInit.php:126
+msgctxt "Post Type General Name"
+msgid "Forms"
+msgstr ""
+
+#: DataInit.php:181
+msgctxt "Post Type General Name"
+msgid "Submitted forms"
+msgstr ""
+
+#: DataInit.php:127
+msgctxt "Post Type Singular Name"
+msgid "Form"
+msgstr ""
+
+#: DataInit.php:182
+msgctxt "Post Type Singular Name"
+msgid "Submitted form"
 msgstr ""
 
 #: modules/Radio.php:7 modules/Radio.php:17
@@ -449,7 +502,7 @@ msgstr ""
 msgid "Range"
 msgstr ""
 
-#: admin/InputListTable.php:38
+#: admin/WP_MADEIT_FORM_admin.php:296
 msgid "Read"
 msgstr ""
 
@@ -457,13 +510,22 @@ msgstr ""
 msgid "Redirect to specific URL"
 msgstr ""
 
-#: modules/Number.php:39 modules/Select.php:30 modules/Textarea.php:30
-#: modules/Radio.php:30 modules/Checkbox.php:30 modules/Text.php:51
+#: DataInit.php:146 DataInit.php:201
+msgid "Remove featured image"
+msgstr ""
+
+#: modules/Number.php:39 modules/WP_MADEIT_FORM_Module.php:43
+#: modules/Text.php:51 modules/Textarea.php:30 modules/Select.php:30
+#: modules/Radio.php:30 modules/Checkbox.php:30
 msgid "Required field"
 msgstr ""
 
-#: admin/forms/settings.php:93 admin/forms/form.php:91
+#: admin/forms/settings.php:93
 msgid "Save"
+msgstr ""
+
+#: DataInit.php:141 DataInit.php:196
+msgid "Search Item"
 msgstr ""
 
 #: admin/forms/settings.php:51
@@ -474,15 +536,19 @@ msgstr ""
 msgid "Send in blue"
 msgstr ""
 
+#: DataInit.php:145 DataInit.php:200
+msgid "Set featured image"
+msgstr ""
+
 #: actions/Email.php:16
 msgid "Set viewed when reading e-mail"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:38 admin/forms/settings.php:15
+#: admin/WP_MADEIT_FORM_admin.php:19 admin/forms/settings.php:15
 msgid "Settings"
 msgstr ""
 
-#: admin/FormListTable.php:34
+#: admin/WP_MADEIT_FORM_admin.php:275
 msgid "Shortcode"
 msgstr ""
 
@@ -490,8 +556,8 @@ msgstr ""
 msgid "Slider"
 msgstr ""
 
-#: actions/Mailchimp.php:17 actions/Mailpoet.php:15 actions/Email.php:18
-#: actions/Sendinblue.php:17 actions/EmailService.php:17
+#: actions/Email.php:18 actions/EmailService.php:17 actions/Mailchimp.php:17
+#: actions/Mailpoet.php:15 actions/Sendinblue.php:17
 msgid ""
 "Sorry, there was an error while processing your data. The admin is contacted."
 msgstr ""
@@ -500,15 +566,11 @@ msgstr ""
 msgid "Spinbox"
 msgstr ""
 
-#: admin/forms/form.php:57
-msgid "Status"
-msgstr ""
-
 #: actions/Email.php:12
 msgid "Subject"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:437
+#: admin/WP_MADEIT_FORM_admin.php:254
 msgid "Submission was referred to as spam"
 msgstr ""
 
@@ -516,11 +578,19 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:40 admin/WP_MADEIT_FORM_admin.php:278
+#: DataInit.php:210
+msgid "Submitted form"
+msgstr ""
+
+#: admin/WP_MADEIT_FORM_admin.php:710
+msgid "Submitted form data"
+msgstr ""
+
+#: DataInit.php:183 DataInit.php:184 DataInit.php:188
 msgid "Submitted forms"
 msgstr ""
 
-#: admin/forms/settings.php:38 admin/forms/form.php:106
+#: admin/WP_MADEIT_FORM_admin.php:590 admin/forms/settings.php:38
 msgid "Support"
 msgstr ""
 
@@ -540,25 +610,22 @@ msgstr ""
 msgid "Text area"
 msgstr ""
 
-#: modules/Number.php:22 modules/Select.php:17 modules/Textarea.php:17
-#: modules/Text.php:38 modules/Submit.php:41
+#: modules/Number.php:22 modules/Text.php:38 modules/Textarea.php:17
+#: modules/Select.php:17 modules/Submit.php:59
 msgid "Text Fields"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:434
+#: admin/WP_MADEIT_FORM_admin.php:251
 msgid "Thank you for your message. It has been sent."
 msgstr ""
 
-#: modules/Submit.php:14 modules/Submit.php:83 modules/Submit.php:89
+#: front/WP_Form_front.php:146 modules/Submit.php:14 modules/Submit.php:102
+#: modules/Submit.php:108
 msgid "The captcha couldn't validate you."
 msgstr ""
 
 #: modules/Submit.php:14
 msgid "The captcha failed the validation."
-msgstr ""
-
-#: admin/WP_MADEIT_FORM_admin.php:293
-msgid "The data isn't available"
 msgstr ""
 
 #: modules/Text.php:13
@@ -573,32 +640,16 @@ msgstr ""
 msgid "The email can't be send."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:439
+#: admin/WP_MADEIT_FORM_admin.php:256
 msgid "The field is required."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:440
+#: admin/WP_MADEIT_FORM_admin.php:257
 msgid "The field is too long."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:441
+#: admin/WP_MADEIT_FORM_admin.php:258
 msgid "The field is too short."
-msgstr ""
-
-#: admin/WP_MADEIT_FORM_admin.php:209
-msgid "The form doesn't exist"
-msgstr ""
-
-#: admin/WP_MADEIT_FORM_admin.php:117
-msgid "The form is deleted."
-msgstr ""
-
-#: admin/WP_MADEIT_FORM_admin.php:214 admin/WP_MADEIT_FORM_admin.php:268
-msgid "The form is successfully saved."
-msgstr ""
-
-#: admin/WP_MADEIT_FORM_admin.php:130
-msgid "The form isn't available"
 msgstr ""
 
 #: modules/Number.php:9
@@ -617,10 +668,6 @@ msgstr ""
 msgid "The settings are successfully saved."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:283
-msgid "The submitted data is deleted."
-msgstr ""
-
 #: modules/Text.php:15
 msgid "The telephone number is invalid."
 msgstr ""
@@ -629,50 +676,59 @@ msgstr ""
 msgid "The URL is invalid."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:438
+#: admin/WP_MADEIT_FORM_admin.php:255
 msgid "There are terms that the sender must accept"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:439
+#: admin/WP_MADEIT_FORM_admin.php:256
 msgid "There is a field that the sender must fill in"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:440
+#: admin/WP_MADEIT_FORM_admin.php:257
 msgid ""
 "There is a field with input that is longer than the maximum allowed length"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:441
+#: admin/WP_MADEIT_FORM_admin.php:258
 msgid ""
 "There is a field with input that is shorter than the minimum allowed length"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:435 admin/WP_MADEIT_FORM_admin.php:437
+#: admin/WP_MADEIT_FORM_admin.php:252 admin/WP_MADEIT_FORM_admin.php:254
 msgid "There was an error trying to send your message. Please try again later."
 msgstr ""
 
-#: admin/FormListTable.php:33
-msgid "Title"
+#: front/WP_Form_front.php:242
+msgid "This form is not available."
 msgstr ""
 
 #: actions/Email.php:10
 msgid "To"
 msgstr ""
 
-#: modules/Number.php:93 modules/Select.php:70 modules/Textarea.php:65
-#: modules/Radio.php:65 modules/Checkbox.php:65 modules/Text.php:86
+#: modules/Number.php:93 modules/Text.php:86 modules/Textarea.php:65
+#: modules/Select.php:70 modules/Radio.php:65 modules/Checkbox.php:65
 #, php-format
 msgid ""
 "To use the value input through this field in a action field, you need to "
 "insert the corresponding name-tag (%s) into the field on the Actions tab."
 msgstr ""
 
-#: admin/forms/form.php:162 admin/forms/form.php:262
+#: admin/WP_MADEIT_FORM_admin.php:402 admin/WP_MADEIT_FORM_admin.php:504
+#: admin/WP_MADEIT_FORM_admin.php:741
 msgid "Type"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:32
+#: admin/WP_MADEIT_FORM_admin.php:898
 msgid "Unread form submits"
+msgstr ""
+
+#: DataInit.php:138 DataInit.php:193
+msgid "Update Item"
+msgstr ""
+
+#: DataInit.php:149 DataInit.php:204
+msgid "Uploaded to this item"
 msgstr ""
 
 #: actions/Redirect.php:10 modules/Text.php:9
@@ -683,37 +739,43 @@ msgstr ""
 msgid "URL that the sender entered is invalid"
 msgstr ""
 
-#: modules/Number.php:51 modules/Textarea.php:42 modules/Radio.php:42
-#: modules/Checkbox.php:42 modules/Text.php:63
+#: DataInit.php:147 DataInit.php:202
+msgid "Use as featured image"
+msgstr ""
+
+#: modules/Number.php:51 modules/Text.php:63 modules/Textarea.php:42
+#: modules/Radio.php:42 modules/Checkbox.php:42
 msgid "Use this text as the placeholder of the field"
 msgstr ""
 
-#: admin/forms/submitted.php:53
+#: admin/WP_MADEIT_FORM_admin.php:860
 msgid "User agent"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:436
+#: admin/WP_MADEIT_FORM_admin.php:253
 msgid "Validation errors occurred"
 msgstr ""
 
-#: admin/forms/form.php:73
+#: DataInit.php:139 DataInit.php:194
+msgid "View Item"
+msgstr ""
+
+#: DataInit.php:140 DataInit.php:195
+msgid "View Items"
+msgstr ""
+
+#: admin/WP_MADEIT_FORM_admin.php:599
 msgid "What's this?"
 msgstr ""
 
-#: admin/InputListTable.php:117
+#: admin/WP_MADEIT_FORM_admin.php:308
 msgid "Yes"
-msgstr ""
-
-#: admin/forms/form.php:83
-msgid ""
-"You are about to delete this contact form.\n"
-"  'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
 #: actions/Sendinblue.php:52
 msgid "You are already subscribed."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:438
+#: admin/WP_MADEIT_FORM_admin.php:255
 msgid "You must accept the terms and conditions before sending your message."
 msgstr ""

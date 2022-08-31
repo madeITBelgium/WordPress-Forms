@@ -4,7 +4,7 @@
 	"name": "madeitforms/largeinput-field",
 	"version": "0.1.0",
 	"title": "Forms Large Input Field",
-	"category": "widgets",
+	"category": "forms",
 	"description": "Forms Input field",
 	"supports": {
 		"html": false

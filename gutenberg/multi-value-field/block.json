@@ -4,7 +4,7 @@
 	"name": "madeitforms/multi-value-field",
 	"version": "0.1.0",
 	"title": "Forms Multi Value Field",
-	"category": "widgets",
+	"category": "forms",
 	"description": "Forms Multi Value field",
 	"supports": {
 		"html": false
