@@ -253,7 +253,7 @@ class DataInit
     public function addHooks()
     {
         if (get_option('madeit_form_db_v') !== null && get_option('madeit_form_db_v') < 3) {
-            //add_action('init', [$this, 'dbMigrate']);
+            add_action('init', [$this, 'dbMigrate']);
         }
 
         //add_action('admin_init', [$this, 'add_role_caps'], 999);

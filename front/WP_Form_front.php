@@ -57,7 +57,7 @@ class WP_Form_front
             'meta_query'  => [
                 [
                     'key'     => 'form_id',
-                    'compare' => 'LIKE',
+                    'compare' => '=',
                     'value'   => ''.$id,
                 ],
             ],
