@@ -25,18 +25,18 @@ class WP_MADEIT_FORM_Mailerlite extends WP_MADEIT_FORM_Action
     public function callback($data, $messages, $actionInfo)
     {
         $mergeFields = apply_filters('madeit_forms_mailerlite_merge_fields', [
-            'email' => $data['ml_email'],
-            'name' => trim($data['ml_firstname'] . ' ' . $data['ml_name']),
+            'email'       => $data['ml_email'],
+            'name'        => trim($data['ml_firstname'].' '.$data['ml_name']),
             'resubscribe' => true,
-            'signup_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'signup_ip'   => $_SERVER['REMOTE_ADDR'] ?? null,
         ], $data, $actionInfo);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://api.mailerlite.com/api/v2/subscribers');
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'X-MailerLite-ApiKey: ' . $data['ml_api_key'],
-        ));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'X-MailerLite-ApiKey: '.$data['ml_api_key'],
+        ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($mergeFields));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
