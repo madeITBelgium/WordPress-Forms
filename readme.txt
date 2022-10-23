@@ -3,7 +3,7 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 5.0
-Tested up to: 6.0.2
+Tested up to: 6.0.3
 Requires PHP: 8.0
 Stable tag: 2.1.0
 License: GNU GPL v3.0
@@ -49,6 +49,7 @@ Currently no upgrade
 == Changelog ==
 = 2.1.0 =
 * Mailerlite integration
+* Klaviyo integration
 
 = 2.0.2 =
 * Bug fix migration old data to new post types
