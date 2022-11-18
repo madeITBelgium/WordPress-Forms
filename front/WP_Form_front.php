@@ -243,6 +243,9 @@ class WP_Form_front
 
             return;
         }
+
+        ob_start();
+
         $this->form_id = $id;
         add_filter('madeit_forms_form_id', [$this, 'form_id']);
         echo '<form action="" method="post" id="form_'.$id.'" '.($ajax ? 'class="madeit-forms-ajax"' : 'class="madeit-forms-noajax"').'>';
@@ -272,6 +275,9 @@ class WP_Form_front
             echo $content;
         }
         echo '</form>';
+        $formHtml = ob_get_clean();
+
+        echo apply_filters('madeit_forms_form_html', $formHtml, $id);
     }
 
     public function form_id()
