@@ -962,11 +962,12 @@ class WP_MADEIT_FORM_admin
 
     public function disable_gutenberg($can_edit, $post_type)
     {
+        global $_GET;
         if (!$can_edit) {
             return $can_edit;
         }
 
-        if ($post_type === 'ma_forms' && get_post_meta($_GET['post'], 'form_type', true) === 'html') {
+        if (isset($_GET['post']) && $post_type === 'ma_forms' && get_post_meta($_GET['post'], 'form_type', true) === 'html') {
             return false;
         }
 
