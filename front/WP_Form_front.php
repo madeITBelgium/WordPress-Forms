@@ -69,10 +69,10 @@ class WP_Form_front
             $form = get_post($id);
 
             $objectId = apply_filters('wpml_object_id', $id, 'ma_forms');
-            if(!empty($objectId) && $objectId !== $id) {
+            if (!empty($objectId) && $objectId !== $id) {
                 //Translation found
                 $translatedForm = get_post($objectId);
-                if($translatedForm == null) {
+                if ($translatedForm == null) {
                     $translatedForm = $form;
                 }
             } else {
