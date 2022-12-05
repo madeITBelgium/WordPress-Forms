@@ -67,6 +67,17 @@ class WP_Form_front
             $form = $forms[0];
         } else {
             $form = get_post($id);
+
+            $objectId = apply_filters('wpml_object_id', $id, 'ma_forms');
+            if(!empty($objectId) && $objectId !== $id) {
+                //Translation found
+                $translatedForm = get_post($objectId);
+                if($translatedForm == null) {
+                    $translatedForm = $form;
+                }
+            } else {
+                $translatedForm = $form;
+            }
         }
 
         if ($form->post_type !== 'ma_forms') {
@@ -149,7 +160,7 @@ class WP_Form_front
 
             if ($error) {
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
-                $this->renderForm($form->ID, $form, $ajax);
+                $this->renderForm($form->ID, $form, $translatedForm, $ajax);
                 $content = ob_get_clean();
 
                 return $content;
@@ -222,13 +233,13 @@ class WP_Form_front
 
             if ($error) {
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
-                $this->renderForm($id, $form, $ajax);
+                $this->renderForm($id, $form, $translatedForm, $ajax);
             } else {
                 echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
             }
             //return success message
         } else {
-            $this->renderForm($form->ID, $form, $ajax);
+            $this->renderForm($form->ID, $translatedForm, $ajax);
         }
 
         $content = ob_get_clean();
@@ -236,7 +247,7 @@ class WP_Form_front
         return $content;
     }
 
-    private function renderForm($id, $form, $ajax = false)
+    private function renderForm($id, $form, $translatedForm, $ajax = false)
     {
         if ($form->post_status !== 'publish') {
             echo __('This form is not available.', 'forms-by-made-it');
@@ -256,7 +267,7 @@ class WP_Form_front
             $formValue = str_replace("\'", "'", $formValue);
             echo do_shortcode($formValue);
         } else {
-            $content = apply_filters('the_content', $form->post_content);
+            $content = apply_filters('the_content', $translatedForm->post_content);
 
             if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
                 $captchaCallback = 'onSubmit'.rand();
