@@ -1101,6 +1101,7 @@ class WP_MADEIT_FORM_admin
         $data = str_replace('|--MAFORM-N--|', '\n', $data);
 
         $data = preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $data);
+
         return $data;
     }
 
