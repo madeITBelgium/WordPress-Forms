@@ -60,7 +60,7 @@ function madeit_forms_loadActions()
     $a = new WP_MADEIT_FORM_Javacript();
     require_once MADEIT_FORM_DIR.'/actions/Redirect.php';
     $a = new WP_MADEIT_FORM_Redirect();
-    require_once MADEIT_FROM_DIR.'/actions/Klaviyo.php';
+    require_once MADEIT_FORM_DIR.'/actions/Klaviyo.php';
     $a = new WP_MADEIT_FORM_Klaviyo();
 
     require_once MADEIT_FORM_DIR.'/modules/Text.php';

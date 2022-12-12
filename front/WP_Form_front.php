@@ -45,7 +45,7 @@ class WP_Form_front
 
     public function shortcode_form($attsOrig)
     {
-        $atts = shortcode_atts(['id' => 0, 'ajax' => 'no'], $attsOrig);
+        $atts = shortcode_atts(['id' => 0, 'ajax' => 'no', 'spam_action' => 'fail'], $attsOrig);
         extract($atts);
 
         $ajax = strtolower($ajax) == 'yes';
@@ -63,8 +63,10 @@ class WP_Form_front
             ],
         ]);
 
+        $translatedForm = null;
         if (count($forms) === 1) {
             $form = $forms[0];
+            $translatedForm = $form;
         } else {
             $form = get_post($id);
 
@@ -87,6 +89,8 @@ class WP_Form_front
         ob_start();
 
         if (isset($_POST['form_id']) && $_POST['form_id'] == $form->ID) {
+            //check spam
+            $spam = false;
 
             //validate input fields
             $error = false;
@@ -158,6 +162,14 @@ class WP_Form_front
                 }
             }
 
+            if($this->isSpam($_POST)) {
+                $spam = true;
+                if($spam_action === 'fail') {
+                    $error = true;
+                    $error_msg = __("Spam detected.", 'forms-by-made-it');
+                }
+            }
+
             if ($error) {
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
                 $this->renderForm($form->ID, $form, $translatedForm, $ajax);
@@ -165,9 +177,6 @@ class WP_Form_front
 
                 return $content;
             }
-
-            //check spam
-            $spam = false;
 
             //insert into DB
             $postData = $_POST;
@@ -239,7 +248,7 @@ class WP_Form_front
             }
             //return success message
         } else {
-            $this->renderForm($form->ID, $translatedForm, $ajax);
+            $this->renderForm($form->ID, $form, $translatedForm, $ajax);
         }
 
         $content = ob_get_clean();
@@ -397,6 +406,11 @@ class WP_Form_front
             wp_die();
         }
 
+        if($this->isSpam($_POST)) {
+            echo json_encode(['success' => false, 'message' => __("Spam detected.", 'forms-by-made-it')]);
+            wp_die();
+        }
+
         $formValue = get_post_meta($form->ID, 'form', true);
         $formValue = str_replace('\"', '"', $formValue);
 
@@ -433,9 +447,6 @@ class WP_Form_front
         $postData = $_POST;
         unset($postData['form_id']);
         unset($postData['action']);
-        unset($atts['ajax']);
-        unset($atts['id']);
-        $postData = array_merge($atts, $postData);
 
         $inputId = -1;
         if (get_post_meta($form->ID, 'save_inputs', true) == 1) {
@@ -462,11 +473,9 @@ class WP_Form_front
             foreach ($formActions as $actID => $actionInfo) {
                 $action = $this->actions[$actionInfo['_id']];
 
-                unset($atts['ajax']);
-                unset($atts['id']);
-                $data = array_merge($atts, [
+                $data = [
                     'id' => $inputId,
-                ]);
+                ];
                 foreach ($action['action_fields'] as $name => $info) {
                     $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value'];
                     $data[$name] = $this->changeInputTag($inputValue, $postData);
@@ -536,6 +545,48 @@ class WP_Form_front
         $data = str_replace('|--MAFORM-R--|', '\r', $data);
         $data = str_replace('|--MAFORM-N--|', '\n', $data);
 
+        $data = preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $data);
+        
         return $data;
+    }
+
+    private function isSpam($data)
+    {
+        $spam = false;
+
+        //Check if IP is spam listed
+        $spamIPs = apply_filters('madeit_forms_spam_ips', []);
+        if(in_array($this->getIP(), $spamIPs)) {
+            $spam = true;
+        }
+
+        //check user agent
+        $spamUserAgents = apply_filters('madeit_forms_spam_user_agents', [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36 OPR/89.0.4447.51',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.99',
+            'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.106',
+            'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:102.0) Gecko/20100101 Firefox/102.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68',
+        ]);
+        if(isset($_SERVER['HTTP_USER_AGENT']) && in_array($_SERVER['HTTP_USER_AGENT'], $spamUserAgents)) {
+            $spam = true;
+        }
+
+        //check words
+        $spamWords = apply_filters('madeit_forms_spam_words', ['mail.ru']);
+        foreach ($spamWords as $spamWord) {
+            foreach($data as $k => $v) {
+                if (stripos($v, $spamWord) !== false) {
+                    $spam = true;
+                    break;
+                }
+            }
+        }
+
+        return $spam;
     }
 }

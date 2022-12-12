@@ -41,7 +41,7 @@ class WP_MADEIT_FORM_Klaviyo extends WP_MADEIT_FORM_Action
         curl_setopt($ch, CURLOPT_URL, 'https://a.klaviyo.com/client/subscriptions/?company_id=' . $data['kly_company_id']);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'revision: 2022-10-17'));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['data' => $mergeFields));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['data' => $mergeFields]));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $server_output = curl_exec($ch);
