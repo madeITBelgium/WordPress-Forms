@@ -26,21 +26,21 @@ class WP_MADEIT_FORM_Klaviyo extends WP_MADEIT_FORM_Action
     public function callback($data, $messages, $actionInfo)
     {
         $mergeFields = apply_filters('madeit_forms_klaviyo_merge_fields', [
-            'type' => 'subscription',
+            'type'       => 'subscription',
             'attributes' => [
                 'properties' => [
-                    'name' => trim($data['kly_firstname'].' '.$data['kly_name'])
+                    'name' => trim($data['kly_firstname'].' '.$data['kly_name']),
                 ],
             ],
-            'email' => $data['kly_email'],
-            'list_id' => $data['kly_list_id'],
+            'email'         => $data['kly_email'],
+            'list_id'       => $data['kly_list_id'],
             'custom_source' => $data['kly_custom_source'],
         ], $data, $actionInfo);
-      
+
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://a.klaviyo.com/client/subscriptions/?company_id=' . $data['kly_company_id']);
+        curl_setopt($ch, CURLOPT_URL, 'https://a.klaviyo.com/client/subscriptions/?company_id='.$data['kly_company_id']);
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'revision: 2022-10-17'));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'revision: 2022-10-17']);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['data' => $mergeFields]));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
