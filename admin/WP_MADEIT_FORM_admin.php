@@ -996,6 +996,7 @@ class WP_MADEIT_FORM_admin
             'madeitforms/largeinput-field',
             'madeitforms/submit-field',
             'madeitforms/multi-value-field',
+            'madeitforms/question-seperator',
         ];
         if ($block_editor_context->post->post_type == 'ma_forms') {
             return $allowed;

@@ -14,7 +14,7 @@ class WP_MADEIT_FORM_Javacript extends WP_MADEIT_FORM_Action
         $this->addHooks();
     }
 
-    public function callback($data, $messages, $actionInfo)
+    public function callback($data, $messages, $actionInfo, $formId = null, $inputId = null, $postData = null)
     {
         return ['type' => 'HTML', 'code' => str_replace("\'", "'", $data['js_event_code'])];
     }

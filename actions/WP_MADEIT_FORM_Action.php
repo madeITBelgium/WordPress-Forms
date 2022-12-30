@@ -34,7 +34,7 @@ class WP_MADEIT_FORM_Action
         return array_merge($actions, $this->actions);
     }
 
-    public function callback($data, $messages, $actionInfo)
+    public function callback($data, $messages, $actionInfo, $formId = null, $inputId = null, $postData = null)
     {
         return $messages['failed'];
     }

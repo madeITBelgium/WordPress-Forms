@@ -39,11 +39,11 @@ export default function save(props) {
         }
     } else if(type === 'radio') {
         for(var i = 0; i < splitedValues.length; i++) {
-            html.push(<div className={'madeit-forms-radio-field'}><input type={type} name={name} value={ splitedValues[i] } checked={default_value === splitedValues[i] } />{ splitedValues[i] }</div>);
+            html.push(<div className={'madeit-forms-radio-field'}><label><input type={type} name={name} value={ splitedValues[i] } checked={default_value === splitedValues[i] } /><span>{ splitedValues[i] }</span></label></div>);
         }
     } else if(type === 'checkbox') {
         for(var i = 0; i < splitedValues.length; i++) {
-            html.push(<div className={'madeit-forms-checkbox-field'}><input type={type} name={name +'[]'} value={ splitedValues[i] } checked={default_value === splitedValues[i] } />{ splitedValues[i] }</div>);
+            html.push(<div className={'madeit-forms-checkbox-field'}><label><input type={type} name={name +'[]'} value={ splitedValues[i] } checked={default_value === splitedValues[i] } /><span>{ splitedValues[i] }</span></label></div>);
         }
     }
     

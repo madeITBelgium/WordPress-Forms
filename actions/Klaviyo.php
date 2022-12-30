@@ -23,7 +23,7 @@ class WP_MADEIT_FORM_Klaviyo extends WP_MADEIT_FORM_Action
         $this->addHooks();
     }
 
-    public function callback($data, $messages, $actionInfo)
+    public function callback($data, $messages, $actionInfo, $formId = null, $inputId = null, $postData = null)
     {
         $mergeFields = apply_filters('madeit_forms_klaviyo_merge_fields', [
             'type'       => 'subscription',

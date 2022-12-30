@@ -1,0 +1,16 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "madeitforms/question-seperator",
+	"version": "0.1.0",
+	"title": "Forms Question Seperator",
+	"category": "forms",
+	"description": "Forms Question Seperator",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "forms-by-made-it",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css"
+}

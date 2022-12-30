@@ -3,6 +3,44 @@ jQuery( document ).ready( function( $ ) {
         e.preventDefault();
         submitMadeitForm($(this).attr('id'));
     });
+
+    if($('.madeit-forms-quiz-container').length) {
+        //Has quiz!
+
+        $('.madeit-forms-quiz-question-button-prev').click(function(e) {
+            e.preventDefault();
+            var container = $(this).parents('.madeit-forms-quiz-container');
+            container.find('hide-question').removeClass('hide-question');
+
+            var steps = container.attr('data-steps');
+            var currentStep = container.attr('data-current-step');
+            if(currentStep > 1) {
+                currentStep--;
+            }
+            container.attr('data-current-step', currentStep);
+            
+            container.find('.madeit-forms-quiz-question').addClass('hide-question');
+            container.find('.madeit-forms-quiz-question[data-question=' + currentStep + ']').removeClass('hide-question');
+
+        });
+
+        $('.madeit-forms-quiz-question-button-next').click(function(e) {
+            e.preventDefault();
+            var container = $(this).parents('.madeit-forms-quiz-container');
+            container.find('hide-question').removeClass('hide-question');
+
+            var steps = container.attr('data-steps');
+            var currentStep = container.attr('data-current-step');
+            if(currentStep < steps) {
+                currentStep++;
+            }
+
+            container.attr('data-current-step', currentStep);
+            
+            container.find('.madeit-forms-quiz-question').addClass('hide-question');
+            container.find('.madeit-forms-quiz-question[data-question=' + currentStep + ']').removeClass('hide-question');
+        });
+    }
 });
 
 function submitMadeitForm(formId) {
@@ -71,3 +109,4 @@ function setBubble(range, bubble) {
     // Sorta magic numbers based on size of the native UI thumb
     bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.15}px))`;
 }
+

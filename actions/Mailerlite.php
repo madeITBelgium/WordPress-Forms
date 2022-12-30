@@ -22,7 +22,7 @@ class WP_MADEIT_FORM_Mailerlite extends WP_MADEIT_FORM_Action
         $this->addHooks();
     }
 
-    public function callback($data, $messages, $actionInfo)
+    public function callback($data, $messages, $actionInfo, $formId = null, $inputId = null, $postData = null)
     {
         $mergeFields = apply_filters('madeit_forms_mailerlite_merge_fields', [
             'email'       => $data['ml_email'],

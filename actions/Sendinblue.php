@@ -21,7 +21,7 @@ class WP_MADEIT_FORM_Sendinblue extends WP_MADEIT_FORM_Action
         $this->addHooks();
     }
 
-    public function callback($data, $messages, $actionInfo)
+    public function callback($data, $messages, $actionInfo, $formId = null, $inputId = null, $postData = null)
     {
         $apiInstance = null;
         $createContact = null;
