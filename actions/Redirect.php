@@ -17,6 +17,7 @@ class WP_MADEIT_FORM_Redirect extends WP_MADEIT_FORM_Action
     public function callback($data, $messages, $actionInfo, $formId = null, $inputId = null, $postData = null)
     {
         $redirectUrl = apply_filters('madeit_forms_redirect_url', $actionInfo['redirect_url'], $data, $messages, $actionInfo, $formId, $inputId, $postData);
+
         return ['type' => 'HTML', 'code' => '<script>window.location.href="'.$redirectUrl.'";</script>'];
     }
 }
