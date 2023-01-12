@@ -22,6 +22,8 @@ jQuery( document ).ready( function( $ ) {
             container.find('.madeit-forms-quiz-question').addClass('hide-question');
             container.find('.madeit-forms-quiz-question[data-question=' + currentStep + ']').removeClass('hide-question');
 
+			var event = new CustomEvent("madeit-forms-quiz-prev", { "detail": currentStep });
+			document.dispatchEvent(event);
         });
 
         $('.madeit-forms-quiz-question-button-next').click(function(e) {
@@ -39,6 +41,9 @@ jQuery( document ).ready( function( $ ) {
             
             container.find('.madeit-forms-quiz-question').addClass('hide-question');
             container.find('.madeit-forms-quiz-question[data-question=' + currentStep + ']').removeClass('hide-question');
+            
+			var event = new CustomEvent("madeit-forms-quiz-next", { "detail": currentStep });
+			document.dispatchEvent(event);
         });
     }
 });
