@@ -181,7 +181,6 @@ class WP_Form_front
                 $remoteIp = $_SERVER['REMOTE_ADDR'];
                 $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
                 $result = json_decode($reCaptchaValidationUrl, TRUE);
-                error_log(print_r($result, true));
 
                 if($this->defaultSettings['reCaptcha']['version'] === 'V3') {
                     if($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
@@ -457,7 +456,6 @@ class WP_Form_front
             $remoteIp = $_SERVER['REMOTE_ADDR'];
             $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
             $result = json_decode($reCaptchaValidationUrl, TRUE);
-            error_log(print_r($result, true));
             
             if($this->defaultSettings['reCaptcha']['version'] === 'V3') {
                 if($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
