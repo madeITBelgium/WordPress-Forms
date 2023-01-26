@@ -63,7 +63,18 @@ if (!defined('ABSPATH')) {
                                         </tr>
                                         <tr>
                                             <th scope="row">
-                                                <label for=""><?php echo esc_html(__('Google invisble reCaptcha key', 'madeit_security')); ?></label>
+                                                <label for=""><?php echo esc_html(__('Google reCaptcha Version', 'forms-by-made-it')); ?></label>
+                                            </th>
+                                            <td>
+                                                <select name="madeit_forms_reCaptcha_version" class="large-text code">
+                                                    <option value="V2" <?php echo $this->defaultSettings['reCaptcha']['version'] === 'V2' ? 'SELECTED' : ''; ?>>V2</option>
+                                                    <option value="V3" <?php echo $this->defaultSettings['reCaptcha']['version'] === 'V3' ? 'SELECTED' : ''; ?>>V3</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">
+                                                <label for=""><?php echo esc_html(__('Google invisble reCaptcha key', 'forms-by-made-it')); ?></label>
                                             </th>
                                             <td>
                                                 <input type="text" name="madeit_forms_reCaptcha_key" class="large-text code" size="70" value="<?php echo $this->defaultSettings['reCaptcha']['key']; ?>" />
@@ -74,12 +85,22 @@ if (!defined('ABSPATH')) {
                                         </tr>
                                         <tr>
                                             <th scope="row">
-                                                <label for=""><?php echo esc_html(__('Google invisble reCaptcha secret key', 'madeit_security')); ?></label>
+                                                <label for=""><?php echo esc_html(__('Google invisble reCaptcha secret key', 'forms-by-made-it')); ?></label>
                                             </th>
                                             <td>
                                                 <input type="text" name="madeit_forms_reCaptcha_secret" class="large-text code" size="70" value="<?php echo $this->defaultSettings['reCaptcha']['secret']; ?>" />
                                             </td>
                                         </tr>
+                                        <?php if($this->defaultSettings['reCaptcha']['version'] === 'V3') { ?>
+                                            <tr>
+                                                <th scope="row">
+                                                    <label for=""><?php echo esc_html(__('Google invisble reCaptcha minimum score (default: 0.7)', 'forms-by-made-it')); ?></label>
+                                                </th>
+                                                <td>
+                                                    <input type="text" name="madeit_forms_reCaptcha_minScore" class="large-text code" size="70" value="<?php echo $this->defaultSettings['reCaptcha']['minScore']; ?>" />
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                             </section>

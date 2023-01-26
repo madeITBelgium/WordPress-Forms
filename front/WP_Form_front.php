@@ -170,6 +170,32 @@ class WP_Form_front
                 }
             }
 
+
+            if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+                $secretKey = $this->defaultSettings['reCaptcha']['secret'];
+                if(!isset($_POST['g-recaptcha-response'])) {
+                    $error = true;
+                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+                }
+                $response = $_POST['g-recaptcha-response'];     
+                $remoteIp = $_SERVER['REMOTE_ADDR'];
+                $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
+                $result = json_decode($reCaptchaValidationUrl, TRUE);
+                error_log(print_r($result, true));
+
+                if($this->defaultSettings['reCaptcha']['version'] === 'V3') {
+                    if($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
+                        $error = true;
+                        $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+                    }
+                } else {
+                    if($result['success'] != 1) {
+                        $error = true;
+                        $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+                    }
+                }
+            }
+
             if ($error) {
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
                 $this->renderForm($form->ID, $form, $translatedForm, $ajax);
@@ -416,6 +442,38 @@ class WP_Form_front
 
         if ($this->isSpam($_POST)) {
             echo json_encode(['success' => false, 'message' => __('Spam detected.', 'forms-by-made-it')]);
+            wp_die();
+        }
+
+        $error = false;
+        $error_msg = '';
+        if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+            $secretKey = $this->defaultSettings['reCaptcha']['secret'];
+            if(!isset($_POST['g-recaptcha-response'])) {
+                $error = true;
+                $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+            }
+            $response = $_POST['g-recaptcha-response'];     
+            $remoteIp = $_SERVER['REMOTE_ADDR'];
+            $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
+            $result = json_decode($reCaptchaValidationUrl, TRUE);
+            error_log(print_r($result, true));
+            
+            if($this->defaultSettings['reCaptcha']['version'] === 'V3') {
+                if($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
+                    $error = true;
+                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The spam filter suspects a problem. Contact us by phone or e-mail.", "forms-by-made-it");
+                }
+            } else {
+                if($result['success'] != 1) {
+                    $error = true;
+                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+                }
+            }
+        }
+
+        if($error) {
+            echo json_encode(['success' => false, 'message' => $error_msg]);
             wp_die();
         }
 

@@ -164,6 +164,8 @@ class WP_MADEIT_FORM_admin
             $this->settings->checkCheckbox('madeit_forms_reCaptcha');
             $this->settings->checkTextbox('madeit_forms_reCaptcha_key');
             $this->settings->checkTextbox('madeit_forms_reCaptcha_secret');
+            $this->settings->checkTextbox('madeit_forms_reCaptcha_version');
+            $this->settings->checkTextbox('madeit_forms_reCaptcha_minScore');
 
             if (get_option('madeit_forms_reCaptcha_key', null) == null || get_option('madeit_forms_reCaptcha_secret', null) == null) {
                 update_option('madeit_forms_reCaptcha', false);
