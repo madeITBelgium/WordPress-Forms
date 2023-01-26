@@ -13,10 +13,10 @@ class WP_MadeIT_Form_Settings
     {
         $this->defaultSettings = [
             'reCaptcha' => [
-                'version' => get_option('madeit_forms_reCaptcha_version', 'V2'),
-                'enabled' => get_option('madeit_forms_reCaptcha', false),
-                'key'     => get_option('madeit_forms_reCaptcha_key', null),
-                'secret'  => get_option('madeit_forms_reCaptcha_secret', null),
+                'version'  => get_option('madeit_forms_reCaptcha_version', 'V2'),
+                'enabled'  => get_option('madeit_forms_reCaptcha', false),
+                'key'      => get_option('madeit_forms_reCaptcha_key', null),
+                'secret'   => get_option('madeit_forms_reCaptcha_secret', null),
                 'minScore' => get_option('madeit_forms_reCaptcha_minScore', 0.7),
             ],
         ];
