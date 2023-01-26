@@ -49,21 +49,17 @@ jQuery( document ).ready( function( $ ) {
 });
 
 function submitMadeitForm(formId) {
-    console.log(formId);
     if(jQuery('#' + formId).hasClass('madeit-forms-ajax')) {
-        console.log('Found');
         /*if(! jQuery('#' + formId).checkValidity()) {
             console.log('Validation failed');
             jQuery('#' + formId).find(':submit').click();
             grecaptcha.reset();
         }*/
     
-        console.log('Remove messages');
         jQuery('.madeit-form-success, .madeit-form-error').remove();
         var formData = madeitObjectifyForm(jQuery('#' + formId).serializeArray());
         formData.action = 'madeit_forms_submit';
         jQuery.post('/wp-admin/admin-ajax.php', formData, function(data) {
-            console.log(data);
             if(data.success) {
                 jQuery('#' + formId).before('<div class="madeit-form-success">' + data.message + '</div>');
                 jQuery('#' + formId).hide();
