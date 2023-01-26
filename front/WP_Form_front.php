@@ -171,27 +171,27 @@ class WP_Form_front
             }
 
             $spamScore = null;
-            if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+            if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
                 $secretKey = $this->defaultSettings['reCaptcha']['secret'];
-                if(!isset($_POST['g-recaptcha-response'])) {
+                if (!isset($_POST['g-recaptcha-response'])) {
                     $error = true;
-                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
                 }
-                $response = $_POST['g-recaptcha-response'];     
+                $response = $_POST['g-recaptcha-response'];
                 $remoteIp = $_SERVER['REMOTE_ADDR'];
                 $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
-                $result = json_decode($reCaptchaValidationUrl, TRUE);
+                $result = json_decode($reCaptchaValidationUrl, true);
 
-                if($this->defaultSettings['reCaptcha']['version'] === 'V3') {
+                if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
                     $spamScore = $result['score'];
-                    if($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
+                    if ($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
                         $error = true;
-                        $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+                        $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
                     }
                 } else {
-                    if($result['success'] != 1) {
+                    if ($result['success'] != 1) {
                         $error = true;
-                        $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+                        $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
                     }
                 }
             }
@@ -206,7 +206,7 @@ class WP_Form_front
 
             //insert into DB
             $postData = $_POST;
-            if($spamScore !== null) {
+            if ($spamScore !== null) {
                 $postData['spamScore'] = $spamScore;
             }
             unset($attsOrig['ajax']);
@@ -451,33 +451,33 @@ class WP_Form_front
         $error = false;
         $error_msg = '';
         $spamScore = null;
-        if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
+        if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
             $secretKey = $this->defaultSettings['reCaptcha']['secret'];
-            if(!isset($_POST['g-recaptcha-response'])) {
+            if (!isset($_POST['g-recaptcha-response'])) {
                 $error = true;
-                $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+                $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
             }
-            $response = $_POST['g-recaptcha-response'];     
+            $response = $_POST['g-recaptcha-response'];
             $remoteIp = $_SERVER['REMOTE_ADDR'];
             $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
-            $result = json_decode($reCaptchaValidationUrl, TRUE);
-            
-            if($this->defaultSettings['reCaptcha']['version'] === 'V3') {
+            $result = json_decode($reCaptchaValidationUrl, true);
+
+            if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
                 $spamScore = $result['score'] ?? null;
                 //error_log(print_r($result, true));
-                if($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
+                if ($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
                     $error = true;
-                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The spam filter suspects a problem. Contact us by phone or e-mail.", "forms-by-made-it");
+                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __('The spam filter suspects a problem. Contact us by phone or e-mail.', 'forms-by-made-it');
                 }
             } else {
-                if($result['success'] != 1) {
+                if ($result['success'] != 1) {
                     $error = true;
-                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", "forms-by-made-it");
+                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
                 }
             }
         }
 
-        if($error) {
+        if ($error) {
             echo json_encode(['success' => false, 'message' => $error_msg, 'spamscore' => $spamScore]);
             wp_die();
         }
@@ -516,7 +516,7 @@ class WP_Form_front
 
         //insert into DB
         $postData = $_POST;
-        if($spamScore !== null) {
+        if ($spamScore !== null) {
             $postData['spamScore'] = $spamScore;
         }
         unset($postData['form_id']);
