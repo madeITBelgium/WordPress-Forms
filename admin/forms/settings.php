@@ -91,7 +91,7 @@ if (!defined('ABSPATH')) {
                                                 <input type="text" name="madeit_forms_reCaptcha_secret" class="large-text code" size="70" value="<?php echo $this->defaultSettings['reCaptcha']['secret']; ?>" />
                                             </td>
                                         </tr>
-                                        <?php if($this->defaultSettings['reCaptcha']['version'] === 'V3') { ?>
+                                        <?php if ($this->defaultSettings['reCaptcha']['version'] === 'V3') { ?>
                                             <tr>
                                                 <th scope="row">
                                                     <label for=""><?php echo esc_html(__('Google invisble reCaptcha minimum score (default: 0.7)', 'forms-by-made-it')); ?></label>
