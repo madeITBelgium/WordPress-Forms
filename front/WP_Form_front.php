@@ -225,7 +225,7 @@ class WP_Form_front
                 ]);
 
                 $postData = apply_filters('madeit_forms_post_data', $postData, $form->ID, $inputId);
-                $postData = apply_filters('madeit_forms_' . $form->ID . '_post_data', $postData, $inputId);
+                $postData = apply_filters('madeit_forms_'.$form->ID.'_post_data', $postData, $inputId);
 
                 update_post_meta($inputId, 'form_id', $form->ID);
                 update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
@@ -322,7 +322,7 @@ class WP_Form_front
             }
 
             $content = $this->checkQuiz($content);
-            
+
             echo $content;
         }
         echo '</form>';
@@ -342,7 +342,7 @@ class WP_Form_front
             $params = $_POST;
         }
         foreach ($params as $k => $v) {
-            if(is_array($v)) {
+            if (is_array($v)) {
                 $v = implode(', ', $v);
             }
             $value = str_replace('['.$k.']', $v, $value);
@@ -523,8 +523,8 @@ class WP_Form_front
             ]);
 
             $postData = apply_filters('madeit_forms_post_data', $postData, $form->ID, $inputId);
-            $postData = apply_filters('madeit_forms_' . $form->ID . '_post_data', $postData, $inputId);
-            
+            $postData = apply_filters('madeit_forms_'.$form->ID.'_post_data', $postData, $inputId);
+
             update_post_meta($inputId, 'form_id', $form->ID);
             update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
             update_post_meta($inputId, 'ip', $this->getIP());
@@ -649,7 +649,7 @@ class WP_Form_front
         $spamWords = apply_filters('madeit_forms_spam_words', ['mail.ru']);
         foreach ($spamWords as $spamWord) {
             foreach ($data as $k => $v) {
-                if(is_array($v)) {
+                if (is_array($v)) {
                     $v = implode(' ', $v);
                 }
 
@@ -665,27 +665,28 @@ class WP_Form_front
 
     private function checkQuiz($content)
     {
-        if(strpos($content, 'wp-block-madeitforms-question-seperator') !== false) {
+        if (strpos($content, 'wp-block-madeitforms-question-seperator') !== false) {
             //Is quiz
-            $content = str_replace("wp-block-madeitforms-question-seperator madeit-forms-input-field", "wp-block-madeitforms-question-seperator", $content);
+            $content = str_replace('wp-block-madeitforms-question-seperator madeit-forms-input-field', 'wp-block-madeitforms-question-seperator', $content);
 
             $contentSeperators = explode('<div class="wp-block-madeitforms-question-seperator"></div>', $content);
 
             $content = '';
-            foreach($contentSeperators as $key => $contentSeperator) {
-                $content .= '<div class="madeit-forms-quiz-question ' . ($key > 0 ? 'hide-question' : '') . '" data-question="'.$key.'">'.$contentSeperator;
-                
-                if(count($contentSeperators) - 1 != $key) {
+            foreach ($contentSeperators as $key => $contentSeperator) {
+                $content .= '<div class="madeit-forms-quiz-question '.($key > 0 ? 'hide-question' : '').'" data-question="'.$key.'">'.$contentSeperator;
+
+                if (count($contentSeperators) - 1 != $key) {
                     $content .= '<div class="madeit-forms-quiz-question-buttons">';
                     $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-prev" data-question="'.$key.'" '.($key == 0 ? 'disabled' : '').'>'.__('Previous', 'forms-by-made-it').'</button>';
                     $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-next" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.__('Next', 'forms-by-made-it').'</button>';
                     $content .= '</div>';
                 }
-                $content .='</div>';
+                $content .= '</div>';
             }
 
-            $content = '<div class="madeit-forms-quiz-container" data-steps="' . count($contentSeperators) . '" data-current-step="0">'.$content.'</div>';
+            $content = '<div class="madeit-forms-quiz-container" data-steps="'.count($contentSeperators).'" data-current-step="0">'.$content.'</div>';
         }
+
         return $content;
     }
 }
