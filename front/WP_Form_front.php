@@ -464,7 +464,7 @@ class WP_Form_front
 
             if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
                 $spamScore = $result['score'] ?? null;
-                //error_log(print_r($result, true));
+                error_log(print_r($result, true));
                 if ($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
                     $error = true;
                     $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __('The spam filter suspects a problem. Contact us by phone or e-mail.', 'forms-by-made-it');
