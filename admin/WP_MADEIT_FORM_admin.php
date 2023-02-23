@@ -326,7 +326,13 @@ class WP_MADEIT_FORM_admin
 
                 $data = json_decode($this->dbToEnter(get_post_meta($post_id, 'data', true)), true);
 
-                echo $data[$fieldName] ?? '';
+                $v = $data[$fieldName] ?? '';
+                
+                if(is_array($v)) {
+                    echo implode(", ", $v);
+                } else {
+                    echo $v;
+                }
             }
         }
     }
