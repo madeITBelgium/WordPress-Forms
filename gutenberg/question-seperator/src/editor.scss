@@ -4,19 +4,7 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-.wp-block-madeitforms-input-field .madeit-forms-input-field {
-    width: 100%;
-    margin: 0;
-}
-
-.wp-block-madeitforms-input-field.is-style-horizontal {
-    display: flex;
-}
-.wp-block-madeitforms-input-field.is-style-horizontal > div {
-    flex-basis: 50%;
-}
-
-.ma-forms-input-error {
-    color: red;
-    font-weight: bold;
+.question-seperator {
+    padding-top: 15px;
+    padding-bottom: 15px;
 }

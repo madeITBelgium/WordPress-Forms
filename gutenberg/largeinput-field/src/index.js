@@ -3,8 +3,9 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
  */
-import { registerBlockType } from '@wordpress/blocks';
+import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { Path, SVG } from '@wordpress/primitives';
+import { useBlockProps } from '@wordpress/block-editor';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -39,4 +40,63 @@ registerBlockType('madeitforms/largeinput-field', {
 	 * @see ./save.js
 	 */
 	save,
+
+    deprecated: [
+        {
+            attributes: {
+                required: {
+                    type: "boolean",
+                    default: false
+                },
+                name: {
+                    type: "string"
+                },
+                default_value: {
+                    type: "string"
+                },
+                placeholder: {
+                    type: "string"
+                },
+                label: {
+                    type: "string"
+                }
+            },
+
+            supports: {
+                html: false,
+            },
+
+            save( props ) {
+                const {
+                    attributes,
+                    className,
+                    clientId
+                } = props;
+                
+                const {
+                    required, name, label, default_value, placeholder
+                } = attributes;
+                
+                
+                const blockPropsParent = useBlockProps.save({
+                    className: className
+                });
+                
+                const inputProps = {
+                    className: 'madeit-forms-largeinput-field',
+                    name: name,
+                    required: required,
+                    placeholder: placeholder
+                };
+                
+                return (
+                    <div { ...blockPropsParent }>
+                        <div><label>{ label }</label></div>
+                        <textarea { ...inputProps }>{default_value}</textarea>
+                    </div>
+                );
+            },
+        }
+    ],
+
 });

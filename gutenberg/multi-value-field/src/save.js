@@ -49,7 +49,7 @@ export default function save(props) {
     
 	return (
         <div { ...blockPropsParent }>
-            <div><label>{ label }</label></div>
+            { label !== null && label.length > 0 ? <div><label>{ label }</label></div> : null }
             <div>
                 {
                     type === 'select' && <select {...inputProps}>

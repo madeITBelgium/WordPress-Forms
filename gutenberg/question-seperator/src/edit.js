@@ -7,10 +7,21 @@ import { PanelBody, SelectControl, TextControl, ToggleControl } from "@wordpress
 import './editor.scss';
 
 export default function Edit( props ) {
+    const {
+        attributes,
+        setAttributes,
+        className,
+        clientId
+    } = props;
+
+    const blockPropsParent = useBlockProps({
+        className: className
+    });
 
 	return [
-        <div>
-            <div>
+        <InspectorControls></InspectorControls>,
+        <div { ...blockPropsParent }>
+            <div class="question-seperator">
                 <hr />
             </div>
         </div>

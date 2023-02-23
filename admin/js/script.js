@@ -330,11 +330,38 @@ wp.data.subscribe( _.debounce( () => {
     var newBlocksState = wp.data.select( 'core/editor' ).getEditedPostContent();
     if ( madeitFormsBlockState !== newBlocksState ) {
         var blocks = wp.data.select( 'core/block-editor' ).getBlocks();
-        
+
+        console.log(blocks);
+
         var tags = [];
         for(var i = 0; i < blocks.length; i++) {
             if(blocks[i].attributes !== undefined && blocks[i].attributes.name !== undefined) {
                 tags.push(blocks[i].attributes.name)
+            }
+
+            if(blocks[i].innerBlocks !== undefined) {
+                for(var j = 0; j < blocks[i].innerBlocks.length; j++) {
+                    if(blocks[i].innerBlocks[j].attributes !== undefined && blocks[i].innerBlocks[j].attributes.name !== undefined) {
+                        tags.push(blocks[i].innerBlocks[j].attributes.name)
+                    }
+
+                    if(blocks[i].innerBlocks[j].innerBlocks !== undefined) {
+                        for(var k = 0; k < blocks[i].innerBlocks[j].innerBlocks.length; k++) {
+                            if(blocks[i].innerBlocks[j].innerBlocks[k].attributes !== undefined && blocks[i].innerBlocks[j].innerBlocks[k].attributes.name !== undefined) {
+                                tags.push(blocks[i].innerBlocks[j].innerBlocks[k].attributes.name)
+                            }
+
+                            if(blocks[i].innerBlocks[j].innerBlocks[k].innerBlocks !== undefined) {
+                                for(var l = 0; l < blocks[i].innerBlocks[j].innerBlocks[k].innerBlocks.length; l++) {
+                                    if(blocks[i].innerBlocks[j].innerBlocks[k].innerBlocks[l].attributes !== undefined && blocks[i].innerBlocks[j].innerBlocks[k].innerBlocks[l].attributes.name !== undefined) {
+                                        tags.push(blocks[i].innerBlocks[j].innerBlocks[k].innerBlocks[l].attributes.name)
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
             }
         }
         if(tags.length > 0) {

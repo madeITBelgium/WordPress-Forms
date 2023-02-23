@@ -17,7 +17,7 @@ export default function Edit( props ) {
     const {
         type, required, name, label, default_value, placeholder
     } = attributes;
-    console.log(props);
+
     const inputTypes = [
         { value: 'text', label: __( 'Text' ) },
         { value: 'email', label: __( 'E-mail Address' ) },

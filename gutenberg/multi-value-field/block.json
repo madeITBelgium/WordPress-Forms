@@ -16,7 +16,7 @@
     "attributes": {
         "type": {
             "type": "string",
-            "default": "select",
+            "default": "checkbox",
             "enum": ["select", "multi-select", "radio", "checkbox"]
         },
         "required": {

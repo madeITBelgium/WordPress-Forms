@@ -13,29 +13,6 @@
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./build/index.css",
 	"style": "file:./build/style-index.css",
-    "attributes": {
-        "type": {
-            "type": "string",
-            "default": "text",
-            "enum": ["text", "email", "url", "tel", "password"]
-        },
-        "required": {
-            "type": "boolean",
-            "default": false
-        },
-        "name": {
-            "type": "string"
-        },
-        "default_value": {
-            "type": "string"
-        },
-        "placeholder": {
-            "type": "string"
-        },
-        "label": {
-            "type": "string"
-        }
-    },
     "styles": [
         {
             "name": "default",
