@@ -97,7 +97,7 @@ class WP_MADEIT_FORM_admin
             $columns = array_keys($row);
 
             // output the column headings
-            fputcsv($output, $columns);
+            fputcsv($output, $columns, ";");
 
             // fetch the data
             foreach ($data as $d) {
@@ -107,6 +107,9 @@ class WP_MADEIT_FORM_admin
                 ];
 
                 foreach (json_decode(get_post_meta($d->ID, 'data', true), true) as $k => $v) {
+                    if(is_array($v)) {
+                        $v = implode(", ", $v);
+                    }
                     $row[$k] = $v;
                 }
 
@@ -115,7 +118,7 @@ class WP_MADEIT_FORM_admin
                 $row['date'] = $d->post_date;
 
                 unset($row['g-recaptcha-response']);
-                fputcsv($output, $row);
+                fputcsv($output, $row, ";");
             }
             exit();
         } elseif (isset($_GET['post_type']) && isset($_GET['action']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'mark_as_read_forms') {
@@ -861,7 +864,14 @@ class WP_MADEIT_FORM_admin
                             <label><strong><?php echo esc_textarea($k); ?></strong></label>
                         </th>
                         <td>
-                            <?php echo nl2br(esc_html($v)); ?>
+                            <?php 
+                            if(is_array($v)) {
+                                echo esc_html(implode(", ", $v));
+                            }
+                            else {
+                                echo nl2br(esc_html($v));
+                            }
+                            ?>
                         </td>
                     </tr>
                     <?php
