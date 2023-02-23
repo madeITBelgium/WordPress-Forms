@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Forms 1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/forms-by-made-it\n"
-"POT-Creation-Date: 2022-08-31 17:04+0000\n"
+"POT-Creation-Date: 2023-02-23 17:59+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,25 +16,25 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "X-Generator: Loco https://localise.biz/"
 
-#: admin/WP_MADEIT_FORM_admin.php:1012
+#: admin/WP_MADEIT_FORM_admin.php:1033
 #, php-format
 msgid "%d submits marked as read."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:598
+#: admin/WP_MADEIT_FORM_admin.php:617
 #, php-format
 msgid "%s configuration error found"
 msgid_plural "%s configuration errors found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: actions/GAEvent.php:11 admin/WP_MADEIT_FORM_admin.php:391
-#: admin/WP_MADEIT_FORM_admin.php:499 admin/WP_MADEIT_FORM_admin.php:730
+#: actions/GAEvent.php:11 admin/WP_MADEIT_FORM_admin.php:410
+#: admin/WP_MADEIT_FORM_admin.php:518 admin/WP_MADEIT_FORM_admin.php:749
 msgid "Action"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:360 admin/WP_MADEIT_FORM_admin.php:381
-#: admin/WP_MADEIT_FORM_admin.php:712
+#: admin/WP_MADEIT_FORM_admin.php:379 admin/WP_MADEIT_FORM_admin.php:400
+#: admin/WP_MADEIT_FORM_admin.php:731
 msgid "Actions"
 msgstr ""
 
@@ -46,11 +46,15 @@ msgstr ""
 msgid "Add New Item"
 msgstr ""
 
+#: admin/WP_MADEIT_FORM_admin.php:1120
+msgid "All forms"
+msgstr ""
+
 #: modules/Select.php:46
 msgid "Allow multiple selections"
 msgstr ""
 
-#: actions/Mailchimp.php:14 actions/Sendinblue.php:14
+#: actions/Mailchimp.php:14 actions/Sendinblue.php:14 actions/Mailerlite.php:14
 msgid "API Key"
 msgstr ""
 
@@ -59,11 +63,11 @@ msgid "Build cool, easy and flexible forms with Forms."
 msgstr ""
 
 #: actions/EmailService.php:17 actions/Mailchimp.php:17 actions/Mailpoet.php:15
-#: actions/Sendinblue.php:17
+#: actions/Sendinblue.php:17 actions/Mailerlite.php:17 actions/Klaviyo.php:18
 msgid "Can not subscribe"
 msgstr ""
 
-#: front/WP_Form_front.php:73 front/WP_Form_front.php:379
+#: front/WP_Form_front.php:86 front/WP_Form_front.php:442
 msgid "Can't display the form."
 msgstr ""
 
@@ -86,17 +90,25 @@ msgstr ""
 msgid "Code"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:323
+#: actions/Klaviyo.php:14
+msgid "Company ID"
+msgstr ""
+
+#: admin/WP_MADEIT_FORM_admin.php:342
 msgid ""
 "Copy this shortcode and paste it into your post, page, or text widget "
 "content:"
 msgstr ""
 
-#: admin/forms/settings.php:71
+#: admin/forms/settings.php:82
 msgid "Create your key here."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:868
+#: actions/Klaviyo.php:16
+msgid "Custom Source"
+msgstr ""
+
+#: admin/WP_MADEIT_FORM_admin.php:887
 msgid "Date"
 msgstr ""
 
@@ -106,7 +118,7 @@ msgstr ""
 msgid "Default value"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:588 admin/forms/settings.php:36
+#: admin/WP_MADEIT_FORM_admin.php:607 admin/forms/settings.php:36
 msgid "Docs"
 msgstr ""
 
@@ -127,7 +139,8 @@ msgid "Edit Item"
 msgstr ""
 
 #: actions/EmailService.php:11 actions/Mailchimp.php:11 actions/Mailpoet.php:10
-#: actions/Sendinblue.php:11 modules/Text.php:8
+#: actions/Sendinblue.php:11 actions/Mailerlite.php:11 actions/Klaviyo.php:11
+#: modules/Text.php:8
 msgid "Email"
 msgstr ""
 
@@ -143,12 +156,17 @@ msgstr ""
 msgid "Enable reCaptcha"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:589 admin/forms/settings.php:37
+#: admin/WP_MADEIT_FORM_admin.php:608 admin/forms/settings.php:37
 msgid "F.A.Q."
 msgstr ""
 
 #: DataInit.php:144 DataInit.php:199
 msgid "Featured Image"
+msgstr ""
+
+#: admin/WP_MADEIT_FORM_admin.php:303
+#, php-format
+msgid "Field %s"
 msgstr ""
 
 #: modules/Number.php:31 modules/Number.php:34 modules/Text.php:47
@@ -167,31 +185,31 @@ msgid "Filter items list"
 msgstr ""
 
 #: actions/EmailService.php:12 actions/Mailchimp.php:12 actions/Mailpoet.php:11
-#: actions/Sendinblue.php:12
+#: actions/Sendinblue.php:12 actions/Mailerlite.php:12 actions/Klaviyo.php:12
 msgid "Firstname"
 msgstr ""
 
-#: DataInit.php:155 admin/WP_MADEIT_FORM_admin.php:295
-#: admin/WP_MADEIT_FORM_admin.php:359 admin/WP_MADEIT_FORM_admin.php:364
+#: DataInit.php:155 admin/WP_MADEIT_FORM_admin.php:297
+#: admin/WP_MADEIT_FORM_admin.php:378 admin/WP_MADEIT_FORM_admin.php:383
 msgid "Form"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:252
+#: admin/WP_MADEIT_FORM_admin.php:254
 msgid "Form failed to complete"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:251
+#: admin/WP_MADEIT_FORM_admin.php:253
 msgid "Form successfully completed"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:372
+#: admin/WP_MADEIT_FORM_admin.php:391
 #, php-format
 msgid "Form-tag Generator: %s"
 msgstr ""
 
 #. Name of the plugin
 #: DataInit.php:128 DataInit.php:129 DataInit.php:133
-#: admin/WP_MADEIT_FORM_admin.php:902
+#: admin/WP_MADEIT_FORM_admin.php:921
 msgid "Forms"
 msgstr ""
 
@@ -205,6 +223,10 @@ msgstr ""
 
 #: gutenberg/multi-value-field/madeit-forms.php:6
 msgid "Forms Multi Value Field"
+msgstr ""
+
+#: gutenberg/question-seperator/madeit-forms.php:6
+msgid "Forms Question Seperator"
 msgstr ""
 
 #: gutenberg/submit-field/madeit-forms.php:6
@@ -290,6 +312,22 @@ msgstr ""
 msgid "Google Analytics Event"
 msgstr ""
 
+#: admin/forms/settings.php:77
+msgid "Google invisble reCaptcha key"
+msgstr ""
+
+#: admin/forms/settings.php:97
+msgid "Google invisble reCaptcha minimum score (default: 0.7)"
+msgstr ""
+
+#: admin/forms/settings.php:88
+msgid "Google invisble reCaptcha secret key"
+msgstr ""
+
+#: admin/forms/settings.php:66
+msgid "Google reCaptcha Version"
+msgstr ""
+
 #: actions/GAAdsEvent.php:10
 msgid "Google tag code"
 msgstr ""
@@ -325,12 +363,12 @@ msgstr ""
 msgid "Id attribute"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:383 admin/WP_MADEIT_FORM_admin.php:470
-#: admin/WP_MADEIT_FORM_admin.php:722 admin/WP_MADEIT_FORM_admin.php:814
+#: admin/WP_MADEIT_FORM_admin.php:402 admin/WP_MADEIT_FORM_admin.php:489
+#: admin/WP_MADEIT_FORM_admin.php:741 admin/WP_MADEIT_FORM_admin.php:833
 msgid "In the following fields, you can use these name-tags:"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:585 admin/forms/settings.php:33
+#: admin/WP_MADEIT_FORM_admin.php:604 admin/forms/settings.php:33
 msgid "Information"
 msgstr ""
 
@@ -348,11 +386,11 @@ msgstr ""
 msgid "Insert Tag"
 msgstr ""
 
-#: actions/EmailService.php:18
+#: actions/EmailService.php:18 actions/Mailerlite.php:18 actions/Klaviyo.php:19
 msgid "Invalid emailadres"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:852
+#: admin/WP_MADEIT_FORM_admin.php:871
 msgid "IP"
 msgstr ""
 
@@ -372,7 +410,7 @@ msgstr ""
 msgid "Items list navigation"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:396 admin/WP_MADEIT_FORM_admin.php:735
+#: admin/WP_MADEIT_FORM_admin.php:415 admin/WP_MADEIT_FORM_admin.php:754
 msgid "Key"
 msgstr ""
 
@@ -382,7 +420,7 @@ msgid "Label"
 msgstr ""
 
 #: actions/EmailService.php:15 actions/Mailchimp.php:15 actions/Mailpoet.php:13
-#: actions/Sendinblue.php:15
+#: actions/Sendinblue.php:15 actions/Klaviyo.php:15
 msgid "List ID"
 msgstr ""
 
@@ -406,11 +444,15 @@ msgstr ""
 msgid "Mailchimp"
 msgstr ""
 
+#: actions/Mailerlite.php:20 actions/Klaviyo.php:21
+msgid "MailerLite"
+msgstr ""
+
 #: actions/Mailpoet.php:17
 msgid "Mailpoet"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:991
+#: admin/WP_MADEIT_FORM_admin.php:1012
 msgid "Mark as read"
 msgstr ""
 
@@ -422,7 +464,7 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:361 admin/WP_MADEIT_FORM_admin.php:713
+#: admin/WP_MADEIT_FORM_admin.php:380 admin/WP_MADEIT_FORM_admin.php:732
 msgid "Messages"
 msgstr ""
 
@@ -431,10 +473,10 @@ msgid "Min"
 msgstr ""
 
 #: actions/EmailService.php:13 actions/Mailchimp.php:13 actions/Mailpoet.php:12
-#: actions/Sendinblue.php:13 modules/Number.php:44
-#: modules/WP_MADEIT_FORM_Module.php:39 modules/Text.php:56
-#: modules/Textarea.php:35 modules/Select.php:35 modules/Radio.php:35
-#: modules/Checkbox.php:35
+#: actions/Sendinblue.php:13 actions/Mailerlite.php:13 actions/Klaviyo.php:13
+#: modules/Number.php:44 modules/WP_MADEIT_FORM_Module.php:39
+#: modules/Text.php:56 modules/Textarea.php:35 modules/Select.php:35
+#: modules/Radio.php:35 modules/Checkbox.php:35
 msgid "Name"
 msgstr ""
 
@@ -442,7 +484,11 @@ msgstr ""
 msgid "New Item"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:308
+#: front/WP_Form_front.php:689
+msgid "Next"
+msgstr ""
+
+#: admin/WP_MADEIT_FORM_admin.php:315
 msgid "No"
 msgstr ""
 
@@ -474,7 +520,7 @@ msgstr ""
 msgid "One option per line."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:253
+#: admin/WP_MADEIT_FORM_admin.php:255
 msgid "One or more fields have an error. Please check and try again."
 msgstr ""
 
@@ -510,6 +556,10 @@ msgctxt "Post Type Singular Name"
 msgid "Submitted form"
 msgstr ""
 
+#: front/WP_Form_front.php:688
+msgid "Previous"
+msgstr ""
+
 #: modules/Radio.php:7 modules/Radio.php:17
 msgid "Radio"
 msgstr ""
@@ -518,7 +568,7 @@ msgstr ""
 msgid "Range"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:296
+#: admin/WP_MADEIT_FORM_admin.php:298
 msgid "Read"
 msgstr ""
 
@@ -536,7 +586,7 @@ msgstr ""
 msgid "Required field"
 msgstr ""
 
-#: admin/forms/settings.php:93
+#: admin/forms/settings.php:114
 msgid "Save"
 msgstr ""
 
@@ -564,7 +614,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:275
+#: admin/WP_MADEIT_FORM_admin.php:277
 msgid "Shortcode"
 msgstr ""
 
@@ -573,9 +623,14 @@ msgid "Slider"
 msgstr ""
 
 #: actions/Email.php:18 actions/EmailService.php:17 actions/Mailchimp.php:17
-#: actions/Mailpoet.php:15 actions/Sendinblue.php:17
+#: actions/Mailpoet.php:15 actions/Sendinblue.php:17 actions/Mailerlite.php:17
+#: actions/Klaviyo.php:18
 msgid ""
 "Sorry, there was an error while processing your data. The admin is contacted."
+msgstr ""
+
+#: front/WP_Form_front.php:169 front/WP_Form_front.php:447
+msgid "Spam detected."
 msgstr ""
 
 #: modules/Number.php:36
@@ -586,7 +641,7 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:254
+#: admin/WP_MADEIT_FORM_admin.php:256
 msgid "Submission was referred to as spam"
 msgstr ""
 
@@ -598,7 +653,7 @@ msgstr ""
 msgid "Submitted form"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:710
+#: admin/WP_MADEIT_FORM_admin.php:729
 msgid "Submitted form data"
 msgstr ""
 
@@ -606,7 +661,7 @@ msgstr ""
 msgid "Submitted forms"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:590 admin/forms/settings.php:38
+#: admin/WP_MADEIT_FORM_admin.php:609 admin/forms/settings.php:38
 msgid "Support"
 msgstr ""
 
@@ -631,12 +686,14 @@ msgstr ""
 msgid "Text Fields"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:251
+#: admin/WP_MADEIT_FORM_admin.php:253
 msgid "Thank you for your message. It has been sent."
 msgstr ""
 
-#: front/WP_Form_front.php:146 modules/Submit.php:14 modules/Submit.php:102
-#: modules/Submit.php:108
+#: front/WP_Form_front.php:161 front/WP_Form_front.php:178
+#: front/WP_Form_front.php:189 front/WP_Form_front.php:194
+#: front/WP_Form_front.php:458 front/WP_Form_front.php:475
+#: modules/Submit.php:14
 msgid "The captcha couldn't validate you."
 msgstr ""
 
@@ -648,7 +705,7 @@ msgstr ""
 msgid "The e-mail address entered is invalid."
 msgstr ""
 
-#: actions/EmailService.php:18
+#: actions/EmailService.php:18 actions/Mailerlite.php:18 actions/Klaviyo.php:19
 msgid "The email address entered seems incorrect."
 msgstr ""
 
@@ -656,15 +713,15 @@ msgstr ""
 msgid "The email can't be send."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:256
+#: admin/WP_MADEIT_FORM_admin.php:258
 msgid "The field is required."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:257
+#: admin/WP_MADEIT_FORM_admin.php:259
 msgid "The field is too long."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:258
+#: admin/WP_MADEIT_FORM_admin.php:260
 msgid "The field is too short."
 msgstr ""
 
@@ -684,6 +741,10 @@ msgstr ""
 msgid "The settings are successfully saved."
 msgstr ""
 
+#: front/WP_Form_front.php:470
+msgid "The spam filter suspects a problem. Contact us by phone or e-mail."
+msgstr ""
+
 #: modules/Text.php:15
 msgid "The telephone number is invalid."
 msgstr ""
@@ -692,29 +753,29 @@ msgstr ""
 msgid "The URL is invalid."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:255
+#: admin/WP_MADEIT_FORM_admin.php:257
 msgid "There are terms that the sender must accept"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:256
+#: admin/WP_MADEIT_FORM_admin.php:258
 msgid "There is a field that the sender must fill in"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:257
+#: admin/WP_MADEIT_FORM_admin.php:259
 msgid ""
 "There is a field with input that is longer than the maximum allowed length"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:258
+#: admin/WP_MADEIT_FORM_admin.php:260
 msgid ""
 "There is a field with input that is shorter than the minimum allowed length"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:252 admin/WP_MADEIT_FORM_admin.php:254
+#: admin/WP_MADEIT_FORM_admin.php:254 admin/WP_MADEIT_FORM_admin.php:256
 msgid "There was an error trying to send your message. Please try again later."
 msgstr ""
 
-#: front/WP_Form_front.php:242
+#: front/WP_Form_front.php:294
 msgid "This form is not available."
 msgstr ""
 
@@ -730,12 +791,12 @@ msgid ""
 "insert the corresponding name-tag (%s) into the field on the Actions tab."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:402 admin/WP_MADEIT_FORM_admin.php:504
-#: admin/WP_MADEIT_FORM_admin.php:741
+#: admin/WP_MADEIT_FORM_admin.php:421 admin/WP_MADEIT_FORM_admin.php:523
+#: admin/WP_MADEIT_FORM_admin.php:760
 msgid "Type"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:898
+#: admin/WP_MADEIT_FORM_admin.php:917
 msgid "Unread form submits"
 msgstr ""
 
@@ -764,11 +825,11 @@ msgstr ""
 msgid "Use this text as the placeholder of the field"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:860
+#: admin/WP_MADEIT_FORM_admin.php:879
 msgid "User agent"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:253
+#: admin/WP_MADEIT_FORM_admin.php:255
 msgid "Validation errors occurred"
 msgstr ""
 
@@ -780,11 +841,11 @@ msgstr ""
 msgid "View Items"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:599
+#: admin/WP_MADEIT_FORM_admin.php:618
 msgid "What's this?"
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:308
+#: admin/WP_MADEIT_FORM_admin.php:315
 msgid "Yes"
 msgstr ""
 
@@ -792,6 +853,6 @@ msgstr ""
 msgid "You are already subscribed."
 msgstr ""
 
-#: admin/WP_MADEIT_FORM_admin.php:255
+#: admin/WP_MADEIT_FORM_admin.php:257
 msgid "You must accept the terms and conditions before sending your message."
 msgstr ""
