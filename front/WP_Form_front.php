@@ -233,7 +233,7 @@ class WP_Form_front
                 update_post_meta($inputId, 'form_id', $form->ID);
                 update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
                 update_post_meta($inputId, 'ip', $this->getIP());
-                update_post_meta($inputId, 'user_agent', (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'));
+                update_post_meta($inputId, 'user_agent', isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN');
                 update_post_meta($inputId, 'spam', $spam ? 1 : 0);
                 update_post_meta($inputId, 'read', 0);
                 update_post_meta($inputId, 'result', '');
@@ -278,7 +278,7 @@ class WP_Form_front
             } else {
                 echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
             }
-            //return success message
+        //return success message
         } else {
             $this->renderForm($form->ID, $form, $translatedForm, $ajax);
         }
@@ -536,7 +536,7 @@ class WP_Form_front
             update_post_meta($inputId, 'form_id', $form->ID);
             update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
             update_post_meta($inputId, 'ip', $this->getIP());
-            update_post_meta($inputId, 'user_agent', (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'));
+            update_post_meta($inputId, 'user_agent', isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN');
             update_post_meta($inputId, 'spam', $spam ? 1 : 0);
             update_post_meta($inputId, 'read', 0);
             update_post_meta($inputId, 'result', '');
@@ -594,7 +594,7 @@ class WP_Form_front
 
             header('Content-Type: image/png');
             echo base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=');
-            exit();
+            exit;
         }
     }
 
