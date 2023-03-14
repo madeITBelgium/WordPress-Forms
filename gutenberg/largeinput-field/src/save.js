@@ -27,7 +27,7 @@ export default function save(props) {
     
 	return (
         <div { ...blockPropsParent }>
-            { label !== null && label !== undefined && label.length > 0 ? <div><label>{ label }</label></div> : null }
+            { label !== undefined && label !== null && label.length > 0 ? <div><label>{ label }</label></div> : null }
             <textarea { ...inputProps }>{default_value}</textarea>
         </div>
 	);
