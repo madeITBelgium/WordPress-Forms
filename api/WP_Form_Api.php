@@ -95,7 +95,7 @@ class WP_Form_Api
                 update_post_meta($inputId, 'form_id', $form->ID);
                 update_post_meta($inputId, 'data', json_encode($postData));
                 update_post_meta($inputId, 'ip', $this->getIP());
-                update_post_meta($inputId, 'user_agent', (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN'));
+                update_post_meta($inputId, 'user_agent', isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN');
                 update_post_meta($inputId, 'spam', $spam ? 1 : 0);
                 update_post_meta($inputId, 'read', 0);
                 update_post_meta($inputId, 'result', '');
