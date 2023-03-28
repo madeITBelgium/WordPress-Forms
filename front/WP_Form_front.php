@@ -118,6 +118,8 @@ class WP_Form_front
                 }
             } else {
                 $blocks = parse_blocks($form->post_content);
+                $blocks = $this->parseBlocks($blocks);
+                
                 foreach ($blocks as $block) {
                     if (isset($block['attrs']['name'])) {
                         $tag = $block['attrs']['name'];
@@ -308,6 +310,40 @@ class WP_Form_front
         return $content;
     }
 
+    private function parseBlocks($blocks)
+    {
+        $return = [];
+
+        foreach($blocks as $block) {
+            if(isset($block['attrs']['name'])) {
+                $return[] = $block;
+            }
+
+            if(isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
+                $return = array_merge($return, $this->parseInnerBlocks($block['innerBlocks']));
+            }
+        }
+
+        return $return;
+    }
+
+    private function parseInnerBlocks($blocks)
+    {
+        $return = [];
+
+        foreach($blocks as $block) {
+            if(isset($block['attrs']['name'])) {
+                $return[] = $block;
+            }
+
+            if(isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
+                $return = array_merge($return, $this->parseBlocks($block['innerBlocks']));
+            }
+        }
+
+        return $return;
+    }
+
     private function renderForm($id, $form, $translatedForm, $ajax = false)
     {
         if ($form->post_status !== 'publish') {
@@ -329,6 +365,17 @@ class WP_Form_front
             echo do_shortcode($formValue);
         } else {
             $content = apply_filters('the_content', $translatedForm->post_content);
+
+            if(isset($_POST['form_id']) && $_POST['form_id'] == $id) {
+                $blocks = parse_blocks($form->post_content);
+                $blocks = $this->parseBlocks($blocks);
+                
+                foreach ($blocks as $block) {
+                    if (isset($block['attrs']['name'])) {
+                        $content = str_replace('name="'.$block['attrs']['name'].'"', 'name="'.$block['attrs']['name'].'" value="'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : '').'"', $content);
+                    }
+                }
+            }
 
             if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
                 $captchaCallback = 'onSubmit'.rand();
