@@ -5,7 +5,7 @@ Tags: contact, form, contact form, feedback, email, captcha, form submit, newsle
 Requires at least: 5.0
 Tested up to: 6.2.0
 Requires PHP: 8.0
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
