@@ -123,6 +123,9 @@ class WP_Form_front
                         $tag = $block['attrs']['name'];
                         $tags[] = $tag;
                         $type = $block['attrs']['type'] ?? 'text';
+
+                        error_log('tag: '.$tag . ' type: '.$type);
+
                         if (isset($block['attrs']['required']) && $block['attrs']['required']) {
                             if (!isset($_POST[$tag]) || empty($_POST[$tag])) {
                                 $error = true;
@@ -147,7 +150,24 @@ class WP_Form_front
                         if (!empty($_POST[$tag]) && $type === 'tel') {
                             if (!preg_match('%^[+]?[0-9()/ -]*$%', $_POST[$tag])) {
                                 $error = true;
-                                $error_msg = isset($messages['mod_text_invalid_url']) ? $messages['mod_text_invalid_url'] : $messages['validation_error'];
+                                $error_msg = isset($messages['mod_text_invalid_phone']) ? $messages['mod_text_invalid_phone'] : $messages['validation_error'];
+                            }
+                        }
+
+                        if(!empty($_POST[$tag]) && $type === 'number') {
+                            if(!is_numeric($_POST[$tag])) {
+                                $error = true;
+                                $error_msg = isset($messages['mod_number_invalid_number']) ? $messages['mod_number_invalid_number'] : $messages['validation_error'];
+                            }
+
+                            if(isset($block['attrs']['minimum']) && $_POST[$tag] < $block['attrs']['minimum']) {
+                                $error = true;
+                                $error_msg = isset($messages['mod_number_number_too_small']) ? $messages['mod_number_number_too_small'] : $messages['validation_error'];
+                            }
+
+                            if(isset($block['attrs']['maximum']) && $_POST[$tag] > $block['attrs']['maximum']) {
+                                $error = true;
+                                $error_msg = isset($messages['mod_number_number_too_large']) ? $messages['mod_number_number_too_large'] : $messages['validation_error'];
                             }
                         }
                     }

@@ -10,7 +10,7 @@ export default function save(props) {
     } = props;
     
     const {
-        type, required, name, label, default_value, placeholder
+        type, required, name, label, default_value, placeholder, minimum, maximum
     } = attributes;
     
     
@@ -26,6 +26,16 @@ export default function save(props) {
         value: default_value,
         placeholder: placeholder
     };
+
+    if(type === 'number') {
+        if(minimum !== undefined && minimum !== null) {
+            inputProps.min = minimum;
+        }
+
+        if(maximum !== undefined && maximum !== null) {
+            inputProps.max = maximum;
+        }
+    }
     
 	return (
         <div { ...blockPropsParent }>

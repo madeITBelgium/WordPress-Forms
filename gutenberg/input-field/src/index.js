@@ -26,7 +26,7 @@ const attributes = {
     type: {
         type: "string",
         default: "text",
-        enum: ["text", "email", "url", "tel", "password"]
+        enum: ["text", "email", "url", "tel", "password", "number", "date", "datetime-local"]
     },
     required: {
         type: "boolean",
@@ -43,6 +43,12 @@ const attributes = {
     },
     label: {
         type: "string"
+    },
+    minimum: {
+        type: "number"
+    },
+    maximum: {
+        type: "number"
     }
 };
 
