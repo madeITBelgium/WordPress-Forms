@@ -331,8 +331,6 @@ wp.data.subscribe( _.debounce( () => {
     if ( madeitFormsBlockState !== newBlocksState ) {
         var blocks = wp.data.select( 'core/block-editor' ).getBlocks();
 
-        console.log(blocks);
-
         var tags = [];
         for(var i = 0; i < blocks.length; i++) {
             if(blocks[i].attributes !== undefined && blocks[i].attributes.name !== undefined) {
