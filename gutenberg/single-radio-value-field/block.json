@@ -1,0 +1,43 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "madeitforms/radio-value-field",
+	"version": "0.2.0",
+	"title": "Radio Value Field",
+	"category": "forms",
+	"description": "Radio Value field",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "forms-by-made-it",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css",
+    "attributes": {
+        "selected": {
+            "type": "boolean",
+            "default": false
+        },
+        "name": {
+            "type": "string"
+        },
+        "id": {
+            "type": "string"
+        },
+        "label": {
+            "type": "string",
+            "default": "Label"
+        },
+        "value": {
+            "type": "string"
+        }
+    },
+    "styles": [
+        {
+            "name": "default",
+            "label": "Default",
+            "isDefault": true
+        },
+        { "name": "horizontal", "label": "Horizontaal" }
+    ]
+}

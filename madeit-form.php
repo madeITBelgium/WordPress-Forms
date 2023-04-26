@@ -5,7 +5,7 @@
  * Description: Build cool, easy and flexible forms with Forms.
  * Author: Made I.T.
  * Author URI: https://www.madeit.be
- * Version: 2.5.1
+ * Version: 2.6.0
  * Text Domain: forms-by-made-it
  * Domain Path: /languages
  * License: GPLv2.
@@ -90,6 +90,7 @@ require_once MADEIT_FORM_DIR.'/gutenberg/input-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/largeinput-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/submit-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/multi-value-field/madeit-forms.php';
+require_once MADEIT_FORM_DIR.'/gutenberg/single-radio-value-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/question-seperator/madeit-forms.php';
 
 add_filter('block_categories_all', function ($categories) {

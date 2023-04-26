@@ -719,6 +719,12 @@ class WP_MADEIT_FORM_admin
                 }
             }
 
+            if(isset($_POST['settings_max_submits'])) {
+                update_post_meta($post_id, 'max_submits', $_POST['settings_max_submits']);
+            } else {
+                delete_post_meta($post_id, 'max_submits');
+            }
+
             update_post_meta($post_id, 'actions', $this->enterToDB(json_encode($actions)));
             update_post_meta($post_id, 'messages', $this->enterToDB(json_encode($messages)));
         }
@@ -739,6 +745,7 @@ class WP_MADEIT_FORM_admin
 
         add_meta_box('ma_forms_actions', __('Actions', 'forms-by-made-it'), [$this, 'ma_forms_actions'], 'ma_forms', 'normal', 'high');
         add_meta_box('ma_forms_messages', __('Messages', 'forms-by-made-it'), [$this, 'ma_forms_messages'], 'ma_forms', 'normal', 'high');
+        add_meta_box('ma_forms_settings', __('Settings', 'forms-by-made-it'), [$this, 'ma_forms_settings'], 'ma_forms', 'normal', 'high');
     }
 
     public function ma_forms_actions($post)
@@ -850,6 +857,22 @@ class WP_MADEIT_FORM_admin
                 </p>
                 <?php
             } ?>
+        </fieldset>
+        <?php
+    }
+
+
+    public function ma_forms_settings($post)
+    {
+        $maxAantalInzendingen = get_post_meta($post->ID, 'max_submits', true);
+        ?>
+        <fieldset>
+            <input type="hidden" name="ma_forms_save_meta_type" value="settings">
+            <p class="description">
+                <label for="settings_max_submits">Maximaal aantal inzendingen:<br />
+                    <input type="numeric" id="settings_max_submits" name="settings_max_submits" class="large-text" size="70" value="<?php echo $maxAantalInzendingen; ?>" />
+                </label>
+            </p>
         </fieldset>
         <?php
     }
@@ -1014,7 +1037,9 @@ class WP_MADEIT_FORM_admin
             'madeitforms/largeinput-field',
             'madeitforms/submit-field',
             'madeitforms/multi-value-field',
+            'madeitforms/radio-value-field',
             'madeitforms/question-seperator',
+            'core/spacer',
         ];
         if ($block_editor_context->post->post_type == 'ma_forms') {
             return $allowed;

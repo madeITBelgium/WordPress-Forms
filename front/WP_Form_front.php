@@ -218,6 +218,11 @@ class WP_Form_front
                 }
             }
 
+            if(get_post_meta($form->ID, 'max_submits', true) == 1 && $this->hasAlreadyCompletedThisForm($form->ID)) {
+                $error = true;
+                $error_msg = isset($messages['already_submitted']) ? $messages['already_submitted'] : __("You have already submitted this form.", 'forms-by-made-it');
+            }
+
             if ($error) {
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
                 $this->renderForm($form->ID, $form, $translatedForm, $ajax);
@@ -260,6 +265,10 @@ class WP_Form_front
                 update_post_meta($inputId, 'read', 0);
                 update_post_meta($inputId, 'result', '');
             }
+
+            //set cookie
+            $submittedTimes = isset($_COOKIE['madeit_form_' . $form->ID . '_submitted']) ? $_COOKIE['madeit_form_' . $form->ID . '_submitted'] : 0;
+            setcookie('madeit_form_' . $form->ID . '_submitted', $submittedTimes, time() + 31556926);
 
             //execute actions
             $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'actions', true))), true);
@@ -544,6 +553,11 @@ class WP_Form_front
             }
         }
 
+        if(get_post_meta($form->ID, 'max_submits', true) == 1 && $this->hasAlreadyCompletedThisForm($form->ID)) {
+            $error = true;
+            $error_msg = isset($messages['already_submitted']) ? $messages['already_submitted'] : __("You have already submitted this form.", 'forms-by-made-it');
+        }
+
         if ($error) {
             echo json_encode(['success' => false, 'message' => $error_msg, 'spamscore' => $spamScore]);
             wp_die();
@@ -609,6 +623,10 @@ class WP_Form_front
             update_post_meta($inputId, 'result', '');
         }
         $outputHtml = '';
+
+
+        $submittedTimes = isset($_COOKIE['madeit_form_' . $form->ID . '_submitted']) ? $_COOKIE['madeit_form_' . $form->ID . '_submitted'] : 0;
+        setcookie('madeit_form_' . $form->ID . '_submitted', $submittedTimes, time() + 31556926);
 
         //execute actions
         $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'actions', true))), true);
@@ -713,7 +731,6 @@ class WP_Form_front
             'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
             'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.106',
-            'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:102.0) Gecko/20100101 Firefox/102.0',
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68',
         ]);
         if (isset($_SERVER['HTTP_USER_AGENT']) && in_array($_SERVER['HTTP_USER_AGENT'], $spamUserAgents)) {
@@ -736,6 +753,17 @@ class WP_Form_front
         }
 
         return $spam;
+    }
+
+    private function hasAlreadyCompletedThisForm($formId)
+    {
+        $hasCompleted = false;
+
+        if(isset($_COOKIE['madeit_form_' . $formId . '_submitted'])) {
+            $hasCompleted = true;
+        }
+
+        return $hasCompleted;
     }
 
     private function checkQuiz($content)
