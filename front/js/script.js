@@ -48,6 +48,24 @@ jQuery( document ).ready( function( $ ) {
     }
 });
 
+function getFormJSON(form) {
+    const data = new FormData(form);
+    return Array.from(data.keys()).reduce((result, key) => {
+        var newKey = key;
+        if(newKey.endsWith('[]')) {
+            newKey = newKey.substring(0, newKey.length - 2);
+        }
+
+        if (result[newKey]) {
+            result[newKey] = data.getAll(key)
+            return result
+        }
+        
+        result[newKey] = data.get(key);
+        return result;
+    }, {});
+  };
+
 function submitMadeitForm(formId) {
     if(jQuery('#' + formId).hasClass('madeit-forms-ajax')) {
         /*if(! jQuery('#' + formId).checkValidity()) {
@@ -57,9 +75,11 @@ function submitMadeitForm(formId) {
         }*/
     
         jQuery('.madeit-form-success, .madeit-form-error').remove();
-        var formData = madeitObjectifyForm(jQuery('#' + formId).serializeArray());
-        formData.action = 'madeit_forms_submit';
-        jQuery.post('/wp-admin/admin-ajax.php', formData, function(data) {
+        var form = document.querySelector('#' + formId);
+        const result = getFormJSON(form);
+
+        result.action = 'madeit_forms_submit';
+        jQuery.post('/wp-admin/admin-ajax.php', result, function(data) {
             if(data.success) {
                 jQuery('#' + formId).before('<div class="madeit-form-success">' + data.message + '</div>');
                 jQuery('#' + formId).hide();
@@ -82,14 +102,6 @@ function submitMadeitForm(formId) {
     }
 }
 
-function madeitObjectifyForm(formArray) {//serialize data function
-    var returnArray = {};
-    for (var i = 0; i < formArray.length; i++){
-        returnArray[formArray[i]['name']] = formArray[i]['value'];
-    }
-    return returnArray;
-}
-
 document.querySelectorAll(".range-wrap").forEach(wrap => {
     const range = wrap.querySelector(".range");
     const bubble = wrap.querySelector(".range-bubble");
@@ -110,4 +122,3 @@ function setBubble(range, bubble) {
     // Sorta magic numbers based on size of the native UI thumb
     bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.15}px))`;
 }
-
