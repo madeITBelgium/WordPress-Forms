@@ -85,7 +85,7 @@ class WP_MADEIT_FORM_admin
                 'form' => '',
             ];
 
-            foreach (json_decode(get_post_meta($data[0]->ID, 'data', true), true) as $k => $v) {
+            foreach (json_decode($this->removeSlashes(get_post_meta($data[0]->ID, 'data', true)), true) as $k => $v) {
                 $row[$k] = $v;
             }
 
@@ -106,7 +106,7 @@ class WP_MADEIT_FORM_admin
                     'form' => $form->post_title,
                 ];
 
-                foreach (json_decode(get_post_meta($d->ID, 'data', true), true) as $k => $v) {
+                foreach (json_decode($this->removeSlashes(get_post_meta($d->ID, 'data', true)), true) as $k => $v) {
                     if(is_array($v)) {
                         $v = implode(", ", $v);
                     }
@@ -324,7 +324,7 @@ class WP_MADEIT_FORM_admin
             if (isset($fields[$fieldNr])) {
                 $fieldName = $fields[$fieldNr];
 
-                $data = json_decode($this->dbToEnter(get_post_meta($post_id, 'data', true)), true);
+                $data = json_decode($this->removeSlashes($this->dbToEnter(get_post_meta($post_id, 'data', true))), true);
 
                 $v = $data[$fieldName] ?? '';
                 
@@ -882,7 +882,7 @@ class WP_MADEIT_FORM_admin
         if (in_array(get_post_meta($post->ID, 'read', true), [0, '', null])) {
             update_post_meta($post->ID, 'read', 1);
         }
-        $data = json_decode($this->dbToEnter(get_post_meta($post->ID, 'data', true)), true); ?>
+        $data = json_decode($this->removeSlashes($this->dbToEnter(get_post_meta($post->ID, 'data', true))), true); ?>
         <table class="form-table">
             <tbody>
                 <?php
