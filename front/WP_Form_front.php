@@ -309,7 +309,7 @@ class WP_Form_front
             } else {
                 echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
             }
-        //return success message
+            //return success message
         } else {
             $this->renderForm($form->ID, $form, $translatedForm, $ajax);
         }
