@@ -947,7 +947,63 @@ class WP_MADEIT_FORM_admin
                 </tr>
             </tbody>
         </table>
+
+        <button class="button" role="button" id="btnResend">
+            Resend mail
+        </button>
+        <script>
+            document.getElementById('btnResend').addEventListener('click', function(e) {
+                e.preventDefault();
+                var data = {
+                    'action': 'ma_forms_resend_mail',
+                    'id': <?php echo $post->ID; ?>
+                };
+                jQuery.post(ajaxurl, data, function(response) {
+                    alert(response);
+                });
+            });
+        </script>
         <?php
+    }
+
+    public function resendMail() {
+        $id = $_POST['id'];
+
+        //TODO!!
+        
+        $data = json_decode($this->dbToEnter(get_post_meta($id, 'data', true)), true);
+        $formId = get_post_meta($id, 'form_id', true);
+        
+        $data['message'] = "Beste,
+
+        Onderstaande gegevens zijn ingevoerd via de website
+        
+        Van: [field-1]
+        E-mailadres: [field-2]
+        Telefoon: [field-3]
+        Adres: [field-4], [field-5] [field-6]
+        Organisatie: [field-7]
+        Gelegenheid: [field-9]
+        Aantal personen: [field-12]
+        Datum: [field-10]
+        Bericht: [field-11]";
+
+        $data['to'] = "";
+        $data['subject'] = "Contact via website ";
+        $data['header'] = "Reply-to: " . $data['field-2'] . "\r\n";
+
+        foreach($data as $key => $v) {
+            $data['message'] = str_replace("[" . $key . "]", $v, $data['message']);
+        }
+
+        $mail = new WP_MADEIT_FORM_Email();
+        if($mail->callback($data, [], null, $formId, $id, null)) {
+            echo "Gelukt!";
+        } else {
+            echo "Mislukt!";
+        }
+
+        wp_die();
     }
 
     public function admin_menu()
@@ -1131,6 +1187,9 @@ class WP_MADEIT_FORM_admin
 
         add_action('restrict_manage_posts', [$this, 'add_custom_filters_to_form_inputs_table']);
         add_action('pre_get_posts', [$this, 'filter_form_inputs']);
+
+        
+        add_action('wp_ajax_ma_forms_resend_mail', [$this, 'resendMail']);
     }
 
     public function generateKey()
