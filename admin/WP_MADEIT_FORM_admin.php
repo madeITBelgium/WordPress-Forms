@@ -324,14 +324,30 @@ class WP_MADEIT_FORM_admin
             if (isset($fields[$fieldNr])) {
                 $fieldName = $fields[$fieldNr];
 
-                $data = json_decode($this->removeSlashes($this->dbToEnter(get_post_meta($post_id, 'data', true))), true);
-
+                $data = json_decode($this->removeSlashes($this->dbToEnter(str_replace("\'", "'", get_post_meta($post_id, 'data', true)))), true);
+                
                 $v = $data[$fieldName] ?? '';
                 
                 if(is_array($v)) {
                     echo implode(", ", $v);
                 } else {
                     echo $v;
+                }
+            } else {
+                $data = json_decode($this->removeSlashes($this->dbToEnter(str_replace("\'", "'", get_post_meta($post_id, 'data', true)))), true);
+                $fields = array_keys($data);
+                
+                if (isset($fields[$fieldNr])) {
+                    $fieldName = $fields[$fieldNr];
+                    $v = $data[$fieldName] ?? '';
+                    if($fieldName === 'g-recaptcha-response') {
+                        $v = '';
+                    }
+                    if(is_array($v)) {
+                        echo implode(", ", $v);
+                    } else {
+                        echo $v;
+                    }
                 }
             }
         }
@@ -1220,6 +1236,29 @@ class WP_MADEIT_FORM_admin
                 }
             }
         }
+        
+        preg_match_all('/\['.$tag.'.*name="'.$name.'".*\]/', $form, $result);
+        if (isset($result[0][0])) {
+            $partWithTag = $result[0][0];
+
+            $key = '';
+            foreach (explode('="', $partWithTag) as $o) {
+                if ($key == '') {
+                    $space = explode(' ', $o);
+                    if (count($space) <= 1) {
+                        $key = $space[0];
+                    } else {
+                        $key = $space[count($space) - 1];
+                    }
+                } else {
+                    $tags[$key] = substr($o, 0, strpos($o, '"'));
+                    $key = trim(substr($o, strpos($o, '"') + 1));
+                }
+            }
+
+            return $tags;
+        }
+
 
         return $tags;
     }
