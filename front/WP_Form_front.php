@@ -45,7 +45,7 @@ class WP_Form_front
 
     public function shortcode_form($attsOrig)
     {
-        $atts = shortcode_atts(['id' => 0, 'ajax' => 'no', 'spam_action' => 'fail'], $attsOrig);
+        $atts = shortcode_atts(['id' => 0, 'ajax' => 'no', 'extra_id' => null, 'spam_action' => 'fail'], $attsOrig);
         extract($atts);
 
         $ajax = strtolower($ajax) == 'yes';
@@ -119,14 +119,14 @@ class WP_Form_front
             } else {
                 $blocks = parse_blocks($form->post_content);
                 $blocks = $this->parseBlocks($blocks);
-
+                
                 foreach ($blocks as $block) {
                     if (isset($block['attrs']['name'])) {
                         $tag = $block['attrs']['name'];
                         $tags[] = $tag;
                         $type = $block['attrs']['type'] ?? 'text';
 
-                        error_log('tag: '.$tag.' type: '.$type);
+                        error_log('tag: '.$tag . ' type: '.$type);
 
                         if (isset($block['attrs']['required']) && $block['attrs']['required']) {
                             if (!isset($_POST[$tag]) || empty($_POST[$tag])) {
@@ -156,18 +156,18 @@ class WP_Form_front
                             }
                         }
 
-                        if (!empty($_POST[$tag]) && $type === 'number') {
-                            if (!is_numeric($_POST[$tag])) {
+                        if(!empty($_POST[$tag]) && $type === 'number') {
+                            if(!is_numeric($_POST[$tag])) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_number_invalid_number']) ? $messages['mod_number_invalid_number'] : $messages['validation_error'];
                             }
 
-                            if (isset($block['attrs']['minimum']) && $_POST[$tag] < $block['attrs']['minimum']) {
+                            if(isset($block['attrs']['minimum']) && $_POST[$tag] < $block['attrs']['minimum']) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_number_number_too_small']) ? $messages['mod_number_number_too_small'] : $messages['validation_error'];
                             }
 
-                            if (isset($block['attrs']['maximum']) && $_POST[$tag] > $block['attrs']['maximum']) {
+                            if(isset($block['attrs']['maximum']) && $_POST[$tag] > $block['attrs']['maximum']) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_number_number_too_large']) ? $messages['mod_number_number_too_large'] : $messages['validation_error'];
                             }
@@ -218,14 +218,9 @@ class WP_Form_front
                 }
             }
 
-            if (get_post_meta($form->ID, 'max_submits', true) == 1 && $this->hasAlreadyCompletedThisForm($form->ID)) {
-                $error = true;
-                $error_msg = isset($messages['already_submitted']) ? $messages['already_submitted'] : __('You have already submitted this form.', 'forms-by-made-it');
-            }
-
             if ($error) {
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
-                $this->renderForm($form->ID, $form, $translatedForm, $ajax);
+                $this->renderForm($form->ID, $form, $translatedForm, $ajax, $extra_id);
                 $content = ob_get_clean();
 
                 return $content;
@@ -266,10 +261,6 @@ class WP_Form_front
                 update_post_meta($inputId, 'result', '');
             }
 
-            //set cookie
-            $submittedTimes = isset($_COOKIE['madeit_form_'.$form->ID.'_submitted']) ? $_COOKIE['madeit_form_'.$form->ID.'_submitted'] : 0;
-            setcookie('madeit_form_'.$form->ID.'_submitted', $submittedTimes, time() + 31556926);
-
             //execute actions
             $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'actions', true))), true);
             if (is_array($actions) && count($actions) > 0) {
@@ -305,13 +296,13 @@ class WP_Form_front
 
             if ($error) {
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
-                $this->renderForm($id, $form, $translatedForm, $ajax);
+                $this->renderForm($id, $form, $translatedForm, $ajax, $extra_id);
             } else {
                 echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
             }
         //return success message
         } else {
-            $this->renderForm($form->ID, $form, $translatedForm, $ajax);
+            $this->renderForm($form->ID, $form, $translatedForm, $ajax, $extra_id);
         }
 
         $content = ob_get_clean();
@@ -323,12 +314,12 @@ class WP_Form_front
     {
         $return = [];
 
-        foreach ($blocks as $block) {
-            if (isset($block['attrs']['name'])) {
+        foreach($blocks as $block) {
+            if(isset($block['attrs']['name'])) {
                 $return[] = $block;
             }
 
-            if (isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
+            if(isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
                 $return = array_merge($return, $this->parseInnerBlocks($block['innerBlocks']));
             }
         }
@@ -340,12 +331,12 @@ class WP_Form_front
     {
         $return = [];
 
-        foreach ($blocks as $block) {
-            if (isset($block['attrs']['name'])) {
+        foreach($blocks as $block) {
+            if(isset($block['attrs']['name'])) {
                 $return[] = $block;
             }
 
-            if (isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
+            if(isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
                 $return = array_merge($return, $this->parseBlocks($block['innerBlocks']));
             }
         }
@@ -353,7 +344,7 @@ class WP_Form_front
         return $return;
     }
 
-    private function renderForm($id, $form, $translatedForm, $ajax = false)
+    private function renderForm($id, $form, $translatedForm, $ajax = false, $extra_id = null)
     {
         if ($form->post_status !== 'publish') {
             echo __('This form is not available.', 'forms-by-made-it');
@@ -365,7 +356,7 @@ class WP_Form_front
 
         $this->form_id = $id;
         add_filter('madeit_forms_form_id', [$this, 'form_id']);
-        echo '<form action="" method="post" id="form_'.$id.'" '.($ajax ? 'class="madeit-forms-ajax"' : 'class="madeit-forms-noajax"').'>';
+        echo '<form action="" method="post" id="form_'.$id.'_' . $extra_id . '" '.($ajax ? 'class="madeit-forms-ajax"' : 'class="madeit-forms-noajax"').'>';
         echo '<input type="hidden" name="form_id" value="'.$id.'">';
         if (get_post_meta($form->ID, 'form_type', true) === 'html') {
             $formValue = get_post_meta($form->ID, 'form', true);
@@ -375,10 +366,10 @@ class WP_Form_front
         } else {
             $content = apply_filters('the_content', $translatedForm->post_content);
 
-            if (isset($_POST['form_id']) && $_POST['form_id'] == $id) {
+            if(isset($_POST['form_id']) && $_POST['form_id'] == $id) {
                 $blocks = parse_blocks($form->post_content);
                 $blocks = $this->parseBlocks($blocks);
-
+                
                 foreach ($blocks as $block) {
                     if (isset($block['attrs']['name'])) {
                         $content = str_replace('name="'.$block['attrs']['name'].'"', 'name="'.$block['attrs']['name'].'" value="'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : '').'"', $content);
@@ -553,11 +544,6 @@ class WP_Form_front
             }
         }
 
-        if (get_post_meta($form->ID, 'max_submits', true) == 1 && $this->hasAlreadyCompletedThisForm($form->ID)) {
-            $error = true;
-            $error_msg = isset($messages['already_submitted']) ? $messages['already_submitted'] : __('You have already submitted this form.', 'forms-by-made-it');
-        }
-
         if ($error) {
             echo json_encode(['success' => false, 'message' => $error_msg, 'spamscore' => $spamScore]);
             wp_die();
@@ -623,9 +609,6 @@ class WP_Form_front
             update_post_meta($inputId, 'result', '');
         }
         $outputHtml = '';
-
-        $submittedTimes = isset($_COOKIE['madeit_form_'.$form->ID.'_submitted']) ? $_COOKIE['madeit_form_'.$form->ID.'_submitted'] : 0;
-        setcookie('madeit_form_'.$form->ID.'_submitted', $submittedTimes, time() + 31556926);
 
         //execute actions
         $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'actions', true))), true);
@@ -730,6 +713,7 @@ class WP_Form_front
             'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
             'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.106',
+            'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:102.0) Gecko/20100101 Firefox/102.0',
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68',
         ]);
         if (isset($_SERVER['HTTP_USER_AGENT']) && in_array($_SERVER['HTTP_USER_AGENT'], $spamUserAgents)) {
@@ -752,17 +736,6 @@ class WP_Form_front
         }
 
         return $spam;
-    }
-
-    private function hasAlreadyCompletedThisForm($formId)
-    {
-        $hasCompleted = false;
-
-        if (isset($_COOKIE['madeit_form_'.$formId.'_submitted'])) {
-            $hasCompleted = true;
-        }
-
-        return $hasCompleted;
     }
 
     private function checkQuiz($content)
