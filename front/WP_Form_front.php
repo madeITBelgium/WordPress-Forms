@@ -126,8 +126,6 @@ class WP_Form_front
                         $tags[] = $tag;
                         $type = $block['attrs']['type'] ?? 'text';
 
-                        error_log('tag: '.$tag . ' type: '.$type);
-
                         if (isset($block['attrs']['required']) && $block['attrs']['required']) {
                             if (!isset($_POST[$tag]) || empty($_POST[$tag])) {
                                 $error = true;
@@ -218,6 +216,11 @@ class WP_Form_front
                 }
             }
 
+            if (get_post_meta($form->ID, 'max_submits', true) == 1 && $this->hasAlreadyCompletedThisForm($form->ID)) {
+                $error = true;
+                $error_msg = isset($messages['already_submitted']) ? $messages['already_submitted'] : __('You have already submitted this form.', 'forms-by-made-it');
+            }
+
             if ($error) {
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
                 $this->renderForm($form->ID, $form, $translatedForm, $ajax, $extra_id);
@@ -225,6 +228,10 @@ class WP_Form_front
 
                 return $content;
             }
+
+            //set cookie
+            $submittedTimes = isset($_COOKIE['madeit_form_'.$form->ID.'_submitted']) ? $_COOKIE['madeit_form_'.$form->ID.'_submitted'] : 0;
+            setcookie('madeit_form_'.$form->ID.'_submitted', $submittedTimes, time() + 31556926);
 
             //insert into DB
             $postData = $_POST;
@@ -531,7 +538,6 @@ class WP_Form_front
 
             if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
                 $spamScore = $result['score'] ?? null;
-                error_log(print_r($result, true));
                 if ($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
                     $error = true;
                     $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __('The spam filter suspects a problem. Contact us by phone or e-mail.', 'forms-by-made-it');
@@ -542,6 +548,11 @@ class WP_Form_front
                     $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
                 }
             }
+        }
+
+        if (get_post_meta($form->ID, 'max_submits', true) == 1 && $this->hasAlreadyCompletedThisForm($form->ID)) {
+            $error = true;
+            $error_msg = isset($messages['already_submitted']) ? $messages['already_submitted'] : __('You have already submitted this form.', 'forms-by-made-it');
         }
 
         if ($error) {
@@ -609,6 +620,9 @@ class WP_Form_front
             update_post_meta($inputId, 'result', '');
         }
         $outputHtml = '';
+
+        $submittedTimes = isset($_COOKIE['madeit_form_'.$form->ID.'_submitted']) ? $_COOKIE['madeit_form_'.$form->ID.'_submitted'] : 0;
+        setcookie('madeit_form_'.$form->ID.'_submitted', $submittedTimes, time() + 31556926);
 
         //execute actions
         $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'actions', true))), true);
@@ -736,6 +750,17 @@ class WP_Form_front
         }
 
         return $spam;
+    }
+
+    private function hasAlreadyCompletedThisForm($formId)
+    {
+        $hasCompleted = false;
+
+        if (isset($_COOKIE['madeit_form_'.$formId.'_submitted'])) {
+            $hasCompleted = true;
+        }
+
+        return $hasCompleted;
     }
 
     private function checkQuiz($content)
