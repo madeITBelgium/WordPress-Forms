@@ -204,7 +204,7 @@ class WP_Form_front
 
                 if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
                     $spamScore = $result['score'];
-                    if ($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
+                    if ($result['score'] <= $this->defaultSettings['reCaptcha']['minScore']) {
                         $error = true;
                         $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
                     }
@@ -538,7 +538,7 @@ class WP_Form_front
 
             if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
                 $spamScore = $result['score'] ?? null;
-                if ($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
+                if ($result['score'] <= $this->defaultSettings['reCaptcha']['minScore']) {
                     $error = true;
                     $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __('The spam filter suspects a problem. Contact us by phone or e-mail.', 'forms-by-made-it');
                 }
