@@ -119,7 +119,7 @@ class WP_Form_front
             } else {
                 $blocks = parse_blocks($form->post_content);
                 $blocks = $this->parseBlocks($blocks);
-                
+
                 foreach ($blocks as $block) {
                     if (isset($block['attrs']['name'])) {
                         $tag = $block['attrs']['name'];
@@ -154,18 +154,18 @@ class WP_Form_front
                             }
                         }
 
-                        if(!empty($_POST[$tag]) && $type === 'number') {
-                            if(!is_numeric($_POST[$tag])) {
+                        if (!empty($_POST[$tag]) && $type === 'number') {
+                            if (!is_numeric($_POST[$tag])) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_number_invalid_number']) ? $messages['mod_number_invalid_number'] : $messages['validation_error'];
                             }
 
-                            if(isset($block['attrs']['minimum']) && $_POST[$tag] < $block['attrs']['minimum']) {
+                            if (isset($block['attrs']['minimum']) && $_POST[$tag] < $block['attrs']['minimum']) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_number_number_too_small']) ? $messages['mod_number_number_too_small'] : $messages['validation_error'];
                             }
 
-                            if(isset($block['attrs']['maximum']) && $_POST[$tag] > $block['attrs']['maximum']) {
+                            if (isset($block['attrs']['maximum']) && $_POST[$tag] > $block['attrs']['maximum']) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_number_number_too_large']) ? $messages['mod_number_number_too_large'] : $messages['validation_error'];
                             }
@@ -307,7 +307,7 @@ class WP_Form_front
             } else {
                 echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
             }
-        //return success message
+            //return success message
         } else {
             $this->renderForm($form->ID, $form, $translatedForm, $ajax, $extra_id);
         }
@@ -321,12 +321,12 @@ class WP_Form_front
     {
         $return = [];
 
-        foreach($blocks as $block) {
-            if(isset($block['attrs']['name'])) {
+        foreach ($blocks as $block) {
+            if (isset($block['attrs']['name'])) {
                 $return[] = $block;
             }
 
-            if(isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
+            if (isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
                 $return = array_merge($return, $this->parseInnerBlocks($block['innerBlocks']));
             }
         }
@@ -338,12 +338,12 @@ class WP_Form_front
     {
         $return = [];
 
-        foreach($blocks as $block) {
-            if(isset($block['attrs']['name'])) {
+        foreach ($blocks as $block) {
+            if (isset($block['attrs']['name'])) {
                 $return[] = $block;
             }
 
-            if(isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
+            if (isset($block['innerBlocks']) && count($block['innerBlocks']) > 0) {
                 $return = array_merge($return, $this->parseBlocks($block['innerBlocks']));
             }
         }
@@ -363,7 +363,7 @@ class WP_Form_front
 
         $this->form_id = $id;
         add_filter('madeit_forms_form_id', [$this, 'form_id']);
-        echo '<form action="" method="post" id="form_'.$id.'_' . $extra_id . '" '.($ajax ? 'class="madeit-forms-ajax"' : 'class="madeit-forms-noajax"').'>';
+        echo '<form action="" method="post" id="form_'.$id.'_'.$extra_id.'" '.($ajax ? 'class="madeit-forms-ajax"' : 'class="madeit-forms-noajax"').'>';
         echo '<input type="hidden" name="form_id" value="'.$id.'">';
         if (get_post_meta($form->ID, 'form_type', true) === 'html') {
             $formValue = get_post_meta($form->ID, 'form', true);
@@ -373,10 +373,10 @@ class WP_Form_front
         } else {
             $content = apply_filters('the_content', $translatedForm->post_content);
 
-            if(isset($_POST['form_id']) && $_POST['form_id'] == $id) {
+            if (isset($_POST['form_id']) && $_POST['form_id'] == $id) {
                 $blocks = parse_blocks($form->post_content);
                 $blocks = $this->parseBlocks($blocks);
-                
+
                 foreach ($blocks as $block) {
                     if (isset($block['attrs']['name'])) {
                         $content = str_replace('name="'.$block['attrs']['name'].'"', 'name="'.$block['attrs']['name'].'" value="'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : '').'"', $content);
