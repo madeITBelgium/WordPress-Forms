@@ -92,6 +92,7 @@ require_once MADEIT_FORM_DIR.'/gutenberg/submit-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/multi-value-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/single-radio-value-field/madeit-forms.php';
 require_once MADEIT_FORM_DIR.'/gutenberg/question-seperator/madeit-forms.php';
+require_once MADEIT_FORM_DIR.'/gutenberg/upload-field/madeit-forms.php';
 
 add_filter('block_categories_all', function ($categories) {
     $categories[] = [

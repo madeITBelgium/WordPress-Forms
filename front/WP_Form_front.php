@@ -259,6 +259,40 @@ class WP_Form_front
                 $postData = apply_filters('madeit_forms_post_data', $postData, $form->ID, $inputId);
                 $postData = apply_filters('madeit_forms_'.$form->ID.'_post_data', $postData, $inputId);
 
+
+                /* Process file upload */
+
+                $uploadDir = wp_upload_dir();
+                $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/' . $inputId . '/';
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                
+                foreach ($_FILES as $k => $v) {
+                    //upload file and give URL
+                    $url = '';
+                    $file = $_FILES[$k];
+
+                    //get file extension
+                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+
+                    //generate random filename
+                    $filename = md5($file['name'].time()).'.'.$ext;
+
+                    //move file to upload dir
+                    move_uploaded_file($file['tmp_name'], $uploadDir.$filename);
+
+                    $url = home_url().'/wp-content/uploads/madeit-forms/'.$form->ID.'/' . $inputId . '/'.$filename;
+
+                    $postData[$k] = $url;
+                }
+
+                print_r($postData);
+                exit;
+
+
+                /* End process file upload */
+
                 update_post_meta($inputId, 'form_id', $form->ID);
                 update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
                 update_post_meta($inputId, 'ip', $this->getIP());
@@ -363,7 +397,24 @@ class WP_Form_front
 
         $this->form_id = $id;
         add_filter('madeit_forms_form_id', [$this, 'form_id']);
-        echo '<form action="" method="post" id="form_'.$id.'_' . $extra_id . '" '.($ajax ? 'class="madeit-forms-ajax"' : 'class="madeit-forms-noajax"').'>';
+        $formHtmlId = 'form_'.$id;
+        if($extra_id) {
+            $formHtmlId .= '_' . $extra_id;
+        }
+        echo '<form action="" method="post" id="'.$formHtmlId.'" ';
+
+        if(strpos($translatedForm->post_content, 'type="file"') !== false) {
+            echo 'enctype="multipart/form-data" class="madeit-forms-noajax"';
+        }
+        else if($ajax) {
+            echo 'class="madeit-forms-ajax"';
+        } else {
+            echo 'class="madeit-forms-noajax"';
+        }
+
+
+        echo '>';
+
         echo '<input type="hidden" name="form_id" value="'.$id.'">';
         if (get_post_meta($form->ID, 'form_type', true) === 'html') {
             $formValue = get_post_meta($form->ID, 'form', true);

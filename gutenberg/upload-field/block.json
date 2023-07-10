@@ -1,0 +1,24 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "madeitforms/upload-field",
+	"version": "0.1.0",
+	"title": "Forms Upload Field",
+	"category": "forms",
+	"description": "Forms Upload field",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "forms-by-made-it",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css",
+    "styles": [
+        {
+            "name": "default",
+            "label": "Default",
+            "isDefault": true
+        },
+        { "name": "horizontal", "label": "Horizontaal" }
+    ]
+}

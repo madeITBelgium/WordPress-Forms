@@ -1106,6 +1106,7 @@ class WP_MADEIT_FORM_admin
             'core/columns',
             'core/image',
             'madeitforms/input-field',
+            'madeitforms/upload-field',
             'madeitforms/largeinput-field',
             'madeitforms/submit-field',
             'madeitforms/multi-value-field',
