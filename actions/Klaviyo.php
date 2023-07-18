@@ -18,7 +18,7 @@ class WP_MADEIT_FORM_Klaviyo extends WP_MADEIT_FORM_Action
         $this->addMessageField('action_kly_error', __('Can not subscribe', 'forms-by-made-it'), __('Sorry, there was an error while processing your data. The admin is contacted.', 'forms-by-made-it'));
         $this->addMessageField('action_kly_invalid_email', __('Invalid emailadres', 'forms-by-made-it'), __('The email address entered seems incorrect.', 'forms-by-made-it'));
 
-        $this->addAction('MAILERLITE', __('MailerLite', 'forms-by-made-it'), [$this, 'callback']);
+        $this->addAction('KLAVIYO', __('Klaviyo', 'forms-by-made-it'), [$this, 'callback']);
 
         $this->addHooks();
     }
