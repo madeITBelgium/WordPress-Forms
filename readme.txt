@@ -47,6 +47,10 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
+= 2.7.0 =
+* Support file Upload
+* Bug fixes
+
 = 2.6.0 =
 * Add individual Radio input field
 * Add settings Meta box to form.
