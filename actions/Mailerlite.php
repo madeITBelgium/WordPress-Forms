@@ -43,6 +43,9 @@ class WP_MADEIT_FORM_Mailerlite extends WP_MADEIT_FORM_Action
         $server_output = curl_exec($ch);
         curl_close($ch);
 
+        error_log('MAILERLITE: '.$server_output);
+        error_log('MAILERLITE: '.$httpcode);
+        
         if ($httpcode === 200) {
             return true;
         } elseif ($httpcode === 400) {

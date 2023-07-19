@@ -52,7 +52,7 @@ class WP_Form_Api
 
         $formValue = get_post_meta($form->ID, 'form', true);
         $formValue = str_replace('\"', '"', $formValue);
-        if (isset($form->id)) {
+        if (isset($form->ID)) {
             //validate input fields
             $error = false;
             $error_msg = '';
