@@ -126,10 +126,18 @@ class WP_Form_front
                         $tags[] = $tag;
                         $type = $block['attrs']['type'] ?? 'text';
 
+                        $label = $block['attrs']['label'] ?? ($block['attrs']['placeholder'] ?? $tag);
+
                         if (isset($block['attrs']['required']) && $block['attrs']['required']) {
-                            if (!isset($_POST[$tag]) || empty($_POST[$tag])) {
+                            if($block['blockName'] === 'madeitforms/upload-field') {
+                                if (!isset($_FILES[$tag]) || empty($_FILES[$tag])) {
+                                    $error = true;
+                                    $error_msg = $messages['invalid_required'].' ('.$label.')';
+                                }
+                            }
+                            else if (!isset($_POST[$tag]) || empty($_POST[$tag])) {
                                 $error = true;
-                                $error_msg = $messages['invalid_required'].' ('.$tag.')';
+                                $error_msg = $messages['invalid_required'].' ('.$label.')';
                             }
                         }
 
@@ -137,6 +145,7 @@ class WP_Form_front
                             if (!filter_var($_POST[$tag], FILTER_VALIDATE_EMAIL)) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_text_invalid_email']) ? $messages['mod_text_invalid_email'] : $messages['validation_error'];
+                                $error_msg .= ' (' . $label . ')';
                             }
                         }
 
@@ -144,6 +153,7 @@ class WP_Form_front
                             if (!filter_var($_POST[$tag], FILTER_VALIDATE_URL)) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_text_invalid_url']) ? $messages['mod_text_invalid_url'] : $messages['validation_error'];
+                                $error_msg .= ' (' . $label . ')';
                             }
                         }
 
@@ -151,6 +161,7 @@ class WP_Form_front
                             if (!preg_match('%^[+]?[0-9()/ -]*$%', $_POST[$tag])) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_text_invalid_phone']) ? $messages['mod_text_invalid_phone'] : $messages['validation_error'];
+                                $error_msg .= ' (' . $label . ')';
                             }
                         }
 
@@ -158,16 +169,19 @@ class WP_Form_front
                             if (!is_numeric($_POST[$tag])) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_number_invalid_number']) ? $messages['mod_number_invalid_number'] : $messages['validation_error'];
+                                $error_msg .= ' (' . $label . ')';
                             }
 
                             if (isset($block['attrs']['minimum']) && $_POST[$tag] < $block['attrs']['minimum']) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_number_number_too_small']) ? $messages['mod_number_number_too_small'] : $messages['validation_error'];
+                                $error_msg .= ' (' . $label . ')';
                             }
 
                             if (isset($block['attrs']['maximum']) && $_POST[$tag] > $block['attrs']['maximum']) {
                                 $error = true;
                                 $error_msg = isset($messages['mod_number_number_too_large']) ? $messages['mod_number_number_too_large'] : $messages['validation_error'];
+                                $error_msg .= ' (' . $label . ')';
                             }
                         }
                     }
@@ -256,11 +270,7 @@ class WP_Form_front
                     'post_type'   => 'ma_form_inputs',
                 ]);
 
-                $postData = apply_filters('madeit_forms_post_data', $postData, $form->ID, $inputId);
-                $postData = apply_filters('madeit_forms_'.$form->ID.'_post_data', $postData, $inputId);
-
                 /* Process file upload */
-
                 $uploadDir = wp_upload_dir();
                 $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/'.$inputId.'/';
                 if (!file_exists($uploadDir)) {
@@ -285,11 +295,11 @@ class WP_Form_front
 
                     $postData[$k] = $url;
                 }
-
-                print_r($postData);
-                exit;
-
                 /* End process file upload */
+
+
+                $postData = apply_filters('madeit_forms_post_data', $postData, $form->ID, $inputId);
+                $postData = apply_filters('madeit_forms_'.$form->ID.'_post_data', $postData, $inputId);
 
                 update_post_meta($inputId, 'form_id', $form->ID);
                 update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
@@ -423,10 +433,21 @@ class WP_Form_front
             if (isset($_POST['form_id']) && $_POST['form_id'] == $id) {
                 $blocks = parse_blocks($form->post_content);
                 $blocks = $this->parseBlocks($blocks);
-
+                
                 foreach ($blocks as $block) {
-                    if (isset($block['attrs']['name'])) {
+                    if (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/input-field') {
                         $content = str_replace('name="'.$block['attrs']['name'].'"', 'name="'.$block['attrs']['name'].'" value="'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : '').'"', $content);
+                    }
+                    else if (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/largeinput-field') {
+                        $content = str_replace('name="'.$block['attrs']['name'].'" required placeholder="' . ($block['attrs']['placeholder'] ?? '') . '">', 'name="'.$block['attrs']['name'].'" required placeholder="' . ($block['attrs']['placeholder'] ?? '') . '">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : ''), $content);
+                        $content = str_replace('name="'.$block['attrs']['name'].'" placeholder="' . ($block['attrs']['placeholder'] ?? '') . '">', 'name="'.$block['attrs']['name'].'" placeholder="' . ($block['attrs']['placeholder'] ?? '') . '">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : ''), $content);
+                    }
+                    else if (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/multi-value-field') {
+                        error_log(json_encode($block, JSON_PRETTY_PRINT));
+                        foreach(explode("\n", $block['attrs']['values']) as $value) {
+                            $content = str_replace('name="'.$block['attrs']['name'].'[]" value="'.$value.'"', 'name="'.$block['attrs']['name'].'[]" value="'.$value.'"'.(isset($_POST[$block['attrs']['name']]) && in_array($value, $_POST[$block['attrs']['name']]) ? ' checked' : ''), $content);
+                        }
+                        //$content = str_replace('name="'.$block['attrs']['name'].'" value=" placeholder="' . ($block['attrs']['placeholder'] ?? '') . '">', 'name="'.$block['attrs']['name'].'" required placeholder="' . ($block['attrs']['placeholder'] ?? '') . '">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : ''), $content);
                     }
                 }
             }
@@ -607,28 +628,85 @@ class WP_Form_front
             wp_die();
         }
 
-        $formValue = get_post_meta($form->ID, 'form', true);
-        $formValue = str_replace('\"', '"', $formValue);
-
         //validate input fields
         $error = false;
         $error_msg = '';
         $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'messages', true))), true);
 
-        //insert form input
-        foreach ($_POST as $k => $v) {
-            $tag = $this->getTagNameFromPostInput($formValue, $k);
-            if ($tag !== false) {
-                if (is_callable($this->tags[$tag]['validation'])) {
-                    $tagOptions = $this->getOptionsFromTag($formValue, $tag, $k);
-                    $tagOptions['ajax'] = true;
-                    $result = call_user_func($this->tags[$tag]['validation'], $tagOptions, $v, $messages);
-                    if ($result !== true) {
-                        $error = true;
-                        $error_msg = $result;
+        if (get_post_meta($form->ID, 'form_type', true) === 'html') {
+            $formValue = get_post_meta($form->ID, 'form', true);
+            $formValue = str_replace('\"', '"', $formValue);
+            $formValue = str_replace("\'", "'", $formValue);
+            foreach ($_POST as $k => $v) {
+                $tag = $this->getTagNameFromPostInput($formValue, $k);
+                if ($tag !== false) {
+                    if (is_callable($this->tags[$tag]['validation'])) {
+                        $tagOptions = $this->getOptionsFromTag($formValue, $tag, $k);
+                        $result = call_user_func($this->tags[$tag]['validation'], $tagOptions, $v, $messages);
+                        if ($result !== true) {
+                            $error = true;
+                            $error_msg = $result;
+                        }
                     }
                 }
             }
+        } else {
+            $blocks = parse_blocks($form->post_content);
+            $blocks = $this->parseBlocks($blocks);
+
+            foreach ($blocks as $block) {
+                if (isset($block['attrs']['name'])) {
+                    $tag = $block['attrs']['name'];
+                    $tags[] = $tag;
+                    $type = $block['attrs']['type'] ?? 'text';
+
+                    if (isset($block['attrs']['required']) && $block['attrs']['required']) {
+                        if (!isset($_POST[$tag]) || empty($_POST[$tag])) {
+                            $error = true;
+                            $error_msg = $messages['invalid_required'].' ('.$tag.')';
+                        }
+                    }
+
+                    if (!empty($_POST[$tag]) && $type === 'email') {
+                        if (!filter_var($_POST[$tag], FILTER_VALIDATE_EMAIL)) {
+                            $error = true;
+                            $error_msg = isset($messages['mod_text_invalid_email']) ? $messages['mod_text_invalid_email'] : $messages['validation_error'];
+                        }
+                    }
+
+                    if (!empty($_POST[$tag]) && $type === 'url') {
+                        if (!filter_var($_POST[$tag], FILTER_VALIDATE_URL)) {
+                            $error = true;
+                            $error_msg = isset($messages['mod_text_invalid_url']) ? $messages['mod_text_invalid_url'] : $messages['validation_error'];
+                        }
+                    }
+
+                    if (!empty($_POST[$tag]) && $type === 'tel') {
+                        if (!preg_match('%^[+]?[0-9()/ -]*$%', $_POST[$tag])) {
+                            $error = true;
+                            $error_msg = isset($messages['mod_text_invalid_phone']) ? $messages['mod_text_invalid_phone'] : $messages['validation_error'];
+                        }
+                    }
+
+                    if (!empty($_POST[$tag]) && $type === 'number') {
+                        if (!is_numeric($_POST[$tag])) {
+                            $error = true;
+                            $error_msg = isset($messages['mod_number_invalid_number']) ? $messages['mod_number_invalid_number'] : $messages['validation_error'];
+                        }
+
+                        if (isset($block['attrs']['minimum']) && $_POST[$tag] < $block['attrs']['minimum']) {
+                            $error = true;
+                            $error_msg = isset($messages['mod_number_number_too_small']) ? $messages['mod_number_number_too_small'] : $messages['validation_error'];
+                        }
+
+                        if (isset($block['attrs']['maximum']) && $_POST[$tag] > $block['attrs']['maximum']) {
+                            $error = true;
+                            $error_msg = isset($messages['mod_number_number_too_large']) ? $messages['mod_number_number_too_large'] : $messages['validation_error'];
+                        }
+                    }
+                }
+            }
+
         }
 
         if ($error) {
