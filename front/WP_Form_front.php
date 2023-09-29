@@ -85,6 +85,7 @@ class WP_Form_front
         if ($form->post_type !== 'ma_forms') {
             return __("Can't display the form.", 'forms-by-made-it');
         }
+        $this->form_id = $form->ID;
 
         ob_start();
 
@@ -235,6 +236,8 @@ class WP_Form_front
             }
 
             if ($error) {
+                $this->notifyError($error_msg);
+
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
                 $this->renderForm($form->ID, $form, $translatedForm, $ajax, $extra_id);
                 $content = ob_get_clean();
@@ -342,6 +345,7 @@ class WP_Form_front
             }
 
             if ($error) {
+                $this->notifyError($error_msg);
                 echo '<div class="madeit-form-error">'.$error_msg.'</div>';
                 $this->renderForm($id, $form, $translatedForm, $ajax, $extra_id);
             } else {
@@ -580,8 +584,10 @@ class WP_Form_front
             echo json_encode(['success' => false, 'message' => __("Can't display the form.", 'forms-by-made-it')]);
             wp_die();
         }
+        $this->form_id = $form->ID;
 
         if ($this->isSpam($_POST)) {
+            $this->notifyError('Spam detected.');
             echo json_encode(['success' => false, 'message' => __('Spam detected.', 'forms-by-made-it')]);
             wp_die();
         }
@@ -620,6 +626,7 @@ class WP_Form_front
         }
 
         if ($error) {
+            $this->notifyError($error_msg);
             echo json_encode(['success' => false, 'message' => $error_msg, 'spamscore' => $spamScore]);
             wp_die();
         }
@@ -705,6 +712,7 @@ class WP_Form_front
         }
 
         if ($error) {
+            $this->notifyError($error_msg);
             echo json_encode(['success' => false, 'message' => $error_msg]);
             wp_die();
         }
@@ -776,6 +784,7 @@ class WP_Form_front
         }
 
         if ($error) {
+            $this->notifyError($error_msg);
             echo json_encode(['success' => false, 'message' => $error_msg]);
             wp_die();
         } else {
@@ -908,5 +917,32 @@ class WP_Form_front
         }
 
         return $content;
+    }
+
+    private function notifyError($error = null)
+    {
+        global $_POST;
+        //Send post request to url with all $_POST data, error, form_id, IP and user agent
+        $url = 'https://portal.madeit.be/forms/error';
+
+        $data = [
+            'website' => get_site_url(),
+            'error'   => $error,
+            'form_id' => $this->form_id,
+            'ip'      => $this->getIP(),
+            'ua'      => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN',
+            'data'    => json_encode($_POST, JSON_PRETTY_PRINT),
+        ];
+
+        error_log(json_encode($data, JSON_PRETTY_PRINT));
+
+        //curl
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        $result = curl_exec($ch);
+        curl_close($ch);
     }
 }
