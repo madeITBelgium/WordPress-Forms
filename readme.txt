@@ -47,6 +47,9 @@ Coming soon ...
 Currently no upgrade
 
 == Changelog ==
+= 2.8.0 =
+* Better spam prevention
+
 = 2.7.0 =
 * Support file Upload
 * Improved error messages
