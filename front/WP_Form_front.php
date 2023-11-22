@@ -329,6 +329,7 @@ class WP_Form_front
                     }
 
                     if (is_callable($action['callback'])) {
+                        $data = apply_filters('madeit_forms_action_data', $data, $form->ID, $inputId, $actionInfo);
                         $result = call_user_func($action['callback'], $data, $messages, $actionInfo, $form->ID, $inputId, $postData);
                         if (is_array($result) && isset($result['type'])) {
                             if ($result['type'] == 'JS') {
@@ -768,6 +769,7 @@ class WP_Form_front
                 }
 
                 if (is_callable($action['callback'])) {
+                    $data = apply_filters('madeit_forms_action_data', $data, $form->ID, $inputId, $actionInfo);
                     $result = call_user_func($action['callback'], $data, $messages, $actionInfo, $form->ID, $inputId, $postData);
                     if (is_array($result) && isset($result['type'])) {
                         if ($result['type'] == 'JS') {
