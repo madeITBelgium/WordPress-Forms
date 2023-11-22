@@ -1289,6 +1289,7 @@ class WP_MADEIT_FORM_admin
         $form = get_post_meta($formId, 'form', true);
 
         $tags = [];
+        $tag = null;
         foreach (explode('[', $form) as $i => $v) {
             $v = trim($v);
             if ($i > 0 && strlen($v) > 0) {
@@ -1301,28 +1302,29 @@ class WP_MADEIT_FORM_admin
             }
         }
         
-        preg_match_all('/\['.$tag.'.*name="'.$name.'".*\]/', $form, $result);
-        if (isset($result[0][0])) {
-            $partWithTag = $result[0][0];
+        if($tag) {
+            preg_match_all('/\['.$tag.'.*name="'.$name.'".*\]/', $form, $result);
+            if (isset($result[0][0])) {
+                $partWithTag = $result[0][0];
 
-            $key = '';
-            foreach (explode('="', $partWithTag) as $o) {
-                if ($key == '') {
-                    $space = explode(' ', $o);
-                    if (count($space) <= 1) {
-                        $key = $space[0];
+                $key = '';
+                foreach (explode('="', $partWithTag) as $o) {
+                    if ($key == '') {
+                        $space = explode(' ', $o);
+                        if (count($space) <= 1) {
+                            $key = $space[0];
+                        } else {
+                            $key = $space[count($space) - 1];
+                        }
                     } else {
-                        $key = $space[count($space) - 1];
+                        $tags[$key] = substr($o, 0, strpos($o, '"'));
+                        $key = trim(substr($o, strpos($o, '"') + 1));
                     }
-                } else {
-                    $tags[$key] = substr($o, 0, strpos($o, '"'));
-                    $key = trim(substr($o, strpos($o, '"') + 1));
                 }
+
+                return $tags;
             }
-
-            return $tags;
         }
-
 
         return $tags;
     }
