@@ -217,7 +217,7 @@ class WP_Form_front
                 $result = json_decode($reCaptchaValidationUrl, true);
 
                 if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
-                    $spamScore = $result['score'];
+                    $spamScore = $result['score'] ?? 0;
                     if ($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
                         $error = true;
                         $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
