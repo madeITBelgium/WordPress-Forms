@@ -335,7 +335,7 @@ class WP_MADEIT_FORM_admin
                 }
             } else {
                 $data = json_decode($this->removeSlashes($this->dbToEnter(str_replace("\'", "'", get_post_meta($post_id, 'data', true)))), true);
-                $fields = array_keys($data);
+                $fields = array_keys($data ?? []);
                 
                 if (isset($fields[$fieldNr])) {
                     $fieldName = $fields[$fieldNr];
