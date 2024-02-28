@@ -352,7 +352,7 @@ class WP_Form_front
             } else {
                 echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
             }
-            //return success message
+        //return success message
         } else {
             $this->renderForm($form->ID, $form, $translatedForm, $ajax, $extra_id);
         }
@@ -446,9 +446,9 @@ class WP_Form_front
                     } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/multi-value-field') {
                         //error_log(json_encode($block, JSON_PRETTY_PRINT));
                         foreach (explode("\n", $block['attrs']['values']) as $value) {
-                            if(isset($block['attrs']['type']) && $block['attrs']['type'] === 'select') {
-                                if(isset($_POST[$block['attrs']['name']]) && in_array($value, is_array($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : [$_POST[$block['attrs']['name']]])) {
-                                    $content = str_replace('option value="' . $value . '"', 'option value="'. $value . '" SELECTED', $content);
+                            if (isset($block['attrs']['type']) && $block['attrs']['type'] === 'select') {
+                                if (isset($_POST[$block['attrs']['name']]) && in_array($value, is_array($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : [$_POST[$block['attrs']['name']]])) {
+                                    $content = str_replace('option value="'.$value.'"', 'option value="'.$value.'" SELECTED', $content);
                                 }
                             } else {
                                 $content = str_replace('name="'.$block['attrs']['name'].'[]" value="'.$value.'"', 'name="'.$block['attrs']['name'].'[]" value="'.$value.'"'.(isset($_POST[$block['attrs']['name']]) && in_array($value, is_array($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : [$_POST[$block['attrs']['name']]]) ? ' checked' : ''), $content);
