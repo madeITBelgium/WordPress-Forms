@@ -62,6 +62,8 @@ function madeit_forms_loadActions()
     $a = new WP_MADEIT_FORM_Redirect();
     require_once MADEIT_FORM_DIR.'/actions/Klaviyo.php';
     $a = new WP_MADEIT_FORM_Klaviyo();
+    require_once MADEIT_FORM_DIR.'/actions/ActiveCampaign.php';
+    $a = new WP_MADEIT_FORM_ActiveCampaign();
 
     require_once MADEIT_FORM_DIR.'/modules/Text.php';
     require_once MADEIT_FORM_DIR.'/modules/Checkbox.php';
