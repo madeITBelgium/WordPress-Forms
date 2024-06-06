@@ -914,8 +914,10 @@ class WP_Form_front
 
                 if (count($contentSeperators) - 1 != $key) {
                     $content .= '<div class="madeit-forms-quiz-question-buttons">';
-                    $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-prev" data-question="'.$key.'" '.($key == 0 ? 'disabled' : '').'>'.__('Previous', 'forms-by-made-it').'</button>';
-                    $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-next" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.__('Next', 'forms-by-made-it').'</button>';
+                    if($key > 0) {
+                        $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-prev" data-question="'.$key.'" '.($key == 0 ? 'disabled' : '').'>'.__('Previous', 'forms-by-made-it').'</button>';
+                    }
+                    $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-next ms-auto" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.apply_filters('madeit_forms_question_button_next', __('Next', 'forms-by-made-it'), $key).'</button>';
                     $content .= '</div>';
                 }
                 $content .= '</div>';
