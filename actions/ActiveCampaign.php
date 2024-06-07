@@ -27,14 +27,30 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
         $apiInstance = null;
         $createContact = null;
 
-        $attributes = apply_filters('madeit_forms_activecampaign_attributes', [
+
+        $array = [
             'email' => $data['ac_email'],
             'firstName' => $data['ac_firstname'],
             'lastName'  => $data['ac_name'],
-            'p[' . $data['ac_list_id'] . ']' => $data['ac_list_id'],
-            'status[' . $data['ac_list_id'] . ']' => 1,
             'fieldValues' => []
-        ], $data, $actionInfo, $formId, $postData);
+        ];
+
+        //if ac_list_id contains , then it is a list of lists
+        if(!empty($data['ac_list_id'])) {
+            if(strpos($data['ac_list_id'], ',') !== false) {
+                $lists = explode(',', $data['ac_list_id']);
+                foreach($lists as $list) {
+                    $array['p[' . $list . ']'] = $list;
+                    $array['status[' . $list . ']'] = 1;
+                }
+            }
+            else {
+                $array['p[' . $data['ac_list_id'] . ']'] = $data['ac_list_id'];
+                $array['status[' . $data['ac_list_id'] . ']'] = 1;
+            }
+        }
+
+        $attributes = apply_filters('madeit_forms_activecampaign_attributes', $array, $data, $actionInfo, $formId, $postData);
 
         $url = $data['ac_api_url'] . '/api/3/contact/sync';
         $body = ['contact' => $attributes];
