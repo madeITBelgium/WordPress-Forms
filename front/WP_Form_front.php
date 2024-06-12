@@ -352,7 +352,7 @@ class WP_Form_front
             } else {
                 echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
             }
-            //return success message
+        //return success message
         } else {
             $this->renderForm($form->ID, $form, $translatedForm, $ajax, $extra_id);
         }
@@ -442,7 +442,7 @@ class WP_Form_front
                 } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/largeinput-field') {
                     $content = str_replace('name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')), $content);
                     $content = str_replace('name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : 'TEST')), $content);
-                    
+
                     $content = str_replace('name="'.$block['attrs']['name'].'" required>', 'name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')), $content);
                     $content = str_replace('name="'.$block['attrs']['name'].'">', 'name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')), $content);
                 } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/multi-value-field') {
@@ -907,7 +907,7 @@ class WP_Form_front
 
                 if (count($contentSeperators) - 1 != $key) {
                     $content .= '<div class="madeit-forms-quiz-question-buttons">';
-                    if($key > 0) {
+                    if ($key > 0) {
                         $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-prev" data-question="'.$key.'" '.($key == 0 ? 'disabled' : '').'>'.__('Previous', 'forms-by-made-it').'</button>';
                     }
                     $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-next ms-auto" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.apply_filters('madeit_forms_question_button_next', __('Next', 'forms-by-made-it'), $key).'</button>';
