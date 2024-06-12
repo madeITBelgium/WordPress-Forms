@@ -433,28 +433,21 @@ class WP_Form_front
         } else {
             $content = apply_filters('the_content', $translatedForm->post_content);
 
-            if (isset($_POST['form_id']) && $_POST['form_id'] == $id) {
-                $blocks = parse_blocks($form->post_content);
-                $blocks = $this->parseBlocks($blocks);
+            $blocks = parse_blocks($form->post_content);
+            $blocks = $this->parseBlocks($blocks);
 
-                foreach ($blocks as $block) {
-                    if (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/input-field') {
-                        $content = str_replace('name="'.$block['attrs']['name'].'"', 'name="'.$block['attrs']['name'].'" value="'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : '').'"', $content);
-                    } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/largeinput-field') {
-                        $content = str_replace('name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : ''), $content);
-                        $content = str_replace('name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : ''), $content);
-                    } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/multi-value-field') {
-                        //error_log(json_encode($block, JSON_PRETTY_PRINT));
-                        foreach (explode("\n", $block['attrs']['values']) as $value) {
-                            if(isset($block['attrs']['type']) && $block['attrs']['type'] === 'select') {
-                                if(isset($_POST[$block['attrs']['name']]) && in_array($value, is_array($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : [$_POST[$block['attrs']['name']]])) {
-                                    $content = str_replace('option value="' . $value . '"', 'option value="'. $value . '" SELECTED', $content);
-                                }
-                            } else {
-                                $content = str_replace('name="'.$block['attrs']['name'].'[]" value="'.$value.'"', 'name="'.$block['attrs']['name'].'[]" value="'.$value.'"'.(isset($_POST[$block['attrs']['name']]) && in_array($value, is_array($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : [$_POST[$block['attrs']['name']]]) ? ' checked' : ''), $content);
-                            }
-                        }
-                        //$content = str_replace('name="'.$block['attrs']['name'].'" value=" placeholder="' . ($block['attrs']['placeholder'] ?? '') . '">', 'name="'.$block['attrs']['name'].'" required placeholder="' . ($block['attrs']['placeholder'] ?? '') . '">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : ''), $content);
+            foreach ($blocks as $block) {
+                if (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/input-field') {
+                    $content = str_replace('name="'.$block['attrs']['name'].'"', 'name="'.$block['attrs']['name'].'" value="'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')).'"', $content);
+                } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/largeinput-field') {
+                    $content = str_replace('name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')), $content);
+                    $content = str_replace('name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : 'TEST')), $content);
+                    
+                    $content = str_replace('name="'.$block['attrs']['name'].'" required>', 'name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')), $content);
+                    $content = str_replace('name="'.$block['attrs']['name'].'">', 'name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')), $content);
+                } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/multi-value-field') {
+                    foreach (explode("\n", $block['attrs']['values']) as $value) {
+                        $content = str_replace('name="'.$block['attrs']['name'].'[]" value="'.$value.'"', 'name="'.$block['attrs']['name'].'[]" value="'.$value.'"'.(isset($_POST[$block['attrs']['name']]) && in_array($value, $_POST[$block['attrs']['name']]) ? ' checked' : (isset($_GET[$block['attrs']['name']]) && in_array($value, $_GET[$block['attrs']['name']]) ? ' checked' : '')), $content);
                     }
                 }
             }
