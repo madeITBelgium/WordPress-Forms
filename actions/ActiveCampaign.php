@@ -34,67 +34,136 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
             'lastName'  => $data['ac_name'],
             'fieldValues' => []
         ];
-
         //if ac_list_id contains , then it is a list of lists
         if(!empty($data['ac_list_id'])) {
             if(strpos($data['ac_list_id'], ',') !== false) {
                 $lists = explode(',', $data['ac_list_id']);
+
+                $stndArray = $array;
                 foreach($lists as $list) {
+                    $array = $stndArray;
                     $array['p[' . $list . ']'] = $list;
                     $array['status[' . $list . ']'] = 1;
+
+                    $attributes = apply_filters('madeit_forms_activecampaign_attributes', $array, $data, $actionInfo, $formId, $postData);
+
+                    error_log('ActiveCampaign attributes: ' . print_r($attributes, true));
+
+                    $url = $data['ac_api_url'] . '/api/3/contact/sync';
+                    $body = ['contact' => $attributes];
+                    list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
+
+                    error_log('ActiveCampaign response: ' . $response);
+                    error_log('ActiveCampaign status code: ' . $statusCode);
+
+                    $response = json_decode($response, true);
+                    $error = false;
+                    $contactId = null;
+                    if(isset($response['errors'])) {
+                        $error = $messages['errors'][0]['title'];
+
+                        if(isset($response['errors'][0]['code']) && $response['errors'][0]['code'] === 'duplicate') {
+                            //contact already exists
+
+                            //Search contact
+                            $url = $data['ac_api_url'] . '/api/3/contacts?email=' . $data['ac_email'];
+                            list($response, $statusCode) = $this->requestAC('GET', $url, $data['ac_api_key']);
+                            if($statusCode == 200) {
+                                $response = json_decode($response, true);
+                                if(isset($response['contacts']) && count($response['contacts']) > 0) {
+                                    $contactId = $response['contacts'][0]['id'];
+
+                                    $body = [
+                                        'contactList' => [
+                                            'contact' => $contactId,
+                                            'list' => $list,
+                                            'status' => 1
+                                        ]
+                                    ];
+                                    $this->requestAC('POST', $data['ac_api_url'] . '/api/3/contactLists', $data['ac_api_key'], $body);
+                                }
+                            }
+                        }
+                    }
+
+                    if($error) {
+                        return $error;
+                    }
+
+                    $contactId = $response['contact']['id'];
+                    $url = $data['ac_api_url'] . '/api/3/contactLists';
+                    $body = ['contactList' => ['contact' => $contactId, 'list' => $list, 'status' => 1]];
+                    list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
+
+                    update_post_meta($inputId, 'ac_contact_id', $contactId);
+
+                    if ($statusCode != 201) {
+                        return 'An unknown error occurred';
+                    }
                 }
             }
             else {
                 $array['p[' . $data['ac_list_id'] . ']'] = $data['ac_list_id'];
                 $array['status[' . $data['ac_list_id'] . ']'] = 1;
-            }
-        }
 
-        $attributes = apply_filters('madeit_forms_activecampaign_attributes', $array, $data, $actionInfo, $formId, $postData);
+                $attributes = apply_filters('madeit_forms_activecampaign_attributes', $array, $data, $actionInfo, $formId, $postData);
 
-        $url = $data['ac_api_url'] . '/api/3/contact/sync';
-        $body = ['contact' => $attributes];
-        list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
+                error_log('ActiveCampaign attributes: ' . print_r($attributes, true));
 
-        error_log('ActiveCampaign response: ' . $response);
-        error_log('ActiveCampaign status code: ' . $statusCode);
+                $url = $data['ac_api_url'] . '/api/3/contact/sync';
+                $body = ['contact' => $attributes];
+                list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
 
-        $response = json_decode($response, true);
-        $error = false;
-        $contactId = null;
-        if(isset($response['errors'])) {
-            $error = $messages['errors'][0]['title'];
+                error_log('ActiveCampaign response: ' . $response);
+                error_log('ActiveCampaign status code: ' . $statusCode);
 
-            if(isset($response['errors'][0]['code']) && $response['errors'][0]['code'] === 'duplicate') {
-                //contact already exists
+                $response = json_decode($response, true);
+                $error = false;
+                $contactId = null;
+                if(isset($response['errors'])) {
+                    $error = $messages['errors'][0]['title'];
 
-                //Search contact
-                $url = $data['ac_api_url'] . '/api/3/contacts?email=' . $data['ac_email'];
-                list($response, $statusCode) = $this->requestAC('GET', $url, $data['ac_api_key']);
-                if($statusCode == 200) {
-                    $response = json_decode($response, true);
-                    if(isset($response['contacts']) && count($response['contacts']) > 0) {
-                        $contactId = $response['contacts'][0]['id'];
+                    if(isset($response['errors'][0]['code']) && $response['errors'][0]['code'] === 'duplicate') {
+                        //contact already exists
 
-                        //TODO Update??
+                        //Search contact
+                        $url = $data['ac_api_url'] . '/api/3/contacts?email=' . $data['ac_email'];
+                        list($response, $statusCode) = $this->requestAC('GET', $url, $data['ac_api_key']);
+                        if($statusCode == 200) {
+                            $response = json_decode($response, true);
+                            if(isset($response['contacts']) && count($response['contacts']) > 0) {
+                                $contactId = $response['contacts'][0]['id'];
+
+                                $contactId = $response['contacts'][0]['id'];
+
+                                $body = [
+                                    'contactList' => [
+                                        'contact' => $contactId,
+                                        'list' => $data['ac_list_id'],
+                                        'status' => 1
+                                    ]
+                                ];
+                                $this->requestAC('POST', $data['ac_api_url'] . '/api/3/contactLists', $data['ac_api_key'], $body);
+                            }
+                        }
                     }
                 }
+
+                if($error) {
+                    return $error;
+                }
+
+                $contactId = $response['contact']['id'];
+                $url = $data['ac_api_url'] . '/api/3/contactLists';
+                $body = ['contactList' => ['contact' => $contactId, 'list' => $data['ac_list_id'], 'status' => 1]];
+                list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
+
+                update_post_meta($inputId, 'ac_contact_id', $contactId);
+
+                if ($statusCode != 201) {
+                    return 'An unknown error occurred';
+                }
             }
-        }
-
-        if($error) {
-            return $error;
-        }
-
-        $contactId = $response['contact']['id'];
-        $url = $data['ac_api_url'] . '/api/3/contactLists';
-        $body = ['contactList' => ['contact' => $contactId, 'list' => $data['ac_list_id'], 'status' => 1]];
-        list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
-
-        update_post_meta($inputId, 'ac_contact_id', $contactId);
-
-        if ($statusCode != 201) {
-            return 'An unknown error occurred';
         }
 
         return true;
