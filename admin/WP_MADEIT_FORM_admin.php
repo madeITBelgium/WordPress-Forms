@@ -761,7 +761,7 @@ class WP_MADEIT_FORM_admin
         
         add_meta_box('ma_form_inputs_data', __('Submitted form data', 'forms-by-made-it'), [$this, 'ma_form_inputs_data'], 'ma_form_inputs', 'normal', 'high');
 
-        if (get_post_meta($post->ID, 'form_type', true) !== 'html') {
+        if ($post && get_post_meta($post->ID, 'form_type', true) !== 'html') {
             add_meta_box('ma_forms_actions', __('Actions', 'forms-by-made-it'), [$this, 'ma_forms_actions'], 'ma_forms', 'normal', 'high');
             add_meta_box('ma_forms_messages', __('Messages', 'forms-by-made-it'), [$this, 'ma_forms_messages'], 'ma_forms', 'normal', 'high');
             add_meta_box('ma_forms_settings', __('Settings', 'forms-by-made-it'), [$this, 'ma_forms_settings'], 'ma_forms', 'normal', 'high');
