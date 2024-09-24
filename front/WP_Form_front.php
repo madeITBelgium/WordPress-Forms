@@ -910,7 +910,7 @@ class WP_Form_front
                     if($key > 0) {
                         $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-prev" data-question="'.$key.'" '.($key == 0 ? 'disabled' : '').'>'.__('Previous', 'forms-by-made-it').'</button>';
                     }
-                    $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-next ms-auto" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.apply_filters('madeit_forms_question_button_next', __('Next', 'forms-by-made-it'), $key).'</button>';
+                    $content .= '<button class="madeit-forms-quiz-question-button madeit-forms-quiz-question-button-next ms-auto" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.apply_filters('madeit_forms_question_button_next', __('Next', 'forms-by-made-it'), $key, $this->form_id).'</button>';
                     $content .= '</div>';
                 }
                 $content .= '</div>';
