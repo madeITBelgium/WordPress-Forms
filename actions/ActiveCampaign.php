@@ -27,71 +27,70 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
         $apiInstance = null;
         $createContact = null;
 
-
         $array = [
-            'email' => $data['ac_email'],
-            'firstName' => $data['ac_firstname'],
-            'lastName'  => $data['ac_name'],
-            'fieldValues' => []
+            'email'       => $data['ac_email'],
+            'firstName'   => $data['ac_firstname'],
+            'lastName'    => $data['ac_name'],
+            'fieldValues' => [],
         ];
         //if ac_list_id contains , then it is a list of lists
-        if(!empty($data['ac_list_id'])) {
-            if(strpos($data['ac_list_id'], ',') !== false) {
+        if (!empty($data['ac_list_id'])) {
+            if (strpos($data['ac_list_id'], ',') !== false) {
                 $lists = explode(',', $data['ac_list_id']);
 
                 $stndArray = $array;
-                foreach($lists as $list) {
+                foreach ($lists as $list) {
                     $array = $stndArray;
-                    $array['p[' . $list . ']'] = $list;
-                    $array['status[' . $list . ']'] = 1;
+                    $array['p['.$list.']'] = $list;
+                    $array['status['.$list.']'] = 1;
 
                     $attributes = apply_filters('madeit_forms_activecampaign_attributes', $array, $data, $actionInfo, $formId, $postData);
 
-                    error_log('ActiveCampaign attributes: ' . print_r($attributes, true));
+                    error_log('ActiveCampaign attributes: '.print_r($attributes, true));
 
-                    $url = $data['ac_api_url'] . '/api/3/contact/sync';
+                    $url = $data['ac_api_url'].'/api/3/contact/sync';
                     $body = ['contact' => $attributes];
                     list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
 
-                    error_log('ActiveCampaign response: ' . $response);
-                    error_log('ActiveCampaign status code: ' . $statusCode);
+                    error_log('ActiveCampaign response: '.$response);
+                    error_log('ActiveCampaign status code: '.$statusCode);
 
                     $response = json_decode($response, true);
                     $error = false;
                     $contactId = null;
-                    if(isset($response['errors'])) {
+                    if (isset($response['errors'])) {
                         $error = $messages['errors'][0]['title'];
 
-                        if(isset($response['errors'][0]['code']) && $response['errors'][0]['code'] === 'duplicate') {
+                        if (isset($response['errors'][0]['code']) && $response['errors'][0]['code'] === 'duplicate') {
                             //contact already exists
 
                             //Search contact
-                            $url = $data['ac_api_url'] . '/api/3/contacts?email=' . $data['ac_email'];
+                            $url = $data['ac_api_url'].'/api/3/contacts?email='.$data['ac_email'];
                             list($response, $statusCode) = $this->requestAC('GET', $url, $data['ac_api_key']);
-                            if($statusCode == 200) {
+                            if ($statusCode == 200) {
                                 $response = json_decode($response, true);
-                                if(isset($response['contacts']) && count($response['contacts']) > 0) {
+                                if (isset($response['contacts']) && count($response['contacts']) > 0) {
                                     $contactId = $response['contacts'][0]['id'];
 
                                     $body = [
                                         'contactList' => [
                                             'contact' => $contactId,
-                                            'list' => $list,
-                                            'status' => 1
-                                        ]
+                                            'list'    => $list,
+                                            'status'  => 1,
+                                        ],
                                     ];
-                                    $this->requestAC('POST', $data['ac_api_url'] . '/api/3/contactLists', $data['ac_api_key'], $body);
+                                    $this->requestAC('POST', $data['ac_api_url'].'/api/3/contactLists', $data['ac_api_key'], $body);
                                 }
                             }
                         }
                     }
 
-                    if($error) {
+                    if ($error) {
                         return $error;
                     }
 
                     $contactId = $response['contact']['id'];
-                    $url = $data['ac_api_url'] . '/api/3/contactLists';
+                    $url = $data['ac_api_url'].'/api/3/contactLists';
                     $body = ['contactList' => ['contact' => $contactId, 'list' => $list, 'status' => 1]];
                     list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
 
@@ -101,37 +100,36 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
                         return 'An unknown error occurred';
                     }
                 }
-            }
-            else {
-                $array['p[' . $data['ac_list_id'] . ']'] = $data['ac_list_id'];
-                $array['status[' . $data['ac_list_id'] . ']'] = 1;
+            } else {
+                $array['p['.$data['ac_list_id'].']'] = $data['ac_list_id'];
+                $array['status['.$data['ac_list_id'].']'] = 1;
 
                 $attributes = apply_filters('madeit_forms_activecampaign_attributes', $array, $data, $actionInfo, $formId, $postData);
 
-                error_log('ActiveCampaign attributes: ' . print_r($attributes, true));
+                error_log('ActiveCampaign attributes: '.print_r($attributes, true));
 
-                $url = $data['ac_api_url'] . '/api/3/contact/sync';
+                $url = $data['ac_api_url'].'/api/3/contact/sync';
                 $body = ['contact' => $attributes];
                 list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
 
-                error_log('ActiveCampaign response: ' . $response);
-                error_log('ActiveCampaign status code: ' . $statusCode);
+                error_log('ActiveCampaign response: '.$response);
+                error_log('ActiveCampaign status code: '.$statusCode);
 
                 $response = json_decode($response, true);
                 $error = false;
                 $contactId = null;
-                if(isset($response['errors'])) {
+                if (isset($response['errors'])) {
                     $error = $messages['errors'][0]['title'];
 
-                    if(isset($response['errors'][0]['code']) && $response['errors'][0]['code'] === 'duplicate') {
+                    if (isset($response['errors'][0]['code']) && $response['errors'][0]['code'] === 'duplicate') {
                         //contact already exists
 
                         //Search contact
-                        $url = $data['ac_api_url'] . '/api/3/contacts?email=' . $data['ac_email'];
+                        $url = $data['ac_api_url'].'/api/3/contacts?email='.$data['ac_email'];
                         list($response, $statusCode) = $this->requestAC('GET', $url, $data['ac_api_key']);
-                        if($statusCode == 200) {
+                        if ($statusCode == 200) {
                             $response = json_decode($response, true);
-                            if(isset($response['contacts']) && count($response['contacts']) > 0) {
+                            if (isset($response['contacts']) && count($response['contacts']) > 0) {
                                 $contactId = $response['contacts'][0]['id'];
 
                                 $contactId = $response['contacts'][0]['id'];
@@ -139,22 +137,22 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
                                 $body = [
                                     'contactList' => [
                                         'contact' => $contactId,
-                                        'list' => $data['ac_list_id'],
-                                        'status' => 1
-                                    ]
+                                        'list'    => $data['ac_list_id'],
+                                        'status'  => 1,
+                                    ],
                                 ];
-                                $this->requestAC('POST', $data['ac_api_url'] . '/api/3/contactLists', $data['ac_api_key'], $body);
+                                $this->requestAC('POST', $data['ac_api_url'].'/api/3/contactLists', $data['ac_api_key'], $body);
                             }
                         }
                     }
                 }
 
-                if($error) {
+                if ($error) {
                     return $error;
                 }
 
                 $contactId = $response['contact']['id'];
-                $url = $data['ac_api_url'] . '/api/3/contactLists';
+                $url = $data['ac_api_url'].'/api/3/contactLists';
                 $body = ['contactList' => ['contact' => $contactId, 'list' => $data['ac_list_id'], 'status' => 1]];
                 list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
 
@@ -173,17 +171,16 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Api-Token: ' . $apitoken,
+            'Api-Token: '.$apitoken,
             'Accept: application/json',
-            'Content-Type: application/json'
+            'Content-Type: application/json',
         ]);
-        if($type == 'POST' || $type == 'PUT' || $type == 'DELETE') {
+        if ($type == 'POST' || $type == 'PUT' || $type == 'DELETE') {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
-            if($data) {
+            if ($data) {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
             }
-        }
-        else {
+        } else {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
