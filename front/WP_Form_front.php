@@ -288,7 +288,7 @@ class WP_Form_front
                     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 
                     //generate random filename
-                    $filename = md5($file['name'].time()).'.'.$ext;
+                    $filename = md5(uniqid($file['name'].random_int(1000, 9999).time(), true)).'.'.$ext;
 
                     //move file to upload dir
                     move_uploaded_file($file['tmp_name'], $uploadDir.$filename);
