@@ -3,13 +3,13 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 5.0
-Tested up to: 6.5.4
+Tested up to: 6.6.2
 Requires PHP: 8.0
 Stable tag: 2.8.0
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Build cool, easy and flexible forms with Forms.
+Build easy and flexible forms with Forms.
 
 == Description ==
 
@@ -17,7 +17,7 @@ Forms is an easy form manager that lets you manage all your cool forms. Creating
 
 = Docs & Support =
 
-You can find [docs](https://www.madeit.be/forms-plugin/docs), [FAQ](https://www.madeit.be/forms-plugin/faq) and more detailed information about Forms on [madeit.be](https://www.madeit.be/forms-plugin/). If you were unable to find the answer to your question on the FAQ or in any of the documentation, you should check the [support forum](http://wordpress.org/support/plugin/forms-by-made-it) on WordPress.org. If you can't locate any topics that pertain to your particular issue, post a new topic for it.
+You can find [docs](https://github.com/madeITBelgium/WordPress-Forms), [FAQ](https://github.com/madeITBelgium/WordPress-Forms) and more detailed information about Forms on [madeit.be](https://www.madeit.be/). If you were unable to find the answer to your question on the FAQ or in any of the documentation, you should check the [support forum](http://wordpress.org/support/plugin/forms-by-made-it) on WordPress.org or [GitHub](https://github.com/madeITBelgium/WordPress-Forms). If you can't locate any topics that pertain to your particular issue, post a new topic for it.
 
 = Recommended Plugins =
 
@@ -35,21 +35,13 @@ You can [translate Forms](https://www.madeit.be/forms-plugin) on [__translate.wo
 
 You will find 'Forms' menu in your WordPress admin panel.
 
-For basic usage, you can also have a look at the [plugin homepage](https://www.madeit.be/forms-plugin/).
-
-== Frequently Asked Questions == 
-Coming soon ...
-
-== Screenshots ==
-Coming soon ...
-
-== Upgrade Notice ==
-Currently no upgrade
+For basic usage, you can also have a look at the [plugin homepage](https://github.com/madeITBelgium/WordPress-Forms).
 
 == Changelog ==
 = 2.8.0 =
 * Better spam prevention
 * Active Campaign integration
+* Security fix
 * Bug fixes
 
 = 2.7.0 =
