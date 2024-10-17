@@ -235,6 +235,21 @@ class WP_Form_front
                 $error_msg = isset($messages['already_submitted']) ? $messages['already_submitted'] : __('You have already submitted this form.', 'forms-by-made-it');
             }
 
+            /* Try uploading files */
+            if (isset($_FILES) && count($_FILES) > 0) {
+                foreach ($_FILES as $k => $v) {
+                    //upload file and give URL
+                    $file = $_FILES[$k];
+
+                    //check if file is not too big
+                    $phpMaxUploadSize = $this->getMaximumFileUploadSize();
+                    if ($file['size'] > $phpMaxUploadSize) {
+                        $error = true;
+                        $error_msg = isset($messages['file_too_big']) ? $messages['file_too_big'] : __('The file is too big.', 'forms-by-made-it');
+                    }
+                }
+            }
+
             if ($error) {
                 $this->notifyError($error_msg);
 
@@ -925,6 +940,7 @@ class WP_Form_front
     	​return $content;    
     }
 
+
     private function notifyError($error = null)
     {
         global $_POST;
@@ -943,12 +959,48 @@ class WP_Form_front
         error_log(json_encode($data, JSON_PRETTY_PRINT));
 
         //curl
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        $result = curl_exec($ch);
-        curl_close($ch);
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            $result = curl_exec($ch);
+            curl_close($ch);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+    }
+
+    function getMaximumFileUploadSize()  
+    {  
+        return min($this->convertPHPSizeToBytes(ini_get('post_max_size')), $this->convertPHPSizeToBytes(ini_get('upload_max_filesize')));  
+    } 
+
+    function convertPHPSizeToBytes($sSize)
+    {
+        $sSuffix = strtoupper(substr($sSize, -1));
+        if (!in_array($sSuffix,array('P','T','G','M','K'))){
+            return (int)$sSize;  
+        } 
+        $iValue = substr($sSize, 0, -1);
+        switch ($sSuffix) {
+            case 'P':
+                $iValue *= 1024;
+                // Fallthrough intended
+            case 'T':
+                $iValue *= 1024;
+                // Fallthrough intended
+            case 'G':
+                $iValue *= 1024;
+                // Fallthrough intended
+            case 'M':
+                $iValue *= 1024;
+                // Fallthrough intended
+            case 'K':
+                $iValue *= 1024;
+                break;
+        }
+        return (int)$iValue;
     }
 }
