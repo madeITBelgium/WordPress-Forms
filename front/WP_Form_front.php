@@ -250,6 +250,53 @@ class WP_Form_front
                 }
             }
 
+            $uploadedFiles = [];
+            if(!$error && isset($_FILES) && count($_FILES) > 0) {
+                /* Process file upload */
+                $uploadDir = wp_upload_dir();
+                $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/';
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0775, true);
+                }
+
+                foreach ($_FILES as $k => $v) {
+                    //upload file and give URL
+                    $file = $_FILES[$k];
+
+                    error_log('File Upload: ' . $file['name']);
+                    error_log('Upload size: ' . $file['size']);
+
+                    //get file extension
+                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+
+                    //generate random filename
+                    $filename = md5(uniqid($file['name'].random_int(1000, 9999).time(), true)).'.'.$ext;
+
+                    //move file to upload dir
+                    $result = move_uploaded_file($file['tmp_name'], $uploadDir.$filename);
+                    if($result === false) {
+                        $error = true;
+                        $error_msg = isset($messages['file_upload_error']) ? $messages['file_upload_error'] : __('Error uploading file.', 'forms-by-made-it');
+                    }
+
+                    $url = home_url().'/wp-content/uploads/madeit-forms/'.$form->ID.'/'.$filename;
+
+                    $uploadedFiles[$k] = [
+                        'url' => $url,
+                        'location' => $uploadDir.$filename,
+                        'filename' => $filename,
+                        'name' => $file['name'],
+                    ];
+                }
+
+                if($error) {
+                    //remove uploaded files
+                    foreach($uploadedFiles as $file) {
+                        unlink($file['location']);
+                    }
+                }
+            }
+
             if ($error) {
                 $this->notifyError($error_msg);
 
@@ -288,29 +335,26 @@ class WP_Form_front
                 ]);
 
                 /* Process file upload */
-                $uploadDir = wp_upload_dir();
-                $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/'.$inputId.'/';
-                if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
-                }
+                if(count($uploadedFiles) > 0) {
+                    $uploadDir = wp_upload_dir();
+                    $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/'.$inputId.'/';
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
 
-                foreach ($_FILES as $k => $v) {
-                    //upload file and give URL
-                    $url = '';
-                    $file = $_FILES[$k];
+                    foreach ($uploadedFiles as $k => $v) {
+                        //move file to new path
+                        $url = home_url().'/wp-content/uploads/madeit-forms/'.$form->ID.'/'.$inputId.'/'.$v['filename'];
 
-                    //get file extension
-                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                        $result = rename($v['location'], $uploadDir.$v['filename']);
+                        if($result === false) {
+                            $url = $v['url'];
+                        } else {
+                            unlink($v['location']);
+                        }
 
-                    //generate random filename
-                    $filename = md5(uniqid($file['name'].random_int(1000, 9999).time(), true)).'.'.$ext;
-
-                    //move file to upload dir
-                    move_uploaded_file($file['tmp_name'], $uploadDir.$filename);
-
-                    $url = home_url().'/wp-content/uploads/madeit-forms/'.$form->ID.'/'.$inputId.'/'.$filename;
-
-                    $postData[$k] = $url;
+                        $postData[$k] = $url;
+                    }
                 }
                 /* End process file upload */
 
