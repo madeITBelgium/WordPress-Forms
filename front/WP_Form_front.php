@@ -953,35 +953,35 @@ class WP_Form_front
     }
 
     private function checkQuiz($content) {        
-    	​if (strpos($content, 'wp-block-madeitforms-question-seperator') !== false) {            
-    	​	​// Is quiz            
-    	​	​$content = str_replace('wp-block-madeitforms-question-seperator madeit-forms-input-field', 'wp-block-madeitforms-question-seperator', $content);                
-    	​	​
-    	​	​$contentSeperators = explode('<div class="wp-block-madeitforms-question-seperator"></div>', $content);                
-    	​	​$content = '';            
-    	​	​foreach ($contentSeperators as $key => $contentSeperator) {                
-    	​	​	​$content .= '<div class="madeit-forms-quiz-question '.($key > 0 ? 'hide-question' : '').'" data-question="'.$key.'">'.$contentSeperator;                    
-    
-    	​	​	​// Voeg knoppen toe als dit niet de laatste vraag is.                
-    	​	​	​$content .= '<div class="madeit-forms-quiz-question-buttons">';                                
-    
-    	​	​	​// Alles behalve de eerste pagina een vorige knop invoeren                
-    	​	​	​if($key > 0) {                    
-    	​	​	​	​$classPrev = apply_filters('madeit_forms_question_prev_button_class', ['madeit-forms-quiz-question-button', 'madeit-forms-quiz-question-button-prev'], $key, $this->form_id);                    
-    	​	​	​	​$content .= '<button class="' . implode(" ", $classPrev) . '" data-question="'.$key.'">'.__('Previous', 'forms-by-made-it').'</button>';                
-    	​	​	​}                    
-    
-    	​	​	​// Een volgende knop weergeven, behalve de laatste pagina.                
-    	​	​	​$classNext = apply_filters('madeit_forms_question_next_button_class', ['madeit-forms-quiz-question-button', 'madeit-forms-quiz-question-button-next', 'ms-auto'], $key, $this->form_id);                
-    	​	​	​$content .= '<button class="' . implode(" ", $classNext) . '" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.apply_filters('madeit_forms_question_button_next', __('Next', 'forms-by-made-it'), $key, $this->form_id).'</button>';                    
-    
-    	​	​	​$content .= '</div>';                
-    	​	​	​$content .= '</div>';            
-    	​	​}                
-    
-    	​	​$content = '<div class="madeit-forms-quiz-container" data-steps="'.count($contentSeperators).'" data-current-step="0">'.$content.'</div>';        
-    	​​}            
-    	​return $content;    
+    	 if (strpos($content, 'wp-block-madeitforms-question-seperator') !== false) {            
+            // Is quiz
+            $content = str_replace('wp-block-madeitforms-question-seperator madeit-forms-input-field', 'wp-block-madeitforms-question-seperator', $content);                
+            
+            $contentSeperators = explode('<div class="wp-block-madeitforms-question-seperator"></div>', $content);                
+            $content = '';            
+            foreach ($contentSeperators as $key => $contentSeperator) {                
+                $content .= '<div class="madeit-forms-quiz-question '.($key > 0 ? 'hide-question' : '').'" data-question="'.$key.'">'.$contentSeperator;                    
+
+                // Voeg knoppen toe als dit niet de laatste vraag is.                
+                $content .= '<div class="madeit-forms-quiz-question-buttons">';                                
+
+                // Alles behalve de eerste pagina een vorige knop invoeren                
+                if($key > 0) {                    
+                    $classPrev = apply_filters('madeit_forms_question_prev_button_class', ['madeit-forms-quiz-question-button', 'madeit-forms-quiz-question-button-prev'], $key, $this->form_id);                    
+                    $content .= '<button class="' . implode(" ", $classPrev) . '" data-question="'.$key.'">'.__('Previous', 'forms-by-made-it').'</button>';                
+                }                    
+
+                // Een volgende knop weergeven, behalve de laatste pagina.                
+                $classNext = apply_filters('madeit_forms_question_next_button_class', ['madeit-forms-quiz-question-button', 'madeit-forms-quiz-question-button-next', 'ms-auto'], $key, $this->form_id);                
+                $content .= '<button class="' . implode(" ", $classNext) . '" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.apply_filters('madeit_forms_question_button_next', __('Next', 'forms-by-made-it'), $key, $this->form_id).'</button>';                    
+
+                $content .= '</div>';                
+                $content .= '</div>';            
+            }                
+
+            $content = '<div class="madeit-forms-quiz-container" data-steps="'.count($contentSeperators).'" data-current-step="0">'.$content.'</div>';        
+        }            
+    	 return $content;    
     }
 
 

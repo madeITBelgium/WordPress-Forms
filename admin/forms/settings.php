@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
         if (!empty($error)) {
             ?>
-            <div class="error"><p><strong><?php echo __($error, 'forms-by-made-it'); ?></strong></p></div>
+            <div class="error"><p><strong><?php echo $error; ?></strong></p></div>
             <?php
         }
         ?>

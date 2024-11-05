@@ -3,9 +3,9 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 5.0
-Tested up to: 6.6.2
+Tested up to: 6.7.0
 Requires PHP: 8.0
-Stable tag: 2.8.0
+Stable tag: 2.8.1
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,6 +38,9 @@ You will find 'Forms' menu in your WordPress admin panel.
 For basic usage, you can also have a look at the [plugin homepage](https://github.com/madeITBelgium/WordPress-Forms).
 
 == Changelog ==
+= 2.8.1 =
+* Bug fix in form settings
+
 = 2.8.0 =
 * Better spam prevention
 * Active Campaign integration

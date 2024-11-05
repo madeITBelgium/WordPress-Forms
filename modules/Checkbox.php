@@ -12,6 +12,7 @@ class WP_MADEIT_FORM_Module_Checkbox extends WP_MADEIT_FORM_Module {
     public function tag_generator_checkbox($contact_form, $args = '') {
         $args = wp_parse_args( $args, array() );
         $type = $args['id'];
+        /* translators: %s is a link to the documentation about mail-tags */
         $description = __("Generate a form-tag for a checkbox input field. For more details, see %s.", 'forms-by-made-it');
         
         $desc_link = '<a href="' . esc_url('https://www.madeit.be/wordpress/forms/docs/text-fields/') . '" target="_blank">' . __('Checkbox', 'forms-by-made-it') . '</a>';
@@ -62,7 +63,10 @@ class WP_MADEIT_FORM_Module_Checkbox extends WP_MADEIT_FORM_Module {
             <br class="clear" />
             <p class="description mail-tag">
                 <label for="<?php echo esc_attr($args['content'] . '-mailtag'); ?>">
-                    <?php echo sprintf( esc_html(__("To use the value input through this field in a action field, you need to insert the corresponding name-tag (%s) into the field on the Actions tab.", 'forms-by-made-it')), '<strong><span class="mail-tag"></span></strong>'); ?>
+                    <?php
+                    /* translators: %s is a placeholder for an example of a mail-tag */
+                    echo sprintf( esc_html(__("To use the value input through this field in a action field, you need to insert the corresponding name-tag (%s) into the field on the Actions tab.", 'forms-by-made-it')), '<strong><span class="mail-tag"></span></strong>');
+                    ?>
                     <input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr($args['content'] . '-mailtag'); ?>" />
                 </label>
             </p>

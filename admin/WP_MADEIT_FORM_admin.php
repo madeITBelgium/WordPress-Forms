@@ -303,6 +303,7 @@ class WP_MADEIT_FORM_admin
 
         $inputFields = min($this->getMaxInputFields(), 5);
         for ($i = 1; $i <= $inputFields; $i++) {
+            /* translators: %s: Field number */
             $columns['input_'.$i - 1] = sprintf(__('Field %s', 'forms-by-made-it'), $i);
         }
 
@@ -410,6 +411,7 @@ class WP_MADEIT_FORM_admin
                         <span id="tag-generator-list">
                             <?php
                             foreach ($this->tags as $id => $panel) {
+                                /* translators: %s: Panel title */
                                 echo sprintf(
                                     '<a href="#TB_inline?width=600&height=550&inlineId=%1$s" class="thickbox button" title="%2$s">%3$s</a>',
                                     esc_attr($panel['content'].'-'.$id),
@@ -509,7 +511,7 @@ class WP_MADEIT_FORM_admin
                     <div class="clear"></div>
                 </div>
                 <div class="madeit-tab-panel" id="messages-panel">
-                   <h2><?php echo esc_html(__('Messages', '')); ?></h2>
+                   <h2><?php echo esc_html(__('Messages', 'forms-by-made-it')); ?></h2>
                     <fieldset>
                         <legend><?php echo esc_html(__('In the following fields, you can use these name-tags:', 'forms-by-made-it')); ?><br /><span class="name-tags"></span></legend>
                         <?php
@@ -639,6 +641,7 @@ class WP_MADEIT_FORM_admin
             <?php
             $errors = $this->checkFormActions($post->ID);
             if ($errors > 0) {
+                /* translators: %s: Number of errors */
                 $message = sprintf(_n('%s configuration error found', '%s configuration errors found', $errors, 'forms-by-made-it'), $errors);
                 $link = sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#configuration-validator'), __("What's this?", 'forms-by-made-it'), '');
                 echo sprintf('<div class="misc-pub-section warning">%1$s<br />%2$s</div>', $message, $link);
@@ -1148,6 +1151,7 @@ class WP_MADEIT_FORM_admin
     {
         if (!empty($_REQUEST['changed-mark-as-read'])) {
             $num_changed = (int) $_REQUEST['changed-mark-as-read'];
+            /* translators: %s: Number of changed posts */
             printf('<div id="message" class="updated notice is-dismissable"><p>'.__('%d submits marked as read.', 'forms-by-made-it').'</p></div>', $num_changed);
         }
     }
