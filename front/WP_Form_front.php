@@ -251,7 +251,7 @@ class WP_Form_front
             }
 
             $uploadedFiles = [];
-            if(!$error && isset($_FILES) && count($_FILES) > 0) {
+            if (!$error && isset($_FILES) && count($_FILES) > 0) {
                 /* Process file upload */
                 $uploadDir = wp_upload_dir();
                 $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/';
@@ -263,8 +263,8 @@ class WP_Form_front
                     //upload file and give URL
                     $file = $_FILES[$k];
 
-                    error_log('File Upload: ' . $file['name']);
-                    error_log('Upload size: ' . $file['size']);
+                    error_log('File Upload: '.$file['name']);
+                    error_log('Upload size: '.$file['size']);
 
                     //get file extension
                     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
@@ -274,7 +274,7 @@ class WP_Form_front
 
                     //move file to upload dir
                     $result = move_uploaded_file($file['tmp_name'], $uploadDir.$filename);
-                    if($result === false) {
+                    if ($result === false) {
                         $error = true;
                         $error_msg = isset($messages['file_upload_error']) ? $messages['file_upload_error'] : __('Error uploading file.', 'forms-by-made-it');
                     }
@@ -282,16 +282,16 @@ class WP_Form_front
                     $url = home_url().'/wp-content/uploads/madeit-forms/'.$form->ID.'/'.$filename;
 
                     $uploadedFiles[$k] = [
-                        'url' => $url,
+                        'url'      => $url,
                         'location' => $uploadDir.$filename,
                         'filename' => $filename,
-                        'name' => $file['name'],
+                        'name'     => $file['name'],
                     ];
                 }
 
-                if($error) {
+                if ($error) {
                     //remove uploaded files
-                    foreach($uploadedFiles as $file) {
+                    foreach ($uploadedFiles as $file) {
                         unlink($file['location']);
                     }
                 }
@@ -335,7 +335,7 @@ class WP_Form_front
                 ]);
 
                 /* Process file upload */
-                if(count($uploadedFiles) > 0) {
+                if (count($uploadedFiles) > 0) {
                     $uploadDir = wp_upload_dir();
                     $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/'.$inputId.'/';
                     if (!file_exists($uploadDir)) {
@@ -347,7 +347,7 @@ class WP_Form_front
                         $url = home_url().'/wp-content/uploads/madeit-forms/'.$form->ID.'/'.$inputId.'/'.$v['filename'];
 
                         $result = rename($v['location'], $uploadDir.$v['filename']);
-                        if($result === false) {
+                        if ($result === false) {
                             $url = $v['url'];
                         } else {
                             unlink($v['location']);
@@ -411,7 +411,7 @@ class WP_Form_front
             } else {
                 echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
             }
-            //return success message
+        //return success message
         } else {
             $this->renderForm($form->ID, $form, $translatedForm, $ajax, $extra_id);
         }
@@ -501,7 +501,7 @@ class WP_Form_front
                 } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/largeinput-field') {
                     $content = str_replace('name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')), $content);
                     $content = str_replace('name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : 'TEST')), $content);
-                    
+
                     $content = str_replace('name="'.$block['attrs']['name'].'" required>', 'name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')), $content);
                     $content = str_replace('name="'.$block['attrs']['name'].'">', 'name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.(isset($_POST[$block['attrs']['name']]) ? $_POST[$block['attrs']['name']] : (isset($_GET[$block['attrs']['name']]) ? $_GET[$block['attrs']['name']] : '')), $content);
                 } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/multi-value-field') {
@@ -952,38 +952,39 @@ class WP_Form_front
         return $hasCompleted;
     }
 
-    private function checkQuiz($content) {        
-    	 if (strpos($content, 'wp-block-madeitforms-question-seperator') !== false) {            
+    private function checkQuiz($content)
+    {
+        if (strpos($content, 'wp-block-madeitforms-question-seperator') !== false) {
             // Is quiz
-            $content = str_replace('wp-block-madeitforms-question-seperator madeit-forms-input-field', 'wp-block-madeitforms-question-seperator', $content);                
-            
-            $contentSeperators = explode('<div class="wp-block-madeitforms-question-seperator"></div>', $content);                
-            $content = '';            
-            foreach ($contentSeperators as $key => $contentSeperator) {                
-                $content .= '<div class="madeit-forms-quiz-question '.($key > 0 ? 'hide-question' : '').'" data-question="'.$key.'">'.$contentSeperator;                    
+            $content = str_replace('wp-block-madeitforms-question-seperator madeit-forms-input-field', 'wp-block-madeitforms-question-seperator', $content);
 
-                // Voeg knoppen toe als dit niet de laatste vraag is.                
-                $content .= '<div class="madeit-forms-quiz-question-buttons">';                                
+            $contentSeperators = explode('<div class="wp-block-madeitforms-question-seperator"></div>', $content);
+            $content = '';
+            foreach ($contentSeperators as $key => $contentSeperator) {
+                $content .= '<div class="madeit-forms-quiz-question '.($key > 0 ? 'hide-question' : '').'" data-question="'.$key.'">'.$contentSeperator;
 
-                // Alles behalve de eerste pagina een vorige knop invoeren                
-                if($key > 0) {                    
-                    $classPrev = apply_filters('madeit_forms_question_prev_button_class', ['madeit-forms-quiz-question-button', 'madeit-forms-quiz-question-button-prev'], $key, $this->form_id);                    
-                    $content .= '<button class="' . implode(" ", $classPrev) . '" data-question="'.$key.'">'.__('Previous', 'forms-by-made-it').'</button>';                
-                }                    
+                // Voeg knoppen toe als dit niet de laatste vraag is.
+                $content .= '<div class="madeit-forms-quiz-question-buttons">';
 
-                // Een volgende knop weergeven, behalve de laatste pagina.                
-                $classNext = apply_filters('madeit_forms_question_next_button_class', ['madeit-forms-quiz-question-button', 'madeit-forms-quiz-question-button-next', 'ms-auto'], $key, $this->form_id);                
-                $content .= '<button class="' . implode(" ", $classNext) . '" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.apply_filters('madeit_forms_question_button_next', __('Next', 'forms-by-made-it'), $key, $this->form_id).'</button>';                    
+                // Alles behalve de eerste pagina een vorige knop invoeren
+                if ($key > 0) {
+                    $classPrev = apply_filters('madeit_forms_question_prev_button_class', ['madeit-forms-quiz-question-button', 'madeit-forms-quiz-question-button-prev'], $key, $this->form_id);
+                    $content .= '<button class="'.implode(' ', $classPrev).'" data-question="'.$key.'">'.__('Previous', 'forms-by-made-it').'</button>';
+                }
 
-                $content .= '</div>';                
-                $content .= '</div>';            
-            }                
+                // Een volgende knop weergeven, behalve de laatste pagina.
+                $classNext = apply_filters('madeit_forms_question_next_button_class', ['madeit-forms-quiz-question-button', 'madeit-forms-quiz-question-button-next', 'ms-auto'], $key, $this->form_id);
+                $content .= '<button class="'.implode(' ', $classNext).'" data-question="'.$key.'" '.($key == count($contentSeperators) - 1 ? 'disabled' : '').'>'.apply_filters('madeit_forms_question_button_next', __('Next', 'forms-by-made-it'), $key, $this->form_id).'</button>';
 
-            $content = '<div class="madeit-forms-quiz-container" data-steps="'.count($contentSeperators).'" data-current-step="0">'.$content.'</div>';        
-        }            
-    	 return $content;    
+                $content .= '</div>';
+                $content .= '</div>';
+            }
+
+            $content = '<div class="madeit-forms-quiz-container" data-steps="'.count($contentSeperators).'" data-current-step="0">'.$content.'</div>';
+        }
+
+        return $content;
     }
-
 
     private function notifyError($error = null)
     {
@@ -1016,17 +1017,17 @@ class WP_Form_front
         }
     }
 
-    function getMaximumFileUploadSize()  
-    {  
-        return min($this->convertPHPSizeToBytes(ini_get('post_max_size')), $this->convertPHPSizeToBytes(ini_get('upload_max_filesize')));  
-    } 
+    public function getMaximumFileUploadSize()
+    {
+        return min($this->convertPHPSizeToBytes(ini_get('post_max_size')), $this->convertPHPSizeToBytes(ini_get('upload_max_filesize')));
+    }
 
-    function convertPHPSizeToBytes($sSize)
+    public function convertPHPSizeToBytes($sSize)
     {
         $sSuffix = strtoupper(substr($sSize, -1));
-        if (!in_array($sSuffix,array('P','T','G','M','K'))){
-            return (int)$sSize;  
-        } 
+        if (!in_array($sSuffix, ['P', 'T', 'G', 'M', 'K'])) {
+            return (int) $sSize;
+        }
         $iValue = substr($sSize, 0, -1);
         switch ($sSuffix) {
             case 'P':
@@ -1045,6 +1046,7 @@ class WP_Form_front
                 $iValue *= 1024;
                 break;
         }
-        return (int)$iValue;
+
+        return (int) $iValue;
     }
 }
