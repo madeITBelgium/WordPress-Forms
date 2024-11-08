@@ -46,14 +46,9 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
 
                     $attributes = apply_filters('madeit_forms_activecampaign_attributes', $array, $data, $actionInfo, $formId, $postData);
 
-                    error_log('ActiveCampaign attributes: '.print_r($attributes, true));
-
                     $url = $data['ac_api_url'].'/api/3/contact/sync';
                     $body = ['contact' => $attributes];
                     list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
-
-                    error_log('ActiveCampaign response: '.$response);
-                    error_log('ActiveCampaign status code: '.$statusCode);
 
                     $response = json_decode($response, true);
                     $error = false;
@@ -96,7 +91,7 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
 
                     update_post_meta($inputId, 'ac_contact_id', $contactId);
 
-                    if ($statusCode != 201) {
+                    if ($statusCode != 201 && $statusCode !== 200) {
                         return 'An unknown error occurred';
                     }
                 }
@@ -106,14 +101,9 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
 
                 $attributes = apply_filters('madeit_forms_activecampaign_attributes', $array, $data, $actionInfo, $formId, $postData);
 
-                error_log('ActiveCampaign attributes: '.print_r($attributes, true));
-
                 $url = $data['ac_api_url'].'/api/3/contact/sync';
                 $body = ['contact' => $attributes];
                 list($response, $statusCode) = $this->requestAC('POST', $url, $data['ac_api_key'], $body);
-
-                error_log('ActiveCampaign response: '.$response);
-                error_log('ActiveCampaign status code: '.$statusCode);
 
                 $response = json_decode($response, true);
                 $error = false;
@@ -158,7 +148,7 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
 
                 update_post_meta($inputId, 'ac_contact_id', $contactId);
 
-                if ($statusCode != 201) {
+                if ($statusCode != 201 && $statusCode !== 200) {
                     return 'An unknown error occurred';
                 }
             }
