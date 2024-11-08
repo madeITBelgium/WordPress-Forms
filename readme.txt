@@ -38,13 +38,16 @@ You will find 'Forms' menu in your WordPress admin panel.
 For basic usage, you can also have a look at the [plugin homepage](https://github.com/madeITBelgium/WordPress-Forms).
 
 == Changelog ==
+= 2.8.2 =
+* Bump version
+
 = 2.8.1 =
 * Bug fix in form settings
 
 = 2.8.0 =
 * Better spam prevention
 * Active Campaign integration
-* Security fix
+* Security fix: CVE-2024-51791
 * Bug fixes
 
 = 2.7.0 =
