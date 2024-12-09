@@ -297,6 +297,11 @@ class WP_Form_front
                 }
             }
 
+            $error_msg = apply_filters('madeit_forms_submit_error', $error_msg, $form->ID);
+            if(!empty($error_msg)) {
+                $error = true;
+            }
+            
             if ($error) {
                 $this->notifyError($error_msg);
 
@@ -402,6 +407,11 @@ class WP_Form_front
                         }
                     }
                 }
+            }
+            
+            $error_msg = apply_filters('madeit_forms_submit_error', $error_msg, $form->ID);
+            if(!empty($error_msg)) {
+                $error = true;
             }
 
             if ($error) {
@@ -706,6 +716,11 @@ class WP_Form_front
         if (get_post_meta($form->ID, 'max_submits', true) == 1 && $this->hasAlreadyCompletedThisForm($form->ID)) {
             $error = true;
             $error_msg = isset($messages['already_submitted']) ? $messages['already_submitted'] : __('You have already submitted this form.', 'forms-by-made-it');
+        }
+        
+        $error_msg = apply_filters('madeit_forms_submit_error', $error_msg, $form->ID);
+        if(!empty($error_msg)) {
+            $error = true;
         }
 
         if ($error) {
