@@ -298,10 +298,10 @@ class WP_Form_front
             }
 
             $error_msg = apply_filters('madeit_forms_submit_error', $error_msg, $form->ID);
-            if(!empty($error_msg)) {
+            if (!empty($error_msg)) {
                 $error = true;
             }
-            
+
             if ($error) {
                 $this->notifyError($error_msg);
 
@@ -408,9 +408,9 @@ class WP_Form_front
                     }
                 }
             }
-            
+
             $error_msg = apply_filters('madeit_forms_submit_error', $error_msg, $form->ID);
-            if(!empty($error_msg)) {
+            if (!empty($error_msg)) {
                 $error = true;
             }
 
@@ -508,19 +508,19 @@ class WP_Form_front
             foreach ($blocks as $block) {
                 if (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/input-field') {
                     $value = $atts[$block['attrs']['name']] ?? '';
-                    if(isset($_GET[$block['attrs']['name']])) {
+                    if (isset($_GET[$block['attrs']['name']])) {
                         $value = $_GET[$block['attrs']['name']];
                     }
-                    if(isset($_POST[$block['attrs']['name']])) {
+                    if (isset($_POST[$block['attrs']['name']])) {
                         $value = $_POST[$block['attrs']['name']];
                     }
-                    $content = str_replace('name="'.$block['attrs']['name'].'"', 'name="'.$block['attrs']['name'].'" value="'. $value .'"', $content);
+                    $content = str_replace('name="'.$block['attrs']['name'].'"', 'name="'.$block['attrs']['name'].'" value="'.$value.'"', $content);
                 } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/largeinput-field') {
                     $value = $atts[$block['attrs']['name']] ?? '';
-                    if(isset($_GET[$block['attrs']['name']])) {
+                    if (isset($_GET[$block['attrs']['name']])) {
                         $value = $_GET[$block['attrs']['name']];
                     }
-                    if(isset($_POST[$block['attrs']['name']])) {
+                    if (isset($_POST[$block['attrs']['name']])) {
                         $value = $_POST[$block['attrs']['name']];
                     }
                     $content = str_replace('name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.$value, $content);
@@ -530,13 +530,13 @@ class WP_Form_front
                     $content = str_replace('name="'.$block['attrs']['name'].'">', 'name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.$value, $content);
                 } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/multi-value-field') {
                     $selectedVal = $atts[$block['attrs']['name']] ?? '';
-                    if(isset($_GET[$block['attrs']['name']])) {
+                    if (isset($_GET[$block['attrs']['name']])) {
                         $selectedVal = $_GET[$block['attrs']['name']];
                     }
-                    if(isset($_POST[$block['attrs']['name']])) {
+                    if (isset($_POST[$block['attrs']['name']])) {
                         $selectedVal = $_POST[$block['attrs']['name']];
                     }
-                    if(!is_array($selectedVal) && !empty($selectedVal)) {
+                    if (!is_array($selectedVal) && !empty($selectedVal)) {
                         $selectedVal = [$selectedVal];
                     }
                     foreach (explode("\n", $block['attrs']['values']) as $value) {
@@ -717,9 +717,9 @@ class WP_Form_front
             $error = true;
             $error_msg = isset($messages['already_submitted']) ? $messages['already_submitted'] : __('You have already submitted this form.', 'forms-by-made-it');
         }
-        
+
         $error_msg = apply_filters('madeit_forms_submit_error', $error_msg, $form->ID);
-        if(!empty($error_msg)) {
+        if (!empty($error_msg)) {
             $error = true;
         }
 
