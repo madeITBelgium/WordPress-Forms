@@ -93,6 +93,10 @@ function submitMadeitForm(formId) {
                 jQuery('#' + formId).find('.delete-submit').remove();
                 
                 jQuery('#' + formId).before('<div class="madeit-form-error">' + data.message + '</div>');
+		    
+                jQuery('html, body').animate({
+                    scrollTop: jQuery('.madeit-form-error').offset().top
+                }, 1000);
                 grecaptcha.reset();
             }
         }, 'json');
