@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Forms
  * Plugin URI: https://www.madeit.be/producten/wordpress/forms-plugin/

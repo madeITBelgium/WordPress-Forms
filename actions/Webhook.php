@@ -51,7 +51,7 @@ class WP_MADEIT_FORM_Webhook extends WP_MADEIT_FORM_Action
         }
 
         if (!empty($body)) {
-            if(is_array($body)) {
+            if (is_array($body)) {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
             } else {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
