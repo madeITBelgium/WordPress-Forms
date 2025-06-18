@@ -100,6 +100,7 @@ class WP_Form_front
 
             //insert form input
             $tags = [];
+            $uploadableFields = [];
             if (get_post_meta($form->ID, 'form_type', true) === 'html') {
                 $formValue = get_post_meta($form->ID, 'form', true);
                 $formValue = str_replace('\"', '"', $formValue);
@@ -184,6 +185,10 @@ class WP_Form_front
                                 $error_msg .= ' ('.$label.')';
                             }
                         }
+                        
+                        if($block['blockName'] === "madeitforms/upload-field") {
+                            $uploadableFields[$block['attrs']['name']] = $block['attrs'];
+                        }
                     }
                 }
             }
@@ -236,8 +241,12 @@ class WP_Form_front
             }
 
             /* Try uploading files */
-            if (isset($_FILES) && count($_FILES) > 0) {
+            if (isset($_FILES) && count($_FILES) > 0 > 0 && count($uploadableFields) > 0) {
                 foreach ($_FILES as $k => $v) {
+                    if (!isset($uploadableFields[$k])) {
+                        continue;
+                    }
+                    
                     //upload file and give URL
                     $file = $_FILES[$k];
 
@@ -246,12 +255,13 @@ class WP_Form_front
                     if ($file['size'] > $phpMaxUploadSize) {
                         $error = true;
                         $error_msg = isset($messages['file_too_big']) ? $messages['file_too_big'] : __('The file is too big.', 'forms-by-made-it');
+                        $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
                     }
                 }
             }
 
             $uploadedFiles = [];
-            if (!$error && isset($_FILES) && count($_FILES) > 0) {
+            if (!$error && isset($_FILES) && count($_FILES) > 0 && count($uploadableFields) > 0) {
                 /* Process file upload */
                 $uploadDir = wp_upload_dir();
                 $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/';
@@ -266,6 +276,10 @@ class WP_Form_front
                     error_log('File Upload: '.$file['name']);
                     error_log('Upload size: '.$file['size']);
 
+                    if(empty($file['name']) || $file['size'] <= 0) {
+                        continue;
+                    }
+                    
                     //get file extension
                     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 
@@ -277,6 +291,7 @@ class WP_Form_front
                     if ($result === false) {
                         $error = true;
                         $error_msg = isset($messages['file_upload_error']) ? $messages['file_upload_error'] : __('Error uploading file.', 'forms-by-made-it');
+                        $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
                     }
 
                     $url = home_url().'/wp-content/uploads/madeit-forms/'.$form->ID.'/'.$filename;
