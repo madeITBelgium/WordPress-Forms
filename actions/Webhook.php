@@ -24,24 +24,24 @@ class WP_MADEIT_FORM_Webhook extends WP_MADEIT_FORM_Action
     {
         $rawBody = apply_filters('madeit_forms_webhook_raw_body', $data['wh_body'], $data, $messages, $actionInfo, $formId, $inputId, $postData);
 
-        //check json_decode errors 
- 	 	if (json_last_error() !== JSON_ERROR_NONE) { 
-	           //Can we fix the error? 
-	           if (json_last_error() === JSON_ERROR_SYNTAX) { 
-	               $body = str_replace(['\n', '\r'], '', $rawBody); 
-	               $body = json_decode($body, true); 
-	               if (json_last_error() !== JSON_ERROR_NONE) { 
-	                   error_log('JSON decode error: ' . json_last_error_msg()); 
-	                   error_log('Raw body: ' . $rawBody); 
-	               } else { 
-	                   $rawBody = json_encode($body); 
-	               } 
-	           } else { 
-	               error_log('JSON decode error: ' . json_last_error_msg()); 
-	               error_log('Raw body: ' . $rawBody); 
-	           } 
-	       } 
-        
+        //check json_decode errors
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            //Can we fix the error?
+            if (json_last_error() === JSON_ERROR_SYNTAX) {
+                $body = str_replace(['\n', '\r'], '', $rawBody);
+                $body = json_decode($body, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('JSON decode error: '.json_last_error_msg());
+                    error_log('Raw body: '.$rawBody);
+                } else {
+                    $rawBody = json_encode($body);
+                }
+            } else {
+                error_log('JSON decode error: '.json_last_error_msg());
+                error_log('Raw body: '.$rawBody);
+            }
+        }
+
         //check if $rawBody is a valid JSON string
         if (is_string($rawBody) && is_array(json_decode($rawBody, true))) {
             $body = json_decode($rawBody, true);
