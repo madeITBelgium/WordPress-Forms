@@ -11,6 +11,10 @@ class WP_MadeIT_Form_Settings
 
     public function loadDefaultSettings()
     {
+        if (!empty($this->defaultSettings)) {
+            return $this->defaultSettings;
+        }
+
         $this->defaultSettings = [
             'reCaptcha' => [
                 'version'  => get_option('madeit_forms_reCaptcha_version', 'V2'),
@@ -27,18 +31,18 @@ class WP_MadeIT_Form_Settings
     public function checkCheckbox($key)
     {
         if (isset($_POST[$key]) && $_POST[$key] == 1) {
-            update_option($key, true);
+            update_option($key, true, 'yes');
         } else {
-            update_option($key, false);
+            update_option($key, false, 'yes');
         }
     }
 
     public function checkTextbox($key)
     {
         if (isset($_POST[$key])) {
-            update_option($key, $_POST[$key]);
+            update_option($key, $_POST[$key], 'yes');
         } else {
-            update_option($key, '');
+            update_option($key, '', 'yes');
         }
     }
 }

@@ -26,6 +26,47 @@ if (!defined('MADEIT_FORM_FRONT')) {
 }
 require_once MADEIT_FORM_DIR.'/vendor/autoload.php';
 
+function madeit_forms_migrate_autoload_options()
+{
+    $keys = [
+        'madeit_forms_reCaptcha',
+        'madeit_forms_reCaptcha_key',
+        'madeit_forms_reCaptcha_secret',
+        'madeit_forms_reCaptcha_version',
+        'madeit_forms_reCaptcha_minScore',
+    ];
+
+    $alloptions = wp_load_alloptions();
+    foreach ($keys as $key) {
+        if (isset($alloptions[$key])) {
+            continue;
+        }
+
+        $sentinel = '__madeit_forms_missing__';
+        $value = get_option($key, $sentinel);
+        if ($value !== $sentinel) {
+            update_option($key, $value, 'yes');
+        }
+    }
+
+    update_option('madeit_forms_autoload_migration', 1, 'yes');
+}
+
+function madeit_forms_on_activation()
+{
+    madeit_forms_migrate_autoload_options();
+}
+
+function madeit_forms_maybe_run_autoload_migration()
+{
+    if ((int) get_option('madeit_forms_autoload_migration', 0) < 1) {
+        madeit_forms_migrate_autoload_options();
+    }
+}
+
+register_activation_hook(__FILE__, 'madeit_forms_on_activation');
+add_action('plugins_loaded', 'madeit_forms_maybe_run_autoload_migration', 5);
+
 function wp_forms_by_madeit_load_plugin_textdomain()
 {
     load_plugin_textdomain('forms-by-made-it', false, basename(dirname(__FILE__)).'/languages/');
