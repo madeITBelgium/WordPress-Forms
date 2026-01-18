@@ -241,7 +241,7 @@ class WP_Form_front
             }
 
             /* Try uploading files */
-            if (isset($_FILES) && count($_FILES) > 0 > 0 && count($uploadableFields) > 0) {
+            if (isset($_FILES) && count($_FILES) > 0 && count($uploadableFields) > 0) {
                 foreach ($_FILES as $k => $v) {
                     if (!isset($uploadableFields[$k])) {
                         continue;
