@@ -353,6 +353,8 @@ class WP_Form_front
                     'post_status' => 'publish',
                     'post_type'   => 'ma_form_inputs',
                 ]);
+                
+                $postData['input_id'] = $inputId;
 
                 /* Process file upload */
                 if (count($uploadedFiles) > 0) {
@@ -848,6 +850,8 @@ class WP_Form_front
                 'post_status' => 'publish',
                 'post_type'   => 'ma_form_inputs',
             ]);
+            
+            $postData['input_id'] = $inputId;
 
             $postData = apply_filters('madeit_forms_post_data', $postData, $form->ID, $inputId);
             $postData = apply_filters('madeit_forms_'.$form->ID.'_post_data', $postData, $inputId);
