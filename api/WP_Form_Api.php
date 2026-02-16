@@ -92,6 +92,8 @@ class WP_Form_Api
                     'post_type'   => 'ma_form_inputs',
                 ]);
 
+                $postData['input_id'] = $inputId;
+
                 update_post_meta($inputId, 'form_id', $form->ID);
                 update_post_meta($inputId, 'data', json_encode($postData));
                 update_post_meta($inputId, 'ip', $this->getIP());
