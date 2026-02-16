@@ -40,6 +40,7 @@ For basic usage, you can also have a look at the [plugin homepage](https://githu
 == Changelog ==
 = 2.9.1 =
 * Improved file upload
+* Add input_id to postData
 
 = 2.9.0 =
 * Added Webhook support
