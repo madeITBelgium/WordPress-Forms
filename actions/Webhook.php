@@ -24,56 +24,32 @@ class WP_MADEIT_FORM_Webhook extends WP_MADEIT_FORM_Action
     {
         $rawBody = apply_filters('madeit_forms_webhook_raw_body', $data['wh_body'], $data, $messages, $actionInfo, $formId, $inputId, $postData);
 
-        //check json_decode errors
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            //Can we fix the error?
-            if (json_last_error() === JSON_ERROR_SYNTAX) {
-                $body = str_replace(['\n', '\r'], '', $rawBody);
-                $body = json_decode($body, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('JSON decode error: '.json_last_error_msg());
-                    error_log('Raw body: '.$rawBody);
-                } else {
-                    $rawBody = json_encode($body);
-                }
-            } else {
-                error_log('JSON decode error: '.json_last_error_msg());
-                error_log('Raw body: '.$rawBody);
-            }
-        }
-
-        //check if $rawBody is a valid JSON string
-        if (is_string($rawBody) && is_array(json_decode($rawBody, true))) {
-            $body = json_decode($rawBody, true);
-            $body = apply_filters('madeit_forms_webhook_body', $rawBody, $data, $messages, $actionInfo, $formId, $inputId, $postData);
-        } else {
-            $body = $rawBody;
-        }
+        $body = $this->buildBody($rawBody, $actionInfo, $postData);
+        $body = apply_filters('madeit_forms_webhook_body', $body, $data, $messages, $actionInfo, $formId, $inputId, $postData);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $data['wh_url']);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $data['wh_type']);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        $requestHeaders = [
             'Content-Type: application/json',
             'Accept: application/json',
-        ]);
+        ];
 
         if (!empty($data['wh_headers'])) {
             $headers = explode("\n", $data['wh_headers']);
             foreach ($headers as $header) {
                 $header = trim($header);
                 if (!empty($header)) {
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, [$header]);
+                    $requestHeaders[] = $header;
                 }
             }
         }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
 
-        if (!empty($body)) {
-            if (is_array($body)) {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
-            } else {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-            }
+        if (is_array($body) && !empty($body)) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, wp_json_encode($body));
+        } elseif (is_string($body) && $body !== '') {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
@@ -83,8 +59,8 @@ class WP_MADEIT_FORM_Webhook extends WP_MADEIT_FORM_Action
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $server_output = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         if ($httpcode === 200) {
@@ -94,5 +70,59 @@ class WP_MADEIT_FORM_Webhook extends WP_MADEIT_FORM_Action
         }
 
         return true;
+    }
+
+    private function buildBody($rawBody, $actionInfo, $postData)
+    {
+        if (is_string($rawBody)) {
+            $decodedBody = json_decode($rawBody, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decodedBody)) {
+                return $decodedBody;
+            }
+        }
+
+        if (!is_array($postData) || !isset($actionInfo['wh_body']) || !is_string($actionInfo['wh_body'])) {
+            return [];
+        }
+
+        $templateBody = json_decode($actionInfo['wh_body'], true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($templateBody)) {
+            return [];
+        }
+
+        return $this->replacePlaceholders($templateBody, $postData);
+    }
+
+    private function replacePlaceholders($value, $postData)
+    {
+        if (is_array($value)) {
+            foreach ($value as $key => $item) {
+                $value[$key] = $this->replacePlaceholders($item, $postData);
+            }
+
+            return $value;
+        }
+
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        return preg_replace_callback('/\[([^\]]+)\]/', function ($matches) use ($postData) {
+            $tag = $matches[1];
+            if (!array_key_exists($tag, $postData)) {
+                return $matches[0];
+            }
+
+            $replacement = $postData[$tag];
+            if (is_array($replacement)) {
+                return implode(', ', $replacement);
+            }
+
+            if (is_scalar($replacement) || $replacement === null) {
+                return (string) $replacement;
+            }
+
+            return '';
+        }, $value);
     }
 }
