@@ -1,0 +1,33 @@
+.formsModalMadeit {
+    min-height: 90vh;
+    min-width: 90vw;
+
+    .components-modal__content {
+        overflow: hidden;
+    }
+
+    iframe {
+        height: calc(90vh - 86px) !important;
+    }
+}
+
+.madeit-form-preview-wrapper {
+
+    > div:last-child {
+        pointer-events: none;
+    }
+}
+
+[data-type="madeit/forms"] {
+    .components-placeholder {
+        text-align: center;
+        align-items: center;
+
+        .components-placeholder__fieldset {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+    }
+}

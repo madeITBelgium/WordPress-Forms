@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/block.json",
+  "apiVersion": 2,
+  "name": "madeit/forms",
+  "version": "0.2.0",
+  "title": "Made I.T. Form",
+  "category": "madeit",
+  "icon": "feedback",
+  "description": "Selecteer een Made I.T. formulier",
+  "textdomain": "forms-by-made-it",
+  "attributes": {
+    "formId": {
+      "type": "number"
+    }
+  },
+  "editorScript": "file:./build/index.js",
+  "editorStyle": "file:./build/index.css",
+  "style": "file:./build/style-index.css",
+  "supports": {
+    "html": false
+  }
+}
