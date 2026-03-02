@@ -251,7 +251,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getEmailCampaign**
-> \SendinBlue\Client\Model\GetEmailCampaign getEmailCampaign($campaignId)
+> \SendinBlue\Client\Model\GetEmailCampaign getEmailCampaign($campaignId, $statistics)
 
 Get an email campaign report
 
@@ -276,9 +276,10 @@ $apiInstance = new SendinBlue\Client\Api\EmailCampaignsApi(
     $config
 );
 $campaignId = 789; // int | Id of the campaign
+$statistics = "statistics_example"; // string | Filter on the type of statistics required. Example **globalStats** value will only fetch globalStats info of the campaign in returned response.
 
 try {
-    $result = $apiInstance->getEmailCampaign($campaignId);
+    $result = $apiInstance->getEmailCampaign($campaignId, $statistics);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling EmailCampaignsApi->getEmailCampaign: ', $e->getMessage(), PHP_EOL;
@@ -291,6 +292,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **campaignId** | **int**| Id of the campaign |
+ **statistics** | **string**| Filter on the type of statistics required. Example **globalStats** value will only fetch globalStats info of the campaign in returned response. | [optional]
 
 ### Return type
 
@@ -308,7 +310,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getEmailCampaigns**
-> \SendinBlue\Client\Model\GetEmailCampaigns getEmailCampaigns($type, $status, $startDate, $endDate, $limit, $offset, $sort)
+> \SendinBlue\Client\Model\GetEmailCampaigns getEmailCampaigns($type, $status, $statistics, $startDate, $endDate, $limit, $offset, $sort)
 
 Return all your created email campaigns
 
@@ -334,14 +336,15 @@ $apiInstance = new SendinBlue\Client\Api\EmailCampaignsApi(
 );
 $type = "type_example"; // string | Filter on the type of the campaigns
 $status = "status_example"; // string | Filter on the status of the campaign
+$statistics = "statistics_example"; // string | Filter on the type of statistics required. Example **globalStats** value will only fetch globalStats info of the campaign in returned response.
 $startDate = "startDate_example"; // string | Mandatory if endDate is used. Starting (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent email campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either 'status' not passed and if passed is set to 'sent' )
 $endDate = "endDate_example"; // string | Mandatory if startDate is used. Ending (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent email campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either 'status' not passed and if passed is set to 'sent' )
-$limit = 500; // int | Number of documents per page
+$limit = 50; // int | Number of documents per page
 $offset = 0; // int | Index of the first document in the page
 $sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
-    $result = $apiInstance->getEmailCampaigns($type, $status, $startDate, $endDate, $limit, $offset, $sort);
+    $result = $apiInstance->getEmailCampaigns($type, $status, $statistics, $startDate, $endDate, $limit, $offset, $sort);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling EmailCampaignsApi->getEmailCampaigns: ', $e->getMessage(), PHP_EOL;
@@ -355,9 +358,10 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **type** | **string**| Filter on the type of the campaigns | [optional]
  **status** | **string**| Filter on the status of the campaign | [optional]
+ **statistics** | **string**| Filter on the type of statistics required. Example **globalStats** value will only fetch globalStats info of the campaign in returned response. | [optional]
  **startDate** | **string**| Mandatory if endDate is used. Starting (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent email campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either &#39;status&#39; not passed and if passed is set to &#39;sent&#39; ) | [optional]
  **endDate** | **string**| Mandatory if startDate is used. Ending (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent email campaigns. Prefer to pass your timezone in date-time format for accurate result ( only available if either &#39;status&#39; not passed and if passed is set to &#39;sent&#39; ) | [optional]
- **limit** | **int**| Number of documents per page | [optional] [default to 500]
+ **limit** | **int**| Number of documents per page | [optional] [default to 50]
  **offset** | **int**| Index of the first document in the page | [optional] [default to 0]
  **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
@@ -726,7 +730,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **uploadImageToGallery**
-> uploadImageToGallery($uploadImage)
+> \SendinBlue\Client\Model\UploadImageModel uploadImageToGallery($uploadImage)
 
 Upload an image to your account's image gallery
 
@@ -753,7 +757,8 @@ $apiInstance = new SendinBlue\Client\Api\EmailCampaignsApi(
 $uploadImage = new \SendinBlue\Client\Model\UploadImageToGallery(); // \SendinBlue\Client\Model\UploadImageToGallery | Parameters to upload an image
 
 try {
-    $apiInstance->uploadImageToGallery($uploadImage);
+    $result = $apiInstance->uploadImageToGallery($uploadImage);
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling EmailCampaignsApi->uploadImageToGallery: ', $e->getMessage(), PHP_EOL;
 }
@@ -768,7 +773,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**\SendinBlue\Client\Model\UploadImageModel**](../Model/UploadImageModel.md)
 
 ### Authorization
 
