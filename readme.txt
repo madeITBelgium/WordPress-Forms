@@ -3,9 +3,9 @@ Contributors: madeit
 Donate link: http://www.madeit.be/donate/
 Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
 Requires at least: 5.0
-Tested up to: 6.8.0
+Tested up to: 6.9.4
 Requires PHP: 8.5
-Stable tag: 2.9.1
+Stable tag: 3.0.0
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -30,7 +30,7 @@ You can [translate Forms](https://www.madeit.be/forms-plugin) on [__translate.wo
 
 == Installation ==
 
-1. Upload the entire `forms-by-madeit` folder to the `/wp-content/plugins/` directory.
+1. Upload the entire `forms-by-made-it` folder to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 You will find 'Forms' menu in your WordPress admin panel.
@@ -38,6 +38,12 @@ You will find 'Forms' menu in your WordPress admin panel.
 For basic usage, you can also have a look at the [plugin homepage](https://github.com/madeITBelgium/WordPress-Forms).
 
 == Changelog ==
+= 3.0.0 =
+* Improved gutenberg block
+* Improved file upload
+* Improved security
+* Odoo integration
+
 = 2.9.1 =
 * Improved file upload
 * Add input_id to postData
