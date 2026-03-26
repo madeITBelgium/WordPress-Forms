@@ -82,7 +82,7 @@ class WP_Form_front
             }
         }
 
-        if ($form->post_type !== 'ma_forms') {
+        if ($form !== null && $form->post_type !== 'ma_forms') {
             return __("Can't display the form.", 'forms-by-made-it');
         }
         $this->form_id = $form->ID;

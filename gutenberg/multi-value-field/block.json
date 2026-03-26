@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json.schemastore.org/block.json",
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"name": "madeitforms/multi-value-field",
 	"version": "0.2.0",
 	"title": "Forms Multi Value Field",

@@ -162,9 +162,64 @@ require_once MADEIT_FORM_DIR.'/api/WP_Form_Api.php';
 $wp_NBD_api = new WP_Form_Api($wp_madeit_form_settings);
 $wp_NBD_api->addHooks();
 
+require_once MADEIT_FORM_DIR.'/api/WP_MADEIT_FORMS_Rest.php';
+$wp_madeit_forms_rest = new WP_MADEIT_FORMS_Rest();
+$wp_madeit_forms_rest->addHooks();
+
 function wp_form_api_save_input($id, $data)
 {
     global $wp_NBD_api;
 
     return $wp_NBD_api->save($id, $data);
+}
+
+add_filter('allowed_block_types_all', 'madeit_hide_form_blocks_from_editor', 10, 2);
+
+function madeit_hide_form_blocks_from_editor($allowed_blocks, $editor_context)
+{
+    $form_blocks = [
+        'madeitforms/input-field',
+        'madeitforms/largeinput-field',
+        'madeitforms/multi-value-field',
+        'madeitforms/question-seperator',
+        'madeitforms/radio-value-field',
+        'madeitforms/submit-field',
+        'madeitforms/upload-field',
+    ];
+
+    $post_type = null;
+    if (is_object($editor_context) && isset($editor_context->post) && !empty($editor_context->post)) {
+        if (isset($editor_context->post->post_type)) {
+            $post_type = $editor_context->post->post_type;
+        }
+    }
+
+    // Only show/allow the field blocks inside the actual form editor post type(s).
+    // The plugin admin already whitelists blocks for `ma_forms`.
+    if (in_array($post_type, ['ma_forms', 'madeit-form'], true)) {
+        return $allowed_blocks;
+    }
+
+    // If nothing is allowed anyway, keep it that way.
+    if ($allowed_blocks === false) {
+        return false;
+    }
+
+    // WordPress can pass `true` (= all blocks) or an array of allowed blocks.
+    if ($allowed_blocks === true || $allowed_blocks === null) {
+        if (!class_exists('WP_Block_Type_Registry')) {
+            return $allowed_blocks;
+        }
+
+        $registry = WP_Block_Type_Registry::get_instance();
+        $all_registered = array_keys($registry->get_all_registered());
+
+        return array_values(array_diff($all_registered, $form_blocks));
+    }
+
+    if (!is_array($allowed_blocks)) {
+        return $allowed_blocks;
+    }
+
+    return array_values(array_diff($allowed_blocks, $form_blocks));
 }
