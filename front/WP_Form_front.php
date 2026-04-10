@@ -484,10 +484,10 @@ class WP_Form_front
 
     private function renderForm($id, $form, $translatedForm, $ajax = false, $extra_id = null, $atts = [])
     {
-        if($form === null) {
+        if ($form === null) {
             return;
         }
-        
+
         if ($form->post_status !== 'publish') {
             echo __('This form is not available.', 'forms-by-made-it');
 

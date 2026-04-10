@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Forms by Made It
  * Description: A plugin to create forms with the Gutenberg editor.
@@ -9,7 +10,6 @@
  * Domain Path: /languages
  * License: GPLv2.
  */
-
 if (!defined('ABSPATH')) {
     exit;
 }
