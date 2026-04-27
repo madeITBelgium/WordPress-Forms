@@ -41,3 +41,8 @@
   top: -1px;
   left: 50%;
 }
+
+.madeit-forms-ajax [type=submit].madeit-submit-loading {
+    opacity: 0.75;
+    cursor: wait;
+}

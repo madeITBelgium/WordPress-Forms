@@ -68,6 +68,12 @@ function getFormJSON(form) {
 
 function submitMadeitForm(formId) {
     if(jQuery('#' + formId).hasClass('madeit-forms-ajax')) {
+        if (isSubmitLoading(formId)) {
+            return;
+        }
+
+        setSubmitLoading(formId, true);
+
         /*if(! jQuery('#' + formId).checkValidity()) {
             console.log('Validation failed');
             jQuery('#' + formId).find(':submit').click();
@@ -80,6 +86,8 @@ function submitMadeitForm(formId) {
 
         result.action = 'madeit_forms_submit';
         jQuery.post('/wp-admin/admin-ajax.php', result, function(data) {
+            setSubmitLoading(formId, false);
+
             if(data.success) {
                 jQuery('#' + formId).before('<div class="madeit-form-success">' + data.message + '</div>');
                 jQuery('#' + formId).hide();
@@ -99,10 +107,54 @@ function submitMadeitForm(formId) {
                 }, 1000);
                 grecaptcha.reset();
             }
-        }, 'json');
+        }, 'json').fail(function() {
+            setSubmitLoading(formId, false);
+        });
     }
     else {
         document.getElementById(formId).submit();
+    }
+}
+
+function getSubmitButton(formId) {
+    return jQuery('#' + formId).find('[type=submit]').first();
+}
+
+function isSubmitLoading(formId) {
+    return getSubmitButton(formId).hasClass('madeit-submit-loading');
+}
+
+function setSubmitLoading(formId, isLoading) {
+    var submitButton = getSubmitButton(formId);
+    if(!submitButton.length) {
+        return;
+    }
+
+    var isButtonElement = submitButton.is('button');
+    var originalLabel = submitButton.data('madeit-original-label');
+    if(typeof originalLabel === 'undefined') {
+        originalLabel = isButtonElement ? submitButton.html() : submitButton.val();
+        submitButton.data('madeit-original-label', originalLabel);
+    }
+
+    if(isLoading) {
+        submitButton.addClass('madeit-submit-loading');
+        submitButton.prop('disabled', true);
+
+        if(isButtonElement) {
+            submitButton.html('Bezig...');
+        } else {
+            submitButton.val('Bezig...');
+        }
+    } else {
+        submitButton.removeClass('madeit-submit-loading');
+        submitButton.prop('disabled', false);
+
+        if(isButtonElement) {
+            submitButton.html(originalLabel);
+        } else {
+            submitButton.val(originalLabel);
+        }
     }
 }
 
