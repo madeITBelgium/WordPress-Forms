@@ -264,6 +264,13 @@ class WP_Form_front
                     //upload file and give URL
                     $file = $_FILES[$k];
 
+                    // If field not required and no file provided, skip further validation
+                    $isRequired = !empty($uploadableFields[$k]['required']);
+                    $noFileProvided = (empty($file['name']) || (isset($file['error']) && (int)$file['error'] === UPLOAD_ERR_NO_FILE) || (isset($file['size']) && (int)$file['size'] === 0));
+                    if (!$isRequired && $noFileProvided) {
+                        continue;
+                    }
+
                     //check if file is not too big
                     $phpMaxUploadSize = $this->getMaximumFileUploadSize();
                     if ($file['size'] > $phpMaxUploadSize) {
@@ -274,9 +281,19 @@ class WP_Form_front
 
                     // Validate upload error status
                     if (isset($file['error']) && $file['error'] !== UPLOAD_ERR_OK) {
-                        $error = true;
-                        $error_msg = isset($messages['file_upload_error']) ? $messages['file_upload_error'] : __('Error uploading file.', 'forms-by-made-it');
-                        $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                        // If no file provided for required field, report; otherwise skip
+                        if ($isRequired && (int)$file['error'] === UPLOAD_ERR_NO_FILE) {
+                            $error = true;
+                            $error_msg = isset($messages['invalid_required']) ? $messages['invalid_required'] : __('This field is required.', 'forms-by-made-it');
+                            $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                        } elseif ((int)$file['error'] !== UPLOAD_ERR_NO_FILE) {
+                            $error = true;
+                            $error_msg = isset($messages['file_upload_error']) ? $messages['file_upload_error'] : __('Error uploading file.', 'forms-by-made-it');
+                            $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                        } else {
+                            // Not required and no file provided: skip
+                            continue;
+                        }
                     }
 
                     // MIME-first validation based on Gutenberg field attribute `filetype`
