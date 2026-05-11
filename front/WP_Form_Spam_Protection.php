@@ -141,10 +141,10 @@ class WP_Form_Spam_Protection
         $isSpam = $score >= $threshold;
 
         return [
-            'spam' => $isSpam,
-            'score' => $score,
+            'spam'      => $isSpam,
+            'score'     => $score,
             'threshold' => $threshold,
-            'reasons' => array_values(array_unique($reasons)),
+            'reasons'   => array_values(array_unique($reasons)),
         ];
     }
 
