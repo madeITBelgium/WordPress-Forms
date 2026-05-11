@@ -11,6 +11,19 @@ $white: white;
 		/*rtl:ignore*/
 		text-align: right;
 	}
+
+	&.wp-block-madeitforms-submit-button__width-25 button {
+		width: 25%;
+	}
+	&.wp-block-madeitforms-submit-button__width-50 button {
+		width: 50%;
+	}
+	&.wp-block-madeitforms-submit-button__width-75 button {
+		width: 75%;
+	}
+	&.wp-block-madeitforms-submit-button__width-100 button {
+		width: 100%;
+	}
 }
 
 // Prefer the link selector instead of the regular button classname

@@ -154,6 +154,7 @@ require_once MADEIT_FORM_DIR.'/admin/WP_MADEIT_FORM_admin.php';
 $wp_madeit_form_admin = new WP_MADEIT_FORM_admin($wp_madeit_form_settings);
 $wp_madeit_form_admin->addHooks();
 
+require_once MADEIT_FORM_DIR.'/front/WP_Form_Spam_Protection.php';
 require_once MADEIT_FORM_DIR.'/front/WP_Form_front.php';
 $wp_NBD_front = new WP_Form_front($wp_madeit_form_settings);
 $wp_NBD_front->addHooks();

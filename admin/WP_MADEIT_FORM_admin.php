@@ -1121,7 +1121,7 @@ class WP_MADEIT_FORM_admin
             'madeitforms/question-seperator',
             'core/spacer',
         ];
-        if ($block_editor_context->post->post_type == 'ma_forms') {
+        if ($block_editor_context->post && $block_editor_context->post->post_type == 'ma_forms') {
             return $allowed;
         }
 
