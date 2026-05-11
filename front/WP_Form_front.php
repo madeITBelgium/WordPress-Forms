@@ -7,12 +7,17 @@ class WP_Form_front
     private $messages = [];
     private $settings;
     private $defaultSettings;
+    private $spamProtection;
     private $form_id = null;
+    private $allowedUploadExtensionsDefault = [
+        'jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv'
+    ];
 
     public function __construct($settings)
     {
         $this->settings = $settings;
         $this->defaultSettings = $this->settings->loadDefaultSettings();
+        $this->spamProtection = new WP_Form_Spam_Protection([$this, 'getIP']);
     }
 
     public function init()
@@ -97,6 +102,15 @@ class WP_Form_front
             $error = false;
             $error_msg = '';
             $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'messages', true))), true);
+
+            // Capability gating via filter (nonce intentionally omitted per caching concerns)
+            $canSubmit = apply_filters('madeit_forms_can_submit', true, $form->ID, $form, $_POST);
+            if (!$canSubmit) {
+                $error = true;
+                if (empty($error_msg)) {
+                    $error_msg = __('Submission blocked.', 'forms-by-made-it');
+                }
+            }
 
             //insert form input
             $tags = [];
@@ -257,6 +271,45 @@ class WP_Form_front
                         $error_msg = isset($messages['file_too_big']) ? $messages['file_too_big'] : __('The file is too big.', 'forms-by-made-it');
                         $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
                     }
+
+                    // Validate upload error status
+                    if (isset($file['error']) && $file['error'] !== UPLOAD_ERR_OK) {
+                        $error = true;
+                        $error_msg = isset($messages['file_upload_error']) ? $messages['file_upload_error'] : __('Error uploading file.', 'forms-by-made-it');
+                        $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                    }
+
+                    // MIME-first validation based on Gutenberg field attribute `filetype`
+                    $allowedMimes = $this->getAllowedMimesForField($uploadableFields[$k]);
+                    $check = wp_check_filetype_and_ext($file['tmp_name'], $file['name']);
+                    $mime = isset($check['type']) ? strtolower($check['type']) : '';
+                    $extLower = isset($check['ext']) ? strtolower($check['ext']) : '';
+
+                    // Disallow dangerous extensions explicitly
+                    $disallowed = apply_filters('madeit_forms_disallowed_upload_extensions', ['php','phtml','php3','php4','php5','php7','php8','phps','phar','cgi','pl','exe','sh','bash']);
+                    if (!empty($extLower) && in_array($extLower, $disallowed, true)) {
+                        $error = true;
+                        $error_msg = isset($messages['file_type_not_allowed']) ? $messages['file_type_not_allowed'] : __('Disallowed file type.', 'forms-by-made-it');
+                        $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                    }
+
+                    // If Gutenberg field defines MIME(s), require a match
+                    if (empty($error_msg) && !empty($allowedMimes)) {
+                        if (empty($mime) || !$this->mimeMatchesAllowed($mime, $allowedMimes)) {
+                            $error = true;
+                            $error_msg = isset($messages['file_type_not_allowed']) ? $messages['file_type_not_allowed'] : __('Invalid or disallowed file type.', 'forms-by-made-it');
+                            $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                        }
+                    } else {
+                        // Fallback: require WordPress to recognize the file
+                        if (empty($check['ext']) || empty($check['type'])) {
+                            $error = true;
+                            if (empty($error_msg)) {
+                                $error_msg = isset($messages['file_type_not_allowed']) ? $messages['file_type_not_allowed'] : __('Invalid or disallowed file type.', 'forms-by-made-it');
+                                $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                            }
+                        }
+                    }
                 }
             }
 
@@ -266,8 +319,9 @@ class WP_Form_front
                 $uploadDir = wp_upload_dir();
                 $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/';
                 if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0775, true);
+                    mkdir($uploadDir, 0755, true);
                 }
+                $this->ensureUploadsProtection($uploadDir);
 
                 foreach ($_FILES as $k => $v) {
                     //upload file and give URL
@@ -280,14 +334,49 @@ class WP_Form_front
                         continue;
                     }
 
-                    //get file extension
-                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                    // Determine safe mimetype and extension via WordPress check
+                    $check = wp_check_filetype_and_ext($file['tmp_name'], $file['name']);
+                    $mime = isset($check['type']) ? strtolower($check['type']) : '';
+                    $ext = isset($check['ext']) ? strtolower($check['ext']) : '';
+                    $allowedMimes = $this->getAllowedMimesForField($uploadableFields[$k]);
 
-                    //generate random filename
-                    $filename = md5(uniqid($file['name'].random_int(1000, 9999).time(), true)).'.'.$ext;
+                    // Disallow dangerous extensions explicitly
+                    $disallowed = apply_filters('madeit_forms_disallowed_upload_extensions', ['php','phtml','php3','php4','php5','php7','php8','phps','phar','cgi','pl','exe','sh','bash']);
+                    if (!empty($ext) && in_array($ext, $disallowed, true)) {
+                        $error = true;
+                        $error_msg = isset($messages['file_type_not_allowed']) ? $messages['file_type_not_allowed'] : __('Disallowed file type.', 'forms-by-made-it');
+                        $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                    }
+
+                    if (empty($error_msg) && !empty($allowedMimes)) {
+                        if (empty($mime) || !$this->mimeMatchesAllowed($mime, $allowedMimes)) {
+                            $error = true;
+                            $error_msg = isset($messages['file_type_not_allowed']) ? $messages['file_type_not_allowed'] : __('Invalid or disallowed file type.', 'forms-by-made-it');
+                            $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                        }
+                    } else {
+                        if (empty($check['ext']) || empty($check['type'])) {
+                            $error = true;
+                            if (empty($error_msg)) {
+                                $error_msg = isset($messages['file_type_not_allowed']) ? $messages['file_type_not_allowed'] : __('Invalid or disallowed file type.', 'forms-by-made-it');
+                                $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                            }
+                        }
+                    }
+
+                    // If no extension from WP, try to infer from MIME; fallback to .bin
+                    if (empty($ext) && !empty($mime)) {
+                        $ext = $this->extensionFromMime($mime);
+                    }
+                    if (empty($ext)) {
+                        $ext = 'bin';
+                    }
+
+                    //generate random unique filename, keeping only validated extension
+                    $filename = wp_unique_filename($uploadDir, md5(uniqid((string) random_int(1000, 9999), true)).'.'.$ext);
 
                     //move file to upload dir
-                    $result = move_uploaded_file($file['tmp_name'], $uploadDir.$filename);
+                    $result = @move_uploaded_file($file['tmp_name'], $uploadDir.$filename);
                     if ($result === false) {
                         $error = true;
                         $error_msg = isset($messages['file_upload_error']) ? $messages['file_upload_error'] : __('Error uploading file.', 'forms-by-made-it');
@@ -340,6 +429,8 @@ class WP_Form_front
             unset($attsOrig['id']);
             $postData = array_merge($attsOrig, $postData);
             unset($postData['form_id']);
+            unset($postData['madeit_form_rendered_at']);
+            unset($postData['madeit_website']);
             foreach ($postData as $k => $v) {
                 if (!in_array($k, $tags)) {
                     $postData[] = null;
@@ -361,8 +452,9 @@ class WP_Form_front
                     $uploadDir = wp_upload_dir();
                     $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/'.$inputId.'/';
                     if (!file_exists($uploadDir)) {
-                        mkdir($uploadDir, 0777, true);
+                        mkdir($uploadDir, 0755, true);
                     }
+                    $this->ensureUploadsProtection($uploadDir);
 
                     foreach ($uploadedFiles as $k => $v) {
                         //move file to new path
@@ -515,6 +607,8 @@ class WP_Form_front
         echo '>';
 
         echo '<input type="hidden" name="form_id" value="'.$id.'">';
+        echo '<input type="hidden" name="madeit_form_rendered_at" value="'.time().'">';
+        echo '<input type="text" name="madeit_website" value="" class="madeit-forms-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">';
         if (get_post_meta($form->ID, 'form_type', true) === 'html') {
             $formValue = get_post_meta($form->ID, 'form', true);
             $formValue = str_replace('\"', '"', $formValue);
@@ -700,6 +794,13 @@ class WP_Form_front
         }
         $this->form_id = $form->ID;
 
+        // Capability gating via filter (nonce intentionally omitted per caching concerns)
+        $canSubmit = apply_filters('madeit_forms_can_submit', true, $form->ID, $form, $_POST);
+        if (!$canSubmit) {
+            echo json_encode(['success' => false, 'message' => __('Submission blocked.', 'forms-by-made-it')]);
+            wp_die();
+        }
+
         if ($this->isSpam($_POST)) {
             $this->notifyError('Spam detected.');
             echo json_encode(['success' => false, 'message' => __('Spam detected.', 'forms-by-made-it')]);
@@ -846,6 +947,8 @@ class WP_Form_front
         }
         unset($postData['form_id']);
         unset($postData['action']);
+        unset($postData['madeit_form_rendered_at']);
+        unset($postData['madeit_website']);
 
         $inputId = -1;
         if (get_post_meta($form->ID, 'save_inputs', true) == 1) {
@@ -961,46 +1064,11 @@ class WP_Form_front
 
     private function isSpam($data)
     {
-        $spam = false;
-
-        //Check if IP is spam listed
-        $spamIPs = apply_filters('madeit_forms_spam_ips', []);
-        if (in_array($this->getIP(), $spamIPs)) {
-            $spam = true;
+        if (!$this->spamProtection instanceof WP_Form_Spam_Protection) {
+            $this->spamProtection = new WP_Form_Spam_Protection([$this, 'getIP']);
         }
 
-        //check user agent
-        $spamUserAgents = apply_filters('madeit_forms_spam_user_agents', [
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36 OPR/89.0.4447.51',
-            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.99',
-            'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.106',
-            'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:102.0) Gecko/20100101 Firefox/102.0',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68',
-        ]);
-        if (isset($_SERVER['HTTP_USER_AGENT']) && in_array($_SERVER['HTTP_USER_AGENT'], $spamUserAgents)) {
-            $spam = true;
-        }
-
-        //check words
-        $spamWords = apply_filters('madeit_forms_spam_words', ['mail.ru']);
-        foreach ($spamWords as $spamWord) {
-            foreach ($data as $k => $v) {
-                if (is_array($v)) {
-                    $v = implode(' ', $v);
-                }
-
-                if (stripos($v, $spamWord) !== false) {
-                    $spam = true;
-                    break;
-                }
-            }
-        }
-
-        return $spam;
+        return $this->spamProtection->isSpam($data);
     }
 
     private function hasAlreadyCompletedThisForm($formId)
@@ -1110,5 +1178,90 @@ class WP_Form_front
         }
 
         return (int) $iValue;
+    }
+
+    private function ensureUploadsProtection($dir)
+    {
+        $base = rtrim($dir, '/');
+        $baseForms = dirname($base);
+        // Ensure a .htaccess one level up (madeit-forms) and in current dir
+        $targets = [$baseForms, $base];
+        $rules = "# Security: block script execution in form uploads\n".
+                 "<FilesMatch \\\"\\.(php|phtml|php3|php4|php5|php7|php8|phps|phar)$\\\">\n".
+                 "  Require all denied\n".
+                 "</FilesMatch>\n".
+                 "Options -ExecCGI\n".
+                 "RemoveHandler .php .phtml .phar\n".
+                 "RemoveType .php .phtml .phar\n";
+        foreach ($targets as $t) {
+            if (!is_dir($t)) {
+                @mkdir($t, 0755, true);
+            }
+            $ht = rtrim($t, '/').'/.htaccess';
+            if (!file_exists($ht)) {
+                @file_put_contents($ht, $rules);
+            }
+        }
+    }
+
+    private function getAllowedMimesForField($fieldAttrs)
+    {
+        $list = [];
+        if (is_array($fieldAttrs)) {
+            $keys = ['filetype'];
+            foreach ($keys as $key) {
+                if (!empty($fieldAttrs[$key])) {
+                    if (is_array($fieldAttrs[$key])) {
+                        $parts = $fieldAttrs[$key];
+                    } else {
+                        $parts = preg_split('/[,\s]+/', (string) $fieldAttrs[$key]);
+                    }
+                    foreach ($parts as $p) {
+                        $p = trim(strtolower((string) $p));
+                        if ($p !== '') {
+                            $list[] = $p;
+                        }
+                    }
+                }
+            }
+        }
+        $list = array_values(array_unique($list));
+        return apply_filters('madeit_forms_allowed_upload_mimes', $list, $fieldAttrs, $this->form_id);
+    }
+
+    private function mimeMatchesAllowed($mime, $allowed)
+    {
+        $mime = strtolower((string) $mime);
+        foreach ((array) $allowed as $allow) {
+            $allow = strtolower((string) $allow);
+            if ($allow === $mime) {
+                return true;
+            }
+            if (substr($allow, -2) === '/*') {
+                $prefix = substr($allow, 0, strpos($allow, '/*'));
+                if (strpos($mime, $prefix.'/') === 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private function extensionFromMime($mime)
+    {
+        $mime = strtolower((string) $mime);
+        $map = wp_get_mime_types(); // ext(s) => mime
+        foreach ($map as $exts => $m) {
+            if (strtolower($m) === $mime) {
+                $first = explode('|', $exts)[0];
+                return strtolower($first);
+            }
+        }
+        // Fallbacks for common types possibly missing
+        $fallback = [
+            'application/pdf' => 'pdf',
+            'text/plain' => 'txt',
+        ];
+        return isset($fallback[$mime]) ? $fallback[$mime] : '';
     }
 }
