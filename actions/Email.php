@@ -38,7 +38,10 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
         add_filter('wp_mail_from_name', [$this, 'my_mail_from_name']);
         add_filter('wp_mail_content_type', [$this, 'set_html_mail_content_type']);
 
-        $result = wp_mail($data['to'], $data['subject'], $email, $data['header']);
+        $attachments = [];
+        $attachments = apply_filters('madeit_forms_' . $formId . '_email_attachments', $attachments, $inputId, $postData);
+
+        $result = wp_mail($data['to'], $data['subject'], $email, $data['header'], $attachments);
         if ($result !== true) {
             return isset($messages['action_email_email_error']) ? $messages['action_email_email_error'] : $messages['failed'];
         }
