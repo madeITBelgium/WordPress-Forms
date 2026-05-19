@@ -39,7 +39,7 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
         add_filter('wp_mail_content_type', [$this, 'set_html_mail_content_type']);
 
         $attachments = [];
-        $attachments = apply_filters('madeit_forms_' . $formId . '_email_attachments', $attachments, $inputId, $postData);
+        $attachments = apply_filters('madeit_forms_'.$formId.'_email_attachments', $attachments, $inputId, $postData);
 
         $result = wp_mail($data['to'], $data['subject'], $email, $data['header'], $attachments);
         if ($result !== true) {
