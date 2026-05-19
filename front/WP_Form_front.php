@@ -10,7 +10,7 @@ class WP_Form_front
     private $spamProtection;
     private $form_id = null;
     private $allowedUploadExtensionsDefault = [
-        'jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv'
+        'jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv',
     ];
 
     public function __construct($settings)
@@ -266,7 +266,7 @@ class WP_Form_front
 
                     // If field not required and no file provided, skip further validation
                     $isRequired = !empty($uploadableFields[$k]['required']);
-                    $noFileProvided = (empty($file['name']) || (isset($file['error']) && (int)$file['error'] === UPLOAD_ERR_NO_FILE) || (isset($file['size']) && (int)$file['size'] === 0));
+                    $noFileProvided = (empty($file['name']) || (isset($file['error']) && (int) $file['error'] === UPLOAD_ERR_NO_FILE) || (isset($file['size']) && (int) $file['size'] === 0));
                     if (!$isRequired && $noFileProvided) {
                         continue;
                     }
@@ -282,11 +282,11 @@ class WP_Form_front
                     // Validate upload error status
                     if (isset($file['error']) && $file['error'] !== UPLOAD_ERR_OK) {
                         // If no file provided for required field, report; otherwise skip
-                        if ($isRequired && (int)$file['error'] === UPLOAD_ERR_NO_FILE) {
+                        if ($isRequired && (int) $file['error'] === UPLOAD_ERR_NO_FILE) {
                             $error = true;
                             $error_msg = isset($messages['invalid_required']) ? $messages['invalid_required'] : __('This field is required.', 'forms-by-made-it');
                             $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
-                        } elseif ((int)$file['error'] !== UPLOAD_ERR_NO_FILE) {
+                        } elseif ((int) $file['error'] !== UPLOAD_ERR_NO_FILE) {
                             $error = true;
                             $error_msg = isset($messages['file_upload_error']) ? $messages['file_upload_error'] : __('Error uploading file.', 'forms-by-made-it');
                             $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
@@ -303,7 +303,7 @@ class WP_Form_front
                     $extLower = isset($check['ext']) ? strtolower($check['ext']) : '';
 
                     // Disallow dangerous extensions explicitly
-                    $disallowed = apply_filters('madeit_forms_disallowed_upload_extensions', ['php','phtml','php3','php4','php5','php7','php8','phps','phar','cgi','pl','exe','sh','bash']);
+                    $disallowed = apply_filters('madeit_forms_disallowed_upload_extensions', ['php', 'phtml', 'php3', 'php4', 'php5', 'php7', 'php8', 'phps', 'phar', 'cgi', 'pl', 'exe', 'sh', 'bash']);
                     if (!empty($extLower) && in_array($extLower, $disallowed, true)) {
                         $error = true;
                         $error_msg = isset($messages['file_type_not_allowed']) ? $messages['file_type_not_allowed'] : __('Disallowed file type.', 'forms-by-made-it');
@@ -358,7 +358,7 @@ class WP_Form_front
                     $allowedMimes = $this->getAllowedMimesForField($uploadableFields[$k]);
 
                     // Disallow dangerous extensions explicitly
-                    $disallowed = apply_filters('madeit_forms_disallowed_upload_extensions', ['php','phtml','php3','php4','php5','php7','php8','phps','phar','cgi','pl','exe','sh','bash']);
+                    $disallowed = apply_filters('madeit_forms_disallowed_upload_extensions', ['php', 'phtml', 'php3', 'php4', 'php5', 'php7', 'php8', 'phps', 'phar', 'cgi', 'pl', 'exe', 'sh', 'bash']);
                     if (!empty($ext) && in_array($ext, $disallowed, true)) {
                         $error = true;
                         $error_msg = isset($messages['file_type_not_allowed']) ? $messages['file_type_not_allowed'] : __('Disallowed file type.', 'forms-by-made-it');
@@ -593,10 +593,10 @@ class WP_Form_front
 
     private function renderForm($id, $form, $translatedForm, $ajax = false, $extra_id = null, $atts = [])
     {
-        if($form === null) {
+        if ($form === null) {
             return;
         }
-        
+
         if ($form->post_status !== 'publish') {
             echo __('This form is not available.', 'forms-by-made-it');
 
@@ -1243,6 +1243,7 @@ class WP_Form_front
             }
         }
         $list = array_values(array_unique($list));
+
         return apply_filters('madeit_forms_allowed_upload_mimes', $list, $fieldAttrs, $this->form_id);
     }
 
@@ -1261,6 +1262,7 @@ class WP_Form_front
                 }
             }
         }
+
         return false;
     }
 
@@ -1271,14 +1273,16 @@ class WP_Form_front
         foreach ($map as $exts => $m) {
             if (strtolower($m) === $mime) {
                 $first = explode('|', $exts)[0];
+
                 return strtolower($first);
             }
         }
         // Fallbacks for common types possibly missing
         $fallback = [
             'application/pdf' => 'pdf',
-            'text/plain' => 'txt',
+            'text/plain'      => 'txt',
         ];
+
         return isset($fallback[$mime]) ? $fallback[$mime] : '';
     }
 }
