@@ -6,7 +6,7 @@
  * Description: Build cool, easy and flexible forms with Forms.
  * Author: Made I.T.
  * Author URI: https://www.madeit.be
- * Version: 3.0.0
+ * Version: 3.0.1
  * Text Domain: forms-by-made-it
  * Domain Path: /languages
  * License: GPLv2.
@@ -23,6 +23,9 @@ if (!defined('MADEIT_FORM_ADMIN')) {
 }
 if (!defined('MADEIT_FORM_FRONT')) {
     define('MADEIT_FORM_FRONT', MADEIT_FORM_DIR.'/front'); // Admin Dir
+}
+if (!defined('MADEIT_FORM_VERSION')) {
+    define('MADEIT_FORM_VERSION', '3.0.1');
 }
 require_once MADEIT_FORM_DIR.'/vendor/autoload.php';
 

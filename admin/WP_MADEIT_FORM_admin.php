@@ -1318,7 +1318,7 @@ class WP_MADEIT_FORM_admin
                         if (count($space) <= 1) {
                             $key = $space[0];
                         } else {
-                            $key = $space[count($space) - 1];
+                            $key = array_last($space);
                         }
                     } else {
                         $tags[$key] = substr($o, 0, strpos($o, '"'));

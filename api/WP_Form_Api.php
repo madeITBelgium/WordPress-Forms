@@ -153,7 +153,7 @@ class WP_Form_Api
         if ($pos !== false) {
             $tags = explode('[', substr($form, 0, $pos));
             if (count($tags) > 0) {
-                $spaces = explode(' ', $tags[count($tags) - 1]);
+                $spaces = explode(' ', array_last($tags));
                 if (isset($spaces[0])) {
                     return $spaces[0];
                 }
@@ -177,7 +177,7 @@ class WP_Form_Api
                     if (count($space) <= 1) {
                         $key = $space[0];
                     } else {
-                        $key = $space[count($space) - 1];
+                        $key = array_last($space);
                     }
                 } else {
                     $data[$key] = substr($o, 0, strpos($o, '"'));

@@ -42,9 +42,33 @@
   left: 50%;
 }
 
-.madeit-forms-ajax [type=submit].madeit-submit-loading {
+.madeit-forms-ajax [type=submit].madeit-submit-loading,
+.madeit-forms-noajax [type=submit].madeit-submit-loading {
     opacity: 0.75;
     cursor: wait;
+}
+
+button.madeit-submit-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.madeit-submit-loading-indicator {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: madeit-submit-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes madeit-submit-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .madeit-forms-honeypot {

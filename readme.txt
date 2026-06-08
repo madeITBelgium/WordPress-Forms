@@ -5,7 +5,7 @@ Tags: contact, form, contact form, feedback, email, captcha, form submit, newsle
 Requires at least: 5.0
 Tested up to: 6.9.4
 Requires PHP: 8.5
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,6 +38,9 @@ You will find 'Forms' menu in your WordPress admin panel.
 For basic usage, you can also have a look at the [plugin homepage](https://github.com/madeITBelgium/WordPress-Forms).
 
 == Changelog ==
+= 3.0.1 =
+* Bug fixes
+
 = 3.0.0 =
 * Improved gutenberg block
 * Improved file upload

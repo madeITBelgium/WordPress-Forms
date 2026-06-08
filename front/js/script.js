@@ -4,6 +4,23 @@ jQuery( document ).ready( function( $ ) {
         submitMadeitForm($(this).attr('id'));
     });
 
+    $('.madeit-forms-noajax').submit(function() {
+        var formId = $(this).attr('id');
+        console.log('Submitting form with ID:', formId);
+        if(!formId) {
+            console.error('Form ID is required for non-ajax forms to prevent multiple submissions.');
+            return true;
+        }
+
+        if (isSubmitLoading(formId)) {
+            console.log('Form submission is already in progress for form ID:', formId);
+            return false;
+        }
+
+        setSubmitLoading(formId, true);
+        return true;
+    });
+
     if($('.madeit-forms-quiz-container').length) {
         //Has quiz!
 
@@ -112,12 +129,13 @@ function submitMadeitForm(formId) {
         });
     }
     else {
+        setSubmitLoading(formId, true);
         document.getElementById(formId).submit();
     }
 }
 
 function getSubmitButton(formId) {
-    return jQuery('#' + formId).find('[type=submit]').first();
+    return jQuery('#' + formId).find('button.wp-block-madeitforms-submit-button__link').first();
 }
 
 function isSubmitLoading(formId) {
@@ -126,7 +144,9 @@ function isSubmitLoading(formId) {
 
 function setSubmitLoading(formId, isLoading) {
     var submitButton = getSubmitButton(formId);
+    console.log('Setting submit loading state for form ID:', formId, 'Loading:', isLoading);
     if(!submitButton.length) {
+        console.error('Submit button not found for form ID:', formId);
         return;
     }
 
@@ -142,7 +162,7 @@ function setSubmitLoading(formId, isLoading) {
         submitButton.prop('disabled', true);
 
         if(isButtonElement) {
-            submitButton.html('Bezig...');
+            submitButton.html('<span class="madeit-submit-loading-indicator" aria-hidden="true"></span><span class="madeit-submit-loading-text">Bezig...</span>');
         } else {
             submitButton.val('Bezig...');
         }

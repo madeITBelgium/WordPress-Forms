@@ -33,12 +33,13 @@ class WP_Form_front
         }
 
         if (!is_admin()) {
-            wp_register_style('madeit-form-style', MADEIT_FORM_URL.'front/css/style.css', [], null);
+            $assetVersion = defined('MADEIT_FORM_VERSION') ? MADEIT_FORM_VERSION : null;
+            wp_register_style('madeit-form-style', MADEIT_FORM_URL.'front/css/style.css', [], $assetVersion);
             wp_enqueue_style('madeit-form-style');
             if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
                 wp_enqueue_script('recaptcha', 'https://www.google.com/recaptcha/api.js', [], null, true);
             }
-            wp_enqueue_script('madeit-form-script', MADEIT_FORM_URL.'front/js/script.js', ['jquery'], null, true);
+            wp_enqueue_script('madeit-form-script', MADEIT_FORM_URL.'front/js/script.js', ['jquery'], $assetVersion, true);
         }
         $this->shortCodes();
     }
@@ -730,7 +731,7 @@ class WP_Form_front
         if ($pos !== false) {
             $tags = explode('[', substr($form, 0, $pos));
             if (count($tags) > 0) {
-                $spaces = explode(' ', $tags[count($tags) - 1]);
+                $spaces = explode(' ', array_last($tags));
                 if (isset($spaces[0])) {
                     return $spaces[0];
                 }
@@ -754,7 +755,7 @@ class WP_Form_front
                     if (count($space) <= 1) {
                         $key = $space[0];
                     } else {
-                        $key = $space[count($space) - 1];
+                        $key = array_last($space);
                     }
                 } else {
                     $data[$key] = substr($o, 0, strpos($o, '"'));
