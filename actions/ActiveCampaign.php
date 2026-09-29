@@ -160,16 +160,16 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
     private function requestAC($type, $url, $apitoken, $data = null)
     {
         $response = wp_safe_remote_request($url, [
-            'method' => $type,
+            'method'  => $type,
             'headers' => [
-                'Api-Token' => $apitoken,
-                'Accept' => 'application/json',
+                'Api-Token'    => $apitoken,
+                'Accept'       => 'application/json',
                 'Content-Type' => 'application/json',
             ],
-            'body' => $data === null ? null : wp_json_encode($data),
-            'timeout' => 30,
-            'redirection' => 0,
-            'sslverify' => true,
+            'body'                => $data === null ? null : wp_json_encode($data),
+            'timeout'             => 30,
+            'redirection'         => 0,
+            'sslverify'           => true,
             'limit_response_size' => 65536,
         ]);
         if (is_wp_error($response)) {

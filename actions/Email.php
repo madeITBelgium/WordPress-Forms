@@ -33,8 +33,8 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
         if (isset($data['sync_view']) && $data['sync_view'] == 'checked' && !empty($data['id']) && (int) $data['id'] > 0) {
             $trackingUrl = add_query_arg([
                 'madeit_forms_view' => 'yes',
-                'input_id' => (int) $data['id'],
-                'token' => wp_hash('madeit_forms_view_'.(int) $data['id']),
+                'input_id'          => (int) $data['id'],
+                'token'             => wp_hash('madeit_forms_view_'.(int) $data['id']),
             ], get_home_url());
             $email .= '<img src="'.esc_url($trackingUrl).'" width="1" height="1">';
         }
