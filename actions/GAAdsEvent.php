@@ -17,12 +17,17 @@ class WP_MADEIT_FORM_GAAdsEvent extends WP_MADEIT_FORM_Action
 
     public function callback($data, $messages, $actionInfo, $formId = null, $inputId = null, $postData = null)
     {
-        return ['type' => 'HTML', 'code' => '<script async src="https://www.googletagmanager.com/gtag/js?id='.$data['ga_ads_event_code']."\"></script>
+        $flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+        $source = 'https://www.googletagmanager.com/gtag/js?id='.rawurlencode($data['ga_ads_event_code']);
+        $code = wp_json_encode($data['ga_ads_event_code'], $flags);
+        $conversion = wp_json_encode(['send_to' => $data['ga_ads_event_send_to']], $flags);
+
+        return ['type' => 'HTML', 'code' => '<script async src="'.esc_url($source).'"></script>
         <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments)};
-        gtag('js', new Date());
-        gtag('config', '".$data['ga_ads_event_code']."');
-        gtag('event', 'conversion', {'send_to': '".$data['ga_ads_event_send_to']."'});</script>"];
+        gtag("js", new Date());
+        gtag("config", '.$code.');
+        gtag("event", "conversion", '.$conversion.');</script>'];
     }
 }

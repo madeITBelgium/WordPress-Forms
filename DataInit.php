@@ -113,13 +113,20 @@ class DataInit
         add_role('ma_form_role', 'Forms management', ['read' => true, 'edit_posts' => false, 'delete_posts' => false, 'publish_posts' => false, 'upload_files' => true]);
 
         $capabilities = [
-            'edit_post'             => 'edit_form',
-            'read_post'             => 'read_forms',
-            'delete_post'           => 'delete_form',
-            'edit_posts'            => 'edit_forms',
-            'edit_others_posts'     => 'edit_others_forms',
-            'publish_posts'         => 'publish_forms',
-            'read_private_posts'    => 'read_private_forms',
+            'edit_post'             => 'manage_options',
+            'read_post'             => 'manage_options',
+            'delete_post'           => 'manage_options',
+            'edit_posts'            => 'manage_options',
+            'edit_others_posts'     => 'manage_options',
+            'publish_posts'         => 'manage_options',
+            'read_private_posts'    => 'manage_options',
+            'delete_posts'          => 'manage_options',
+            'delete_private_posts'  => 'manage_options',
+            'delete_published_posts' => 'manage_options',
+            'delete_others_posts'   => 'manage_options',
+            'edit_private_posts'    => 'manage_options',
+            'edit_published_posts'  => 'manage_options',
+            'create_posts'          => 'manage_options',
         ];
 
         $labels = [
@@ -173,6 +180,7 @@ class DataInit
             'rest_base'             => 'forms',
             'rest_controller_class' => 'WP_REST_Posts_Controller',
             'capability_type'       => 'post',
+            'capabilities'          => $capabilities,
             'map_meta_cap'          => true,
         ];
         register_post_type('ma_forms', $args);
@@ -214,7 +222,7 @@ class DataInit
             'hierarchical'          => false,
             'public'                => false,
             'show_ui'               => true,
-            'show_in_menu'          => current_user_can('edit_posts') ? 'edit.php?post_type=ma_forms' : false,
+            'show_in_menu'          => current_user_can('manage_options') ? 'edit.php?post_type=ma_forms' : false,
             'menu_position'         => 5,
             'show_in_admin_bar'     => false,
             'show_in_nav_menus'     => false,
@@ -223,9 +231,10 @@ class DataInit
             'exclude_from_search'   => true,
             'publicly_queryable'    => false,
             'rewrite'               => false,
-            'show_in_rest'          => true,
+            'show_in_rest'          => false,
             'rest_base'             => 'form_inputs',
             'capability_type'       => 'post',
+            'capabilities'          => $capabilities,
             'map_meta_cap'          => true,
         ];
         register_post_type('ma_form_inputs', $args);

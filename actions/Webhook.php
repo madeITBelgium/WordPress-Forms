@@ -27,46 +27,32 @@ class WP_MADEIT_FORM_Webhook extends WP_MADEIT_FORM_Action
         $body = $this->buildBody($rawBody, $actionInfo, $postData);
         $body = apply_filters('madeit_forms_webhook_body', $body, $data, $messages, $actionInfo, $formId, $inputId, $postData);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $data['wh_url']);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $data['wh_type']);
         $requestHeaders = [
-            'Content-Type: application/json',
-            'Accept: application/json',
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
         ];
 
         if (!empty($data['wh_headers'])) {
             $headers = explode("\n", $data['wh_headers']);
             foreach ($headers as $header) {
                 $header = trim($header);
-                if (!empty($header)) {
-                    $requestHeaders[] = $header;
+                if (strpos($header, ':') !== false) {
+                    [$name, $value] = explode(':', $header, 2);
+                    $requestHeaders[trim($name)] = trim($value);
                 }
             }
         }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
-
-        if (is_array($body) && !empty($body)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, wp_json_encode($body));
-        } elseif (is_string($body) && $body !== '') {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-        }
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-
-        $server_output = curl_exec($ch);
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($httpcode === 200) {
-            return true;
-        } elseif ($httpcode === 400) {
-            return $messages['action_wh_error'];
+        $response = wp_safe_remote_request($data['wh_url'], [
+            'method' => strtoupper($data['wh_type']),
+            'headers' => $requestHeaders,
+            'body' => is_array($body) ? wp_json_encode($body) : (string) $body,
+            'timeout' => 30,
+            'redirection' => 0,
+            'sslverify' => true,
+            'limit_response_size' => 65536,
+        ]);
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) < 200 || wp_remote_retrieve_response_code($response) >= 300) {
+            return $messages['action_wh_error'] ?? __('Webhook request failed.', 'forms-by-made-it');
         }
 
         return true;

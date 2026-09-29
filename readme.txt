@@ -5,7 +5,7 @@ Tags: contact, form, contact form, feedback, email, captcha, form submit, newsle
 Requires at least: 5.0
 Tested up to: 6.9.4
 Requires PHP: 8.5
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 License: GNU GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,6 +38,18 @@ You will find 'Forms' menu in your WordPress admin panel.
 For basic usage, you can also have a look at the [plugin homepage](https://github.com/madeITBelgium/WordPress-Forms).
 
 == Changelog ==
+= 3.0.2 =
+* Security: Escape stored submission values in all submissions-list branches, including existing records and array values.
+* Security: Escape frontend field values, settings, action arguments and messages; protect CSV exports from formula injection.
+* Security: Validate POST requests and field shapes for AJAX and regular submissions, and store only declared request fields.
+* Security: Restrict form configuration and submission management to administrators, protect privileged actions with nonces, and disable the submissions REST endpoint.
+* Security: Validate uploads before moving files, require successful CAPTCHA verification, and sign email read-tracking links.
+* Security: Use safe HTTP requests for Webhook, Odoo and ActiveCampaign actions; update bundled HTTP dependencies.
+* Privacy: Remove automatic transmission of failed submissions to the vendor and logging of full submission bodies.
+* Fix: Preserve quoted and Unicode submission values through WordPress metadata storage.
+* Cache compatibility: Public submissions do not require a frontend nonce. Admin actions retain nonce and capability checks.
+* Compatibility: Authors and editors no longer manage forms or submissions. Custom JavaScript actions no longer interpolate submitted fields. Private-network integrations and redirected API endpoints are blocked by default. Old unsigned email tracking links no longer mark submissions as read.
+
 = 3.0.1 =
 * Bug fixes
 

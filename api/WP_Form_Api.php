@@ -46,7 +46,7 @@ class WP_Form_Api
             $form = get_post($id);
         }
 
-        if ($form->post_type !== 'ma_forms') {
+        if (!$form || $form->post_type !== 'ma_forms' || !is_array($data)) {
             return false;
         }
 
@@ -95,7 +95,7 @@ class WP_Form_Api
                 $postData['input_id'] = $inputId;
 
                 update_post_meta($inputId, 'form_id', $form->ID);
-                update_post_meta($inputId, 'data', json_encode($postData));
+                update_post_meta($inputId, 'data', wp_slash(wp_json_encode($postData)));
                 update_post_meta($inputId, 'ip', $this->getIP());
                 update_post_meta($inputId, 'user_agent', isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN');
                 update_post_meta($inputId, 'spam', $spam ? 1 : 0);
@@ -105,7 +105,7 @@ class WP_Form_Api
 
             //execute actions
             $actions = json_decode(get_post_meta($form->ID, 'actions', true), true);
-            if (count($actions) > 0) {
+            if (is_array($actions) && count($actions) > 0) {
                 $formActions = apply_filters('madeit_forms_submit_actions', $actions);
                 foreach ($formActions as $actID => $actionInfo) {
                     $action = $this->actions[$actionInfo['_id']];

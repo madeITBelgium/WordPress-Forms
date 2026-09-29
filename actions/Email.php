@@ -27,11 +27,16 @@ class WP_MADEIT_FORM_Email extends WP_MADEIT_FORM_Action
         if (isset($data['html']) && $data['html'] == 'checked') {
             $email = stripcslashes($data['message']);
         } else {
-            $email = nl2br($data['message']);
+            $email = nl2br(esc_html($data['message']));
         }
 
-        if (isset($data['sync_view']) && $data['sync_view'] == 'checked') {
-            $email .= '<img src="'.get_home_url().'?madeit_forms_view=yes&input_id='.$data['id'].'" width="1" height="1">';
+        if (isset($data['sync_view']) && $data['sync_view'] == 'checked' && !empty($data['id']) && (int) $data['id'] > 0) {
+            $trackingUrl = add_query_arg([
+                'madeit_forms_view' => 'yes',
+                'input_id' => (int) $data['id'],
+                'token' => wp_hash('madeit_forms_view_'.(int) $data['id']),
+            ], get_home_url());
+            $email .= '<img src="'.esc_url($trackingUrl).'" width="1" height="1">';
         }
 
         add_filter('wp_mail_from', [$this, 'my_mail_from']);

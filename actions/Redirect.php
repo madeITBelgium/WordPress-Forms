@@ -18,6 +18,8 @@ class WP_MADEIT_FORM_Redirect extends WP_MADEIT_FORM_Action
     {
         $redirectUrl = apply_filters('madeit_forms_redirect_url', $data['redirect_url'], $data, $messages, $actionInfo, $formId, $inputId, $postData);
 
-        return ['type' => 'HTML', 'code' => '<script>window.location.href="'.$redirectUrl.'";</script>'];
+        $redirectUrl = esc_url_raw($redirectUrl, ['http', 'https']);
+
+        return ['type' => 'HTML', 'code' => '<script>window.location.href='.wp_json_encode($redirectUrl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT).';</script>'];
     }
 }

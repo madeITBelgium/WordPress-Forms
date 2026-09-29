@@ -159,24 +159,24 @@ class WP_MADEIT_FORM_ActiveCampaign extends WP_MADEIT_FORM_Action
 
     private function requestAC($type, $url, $apitoken, $data = null)
     {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Api-Token: '.$apitoken,
-            'Accept: application/json',
-            'Content-Type: application/json',
+        $response = wp_safe_remote_request($url, [
+            'method' => $type,
+            'headers' => [
+                'Api-Token' => $apitoken,
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ],
+            'body' => $data === null ? null : wp_json_encode($data),
+            'timeout' => 30,
+            'redirection' => 0,
+            'sslverify' => true,
+            'limit_response_size' => 65536,
         ]);
-        if ($type == 'POST' || $type == 'PUT' || $type == 'DELETE') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
-            if ($data) {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-            }
-        } else {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        if (is_wp_error($response)) {
+            return ['{}', 0];
         }
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $statusCode = wp_remote_retrieve_response_code($response);
+        $response = wp_remote_retrieve_body($response);
 
         return [$response, $statusCode];
     }

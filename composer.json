@@ -3,7 +3,8 @@
     "require": {
         "drewm/mailchimp-api": "^2.5",
         "sendinblue/api-v3-sdk": "^8.4",
-        "guzzlehttp/guzzle": "^6.2|^7.0"
+        "guzzlehttp/guzzle": "^7.15.2",
+        "guzzlehttp/psr7": "^2.12.3"
     },
     "extra": {
         "php-prefixer": {

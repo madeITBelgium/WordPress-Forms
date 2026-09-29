@@ -88,7 +88,7 @@ class WP_Form_front
             }
         }
 
-        if ($form !== null && $form->post_type !== 'ma_forms') {
+        if (!$form || $form->post_type !== 'ma_forms' || $form->post_status !== 'publish' || !empty($form->post_password)) {
             return __("Can't display the form.", 'forms-by-made-it');
         }
         $this->form_id = $form->ID;
@@ -96,6 +96,11 @@ class WP_Form_front
         ob_start();
 
         if (isset($_POST['form_id']) && $_POST['form_id'] == $form->ID) {
+            if (!$this->validSubmissionRequest($form)) {
+                ob_end_clean();
+
+                return '<div class="madeit-form-error">'.esc_html(__('Invalid submission. Please reload the form and try again.', 'forms-by-made-it')).'</div>';
+            }
             //check spam
             $spam = false;
 
@@ -104,7 +109,6 @@ class WP_Form_front
             $error_msg = '';
             $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'messages', true))), true);
 
-            // Capability gating via filter (nonce intentionally omitted per caching concerns)
             $canSubmit = apply_filters('madeit_forms_can_submit', true, $form->ID, $form, $_POST);
             if (!$canSubmit) {
                 $error = true;
@@ -226,27 +230,9 @@ class WP_Form_front
 
             $spamScore = null;
             if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
-                $secretKey = $this->defaultSettings['reCaptcha']['secret'];
-                if (!isset($_POST['g-recaptcha-response'])) {
+                if (!$this->verifyCaptcha($spamScore)) {
                     $error = true;
                     $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
-                }
-                $response = $_POST['g-recaptcha-response'];
-                $remoteIp = $_SERVER['REMOTE_ADDR'];
-                $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
-                $result = json_decode($reCaptchaValidationUrl, true);
-
-                if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
-                    $spamScore = $result['score'] ?? 0;
-                    if ($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
-                        $error = true;
-                        $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
-                    }
-                } else {
-                    if ($result['success'] != 1) {
-                        $error = true;
-                        $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
-                    }
                 }
             }
 
@@ -264,6 +250,12 @@ class WP_Form_front
 
                     //upload file and give URL
                     $file = $_FILES[$k];
+
+                    if (!isset($file['name'], $file['tmp_name'], $file['size'], $file['error']) || is_array($file['name']) || is_array($file['tmp_name']) || is_array($file['size']) || is_array($file['error'])) {
+                        $error = true;
+                        $error_msg = __('Invalid upload.', 'forms-by-made-it');
+                        continue;
+                    }
 
                     // If field not required and no file provided, skip further validation
                     $isRequired = !empty($uploadableFields[$k]['required']);
@@ -342,11 +334,11 @@ class WP_Form_front
                 $this->ensureUploadsProtection($uploadDir);
 
                 foreach ($_FILES as $k => $v) {
+                    if (!isset($uploadableFields[$k])) {
+                        continue;
+                    }
                     //upload file and give URL
                     $file = $_FILES[$k];
-
-                    error_log('File Upload: '.$file['name']);
-                    error_log('Upload size: '.$file['size']);
 
                     if (empty($file['name']) || $file['size'] <= 0) {
                         continue;
@@ -380,6 +372,12 @@ class WP_Form_front
                                 $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
                             }
                         }
+                    }
+
+                    if ($error || empty($ext) || empty($mime) || !is_uploaded_file($file['tmp_name'])) {
+                        $error = true;
+                        $error_msg = __('Invalid upload.', 'forms-by-made-it');
+                        continue;
                     }
 
                     // If no extension from WP, try to infer from MIME; fallback to .bin
@@ -427,7 +425,7 @@ class WP_Form_front
             if ($error) {
                 $this->notifyError($error_msg);
 
-                echo '<div class="madeit-form-error">'.$error_msg.'</div>';
+                echo '<div class="madeit-form-error">'.esc_html($error_msg).'</div>';
                 $this->renderForm($form->ID, $form, $translatedForm, $ajax, $extra_id, $attsOrig);
                 $content = ob_get_clean();
 
@@ -439,7 +437,7 @@ class WP_Form_front
             setcookie('madeit_form_'.$form->ID.'_submitted', $submittedTimes, time() + 31556926);
 
             //insert into DB
-            $postData = $_POST;
+            $postData = $this->submissionData($form, wp_unslash($_POST));
             if ($spamScore !== null) {
                 $postData['spamScore'] = $spamScore;
             }
@@ -449,11 +447,6 @@ class WP_Form_front
             unset($postData['form_id']);
             unset($postData['madeit_form_rendered_at']);
             unset($postData['madeit_website']);
-            foreach ($postData as $k => $v) {
-                if (!in_array($k, $tags)) {
-                    $postData[] = null;
-                }
-            }
 
             $inputId = -1;
             if (get_post_meta($form->ID, 'save_inputs', true) == 1) {
@@ -481,8 +474,6 @@ class WP_Form_front
                         $result = rename($v['location'], $uploadDir.$v['filename']);
                         if ($result === false) {
                             $url = $v['url'];
-                        } else {
-                            unlink($v['location']);
                         }
 
                         $postData[$k] = $url;
@@ -494,7 +485,7 @@ class WP_Form_front
                 $postData = apply_filters('madeit_forms_'.$form->ID.'_post_data', $postData, $inputId);
 
                 update_post_meta($inputId, 'form_id', $form->ID);
-                update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
+                update_post_meta($inputId, 'data', wp_slash($this->enterToDB(wp_json_encode($postData))));
                 update_post_meta($inputId, 'ip', $this->getIP());
                 update_post_meta($inputId, 'user_agent', isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN');
                 update_post_meta($inputId, 'spam', $spam ? 1 : 0);
@@ -526,7 +517,7 @@ class WP_Form_front
                             if ($result['type'] == 'JS') {
                                 echo '<script>'.$result['code'].'</script>';
                             } elseif ($result['type'] == 'HTML') {
-                                echo str_replace('\"', '"', $result['code']);
+                                echo $result['code'];
                             }
                         } elseif ($result !== true) {
                             $error = true;
@@ -543,10 +534,10 @@ class WP_Form_front
 
             if ($error) {
                 $this->notifyError($error_msg);
-                echo '<div class="madeit-form-error">'.$error_msg.'</div>';
+                echo '<div class="madeit-form-error">'.esc_html($error_msg).'</div>';
                 $this->renderForm($id, $form, $translatedForm, $ajax, $extra_id, $attsOrig);
             } else {
-                echo '<div class="madeit-form-success">'.$messages['success'].'</div>';
+                echo '<div class="madeit-form-success">'.wp_kses_post($messages['success'] ?? '').'</div>';
             }
             //return success message
         } else {
@@ -556,6 +547,103 @@ class WP_Form_front
         $content = ob_get_clean();
 
         return $content;
+    }
+
+    private function verifyCaptcha(&$score)
+    {
+        $score = null;
+        $token = $_POST['g-recaptcha-response'] ?? '';
+        if (!is_string($token) || $token === '') {
+            return false;
+        }
+
+        $response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
+            'timeout' => 10,
+            'body' => [
+                'secret' => $this->defaultSettings['reCaptcha']['secret'],
+                'response' => wp_unslash($token),
+                'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+            ],
+        ]);
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+            return false;
+        }
+        $result = json_decode(wp_remote_retrieve_body($response), true);
+        if (!is_array($result) || ($result['success'] ?? false) !== true) {
+            return false;
+        }
+        if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
+            if (!isset($result['score']) || !is_numeric($result['score'])) {
+                return false;
+            }
+            $score = (float) $result['score'];
+
+            return $score >= (float) $this->defaultSettings['reCaptcha']['minScore'];
+        }
+
+        return true;
+    }
+
+    private function submissionFields($form)
+    {
+        $fields = [];
+        if (get_post_meta($form->ID, 'form_type', true) === 'html') {
+            $markup = wp_unslash(get_post_meta($form->ID, 'form', true));
+            preg_match_all('/'.get_shortcode_regex(array_keys($this->tags)).'/s', $markup, $matches, PREG_SET_ORDER);
+            foreach ($matches as $match) {
+                $attributes = shortcode_parse_atts($match[3]);
+                if (!empty($attributes['name']) && $match[2] !== 'submit') {
+                    $fields[$attributes['name']] = false;
+                }
+            }
+        } else {
+            foreach ($this->parseBlocks(parse_blocks($form->post_content)) as $block) {
+                if (!empty($block['attrs']['name'])) {
+                    $fields[$block['attrs']['name']] = $block['blockName'] === 'madeitforms/multi-value-field';
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    private function validSubmissionRequest($form)
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+            return false;
+        }
+        foreach (['g-recaptcha-response', 'madeit_form_rendered_at', 'madeit_website'] as $name) {
+            if (isset($_POST[$name]) && !is_scalar($_POST[$name])) {
+                return false;
+            }
+        }
+        foreach ($this->submissionFields($form) as $name => $multiple) {
+            if (!isset($_POST[$name])) {
+                continue;
+            }
+            $value = $_POST[$name];
+            if (is_array($value)) {
+                if (!$multiple) {
+                    return false;
+                }
+                foreach ($value as $item) {
+                    if (!is_scalar($item)) {
+                        return false;
+                    }
+                }
+            } elseif (!is_scalar($value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function submissionData($form, $data)
+    {
+        $data = array_intersect_key($data, $this->submissionFields($form));
+
+        return map_deep($data, 'sanitize_textarea_field');
     }
 
     private function parseBlocks($blocks)
@@ -612,7 +700,7 @@ class WP_Form_front
         if ($extra_id) {
             $formHtmlId .= '_'.$extra_id;
         }
-        echo '<form action="" method="post" id="'.$formHtmlId.'" ';
+        echo '<form action="" method="post" id="'.esc_attr($formHtmlId).'" ';
 
         if (strpos($translatedForm->post_content, 'type="file"') !== false) {
             echo 'enctype="multipart/form-data" class="madeit-forms-noajax"';
@@ -624,7 +712,7 @@ class WP_Form_front
 
         echo '>';
 
-        echo '<input type="hidden" name="form_id" value="'.$id.'">';
+        echo '<input type="hidden" name="form_id" value="'.esc_attr($id).'">';
         echo '<input type="hidden" name="madeit_form_rendered_at" value="'.time().'">';
         echo '<input type="text" name="madeit_website" value="" class="madeit-forms-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">';
         if (get_post_meta($form->ID, 'form_type', true) === 'html') {
@@ -647,6 +735,7 @@ class WP_Form_front
                     if (isset($_POST[$block['attrs']['name']])) {
                         $value = $_POST[$block['attrs']['name']];
                     }
+                    $value = esc_attr(is_scalar($value) ? wp_unslash((string) $value) : '');
                     $content = str_replace('name="'.$block['attrs']['name'].'"', 'name="'.$block['attrs']['name'].'" value="'.$value.'"', $content);
                 } elseif (isset($block['attrs']['name']) && $block['blockName'] === 'madeitforms/largeinput-field') {
                     $value = $atts[$block['attrs']['name']] ?? '';
@@ -656,6 +745,7 @@ class WP_Form_front
                     if (isset($_POST[$block['attrs']['name']])) {
                         $value = $_POST[$block['attrs']['name']];
                     }
+                    $value = esc_textarea(is_scalar($value) ? wp_unslash((string) $value) : '');
                     $content = str_replace('name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" required placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.$value, $content);
                     $content = str_replace('name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">', 'name="'.$block['attrs']['name'].'" placeholder="'.($block['attrs']['placeholder'] ?? '').'">'.$value, $content);
 
@@ -712,6 +802,8 @@ class WP_Form_front
         if (count($params) === 0) {
             $params = $_POST;
         }
+        $value = $this->replaceDynamicTokens($value);
+        $value = $this->applyDynamicFieldBlocks($value, $params);
         foreach ($params as $k => $v) {
             if (is_array($v)) {
                 $v = implode(', ', $v);
@@ -720,6 +812,190 @@ class WP_Form_front
         }
 
         return $value;
+    }
+
+    private function replaceDynamicTokens($value)
+    {
+        $timestamp = current_time('timestamp');
+        $date = date_i18n('j F Y', $timestamp);
+        $time = date_i18n('G:i', $timestamp);
+        $siteUrl = home_url();
+        $siteUrlEscaped = esc_url($this->formatWebsiteUrl($siteUrl));
+        $siteLabel = esc_html($this->formatWebsiteLabel($siteUrl));
+        $value = str_replace('{{DATUM}}', $date, $value);
+        $value = str_replace('{{TIJD}}', $time, $value);
+        $value = str_replace('{{DATUM_TIJD}}', $date.' '.$time, $value);
+        $value = str_replace('{{WEBSITE}}', '<a href="'.$siteUrlEscaped.'">'.$siteLabel.'</a>', $value);
+
+        return $value;
+    }
+
+    private function formatWebsiteLabel($url)
+    {
+        $parsed = wp_parse_url($url);
+        if (is_array($parsed) && !empty($parsed['host'])) {
+            return $this->ensureWwwHost($parsed['host']);
+        }
+
+        return preg_replace('#^https?://#', '', (string) $url);
+    }
+
+    private function formatWebsiteUrl($url)
+    {
+        $parsed = wp_parse_url($url);
+        if (is_array($parsed) && !empty($parsed['host'])) {
+            $host = $this->ensureWwwHost($parsed['host']);
+            $path = isset($parsed['path']) ? $parsed['path'] : '';
+            return $host.$path;
+        }
+
+        return preg_replace('#^https?://#', '', (string) $url);
+    }
+
+    private function ensureWwwHost($host)
+    {
+        $host = trim((string) $host);
+        if ($host === '') {
+            return $host;
+        }
+
+        return strpos($host, 'www.') === 0 ? $host : 'www.'.$host;
+    }
+
+    private function applyDynamicFieldBlocks($value, $params)
+    {
+        $value = $this->renderForeachBlocks($value, $params);
+        $value = $this->renderIfBlocks($value, $params);
+
+        return $value;
+    }
+
+    private function renderForeachBlocks($value, $params)
+    {
+        $pattern = '/{{foreach\s+([^}]+)}}(.*?){{endforeach}}/s';
+
+        return preg_replace_callback($pattern, function ($matches) use ($params) {
+            $field = trim($matches[1]);
+            $rawValue = isset($params[$field]) ? $params[$field] : null;
+
+            if (is_array($rawValue)) {
+                $items = $rawValue;
+            } else {
+                $rawValue = isset($rawValue) ? trim((string) $rawValue) : '';
+                $items = $rawValue === '' ? [] : [$rawValue];
+            }
+
+            if (count($items) === 0) {
+                return '';
+            }
+
+            $output = '';
+            foreach ($items as $item) {
+                $chunk = str_replace('['.$field.']', $item, $matches[2]);
+                $output .= $chunk;
+            }
+
+            return $output;
+        }, $value);
+    }
+
+    private function renderIfBlocks($value, $params)
+    {
+        $pattern = '/{{if\s+([^}]+)}}((?:(?!{{if\s).)*?){{endif}}/s';
+        $previous = null;
+
+        while ($previous !== $value) {
+            $previous = $value;
+            $value = preg_replace_callback($pattern, function ($matches) use ($params) {
+                if (!$this->evaluateIfCondition(trim($matches[1]), $params)) {
+                    return '';
+                }
+
+                return $matches[2];
+            }, $value);
+        }
+
+        return $value;
+    }
+
+    private function evaluateIfCondition($condition, $params)
+    {
+        if (strpos($condition, '===') !== false || strpos($condition, '!==') !== false) {
+            $operator = strpos($condition, '!==') !== false ? '!==' : '===';
+            $parts = preg_split('/\s*'.preg_quote($operator, '/').'\s*/', $condition, 2);
+            $field = isset($parts[0]) ? trim($parts[0]) : '';
+            $expectedRaw = isset($parts[1]) ? trim($parts[1]) : '';
+
+            if ($field === '') {
+                return false;
+            }
+
+            $expected = $this->stripConditionQuotes($expectedRaw);
+            $rawValue = isset($params[$field]) ? $params[$field] : null;
+            $isMatch = $this->matchesExpectedValue($rawValue, $expected);
+
+            return $operator === '===' ? $isMatch : !$isMatch;
+        }
+
+        $field = trim($condition);
+        $rawValue = isset($params[$field]) ? $params[$field] : null;
+
+        return $this->isFilledValue($rawValue);
+    }
+
+    private function stripConditionQuotes($value)
+    {
+        if (strlen($value) >= 2) {
+            $first = $value[0];
+            $last = $value[strlen($value) - 1];
+            if (($first === '"' && $last === '"') || ($first === "'" && $last === "'")) {
+                return substr($value, 1, -1);
+            }
+        }
+
+        return $value;
+    }
+
+    private function matchesExpectedValue($rawValue, $expected)
+    {
+        if (is_array($rawValue)) {
+            foreach ($rawValue as $item) {
+                if (trim((string) $item) === $expected) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if ($rawValue === null) {
+            return false;
+        }
+
+        return trim((string) $rawValue) === $expected;
+    }
+
+    private function isFilledValue($value)
+    {
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if (trim((string) $item) !== '') {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if ($value === null) {
+            return false;
+        }
+
+        return trim((string) $value) !== '';
     }
 
     private function getTagNameFromPostInput($form, $inputKey)
@@ -802,17 +1078,20 @@ class WP_Form_front
 
     public function submitAjaxForm()
     {
-        $id = $_POST['form_id'];
+        $id = isset($_POST['form_id']) && is_scalar($_POST['form_id']) ? absint($_POST['form_id']) : 0;
 
-        $form = get_post($id);
+        $form = $id ? get_post($id) : null;
 
-        if ($form->post_type !== 'ma_forms') {
+        if (!$form || $form->post_type !== 'ma_forms' || $form->post_status !== 'publish' || !empty($form->post_password)) {
             echo json_encode(['success' => false, 'message' => __("Can't display the form.", 'forms-by-made-it')]);
             wp_die();
         }
         $this->form_id = $form->ID;
 
-        // Capability gating via filter (nonce intentionally omitted per caching concerns)
+        if (!$this->validSubmissionRequest($form)) {
+            wp_send_json(['success' => false, 'message' => __('Invalid submission. Please reload the form and try again.', 'forms-by-made-it')], 403);
+        }
+
         $canSubmit = apply_filters('madeit_forms_can_submit', true, $form->ID, $form, $_POST);
         if (!$canSubmit) {
             echo json_encode(['success' => false, 'message' => __('Submission blocked.', 'forms-by-made-it')]);
@@ -829,27 +1108,9 @@ class WP_Form_front
         $error_msg = '';
         $spamScore = null;
         if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
-            $secretKey = $this->defaultSettings['reCaptcha']['secret'];
-            if (!isset($_POST['g-recaptcha-response'])) {
+            if (!$this->verifyCaptcha($spamScore)) {
                 $error = true;
                 $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
-            }
-            $response = $_POST['g-recaptcha-response'];
-            $remoteIp = $_SERVER['REMOTE_ADDR'];
-            $reCaptchaValidationUrl = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$remoteIp");
-            $result = json_decode($reCaptchaValidationUrl, true);
-
-            if ($this->defaultSettings['reCaptcha']['version'] === 'V3') {
-                $spamScore = $result['score'] ?? null;
-                if ($result['score'] < $this->defaultSettings['reCaptcha']['minScore']) {
-                    $error = true;
-                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __('The spam filter suspects a problem. Contact us by phone or e-mail.', 'forms-by-made-it');
-                }
-            } else {
-                if ($result['success'] != 1) {
-                    $error = true;
-                    $error_msg = isset($messages['check_captcha']) ? $messages['check_captcha'] : __("The captcha couldn't validate you.", 'forms-by-made-it');
-                }
             }
         }
 
@@ -959,7 +1220,7 @@ class WP_Form_front
         $spam = false;
 
         //insert into DB
-        $postData = $_POST;
+        $postData = $this->submissionData($form, wp_unslash($_POST));
         if ($spamScore !== null) {
             $postData['spamScore'] = $spamScore;
         }
@@ -982,7 +1243,7 @@ class WP_Form_front
             $postData = apply_filters('madeit_forms_'.$form->ID.'_post_data', $postData, $inputId);
 
             update_post_meta($inputId, 'form_id', $form->ID);
-            update_post_meta($inputId, 'data', $this->enterToDB(json_encode($postData)));
+            update_post_meta($inputId, 'data', wp_slash($this->enterToDB(wp_json_encode($postData))));
             update_post_meta($inputId, 'ip', $this->getIP());
             update_post_meta($inputId, 'user_agent', isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN');
             update_post_meta($inputId, 'spam', $spam ? 1 : 0);
@@ -996,7 +1257,7 @@ class WP_Form_front
 
         //execute actions
         $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($form->ID, 'actions', true))), true);
-        if (count($actions) > 0) {
+        if (is_array($actions) && count($actions) > 0) {
             $formActions = apply_filters('madeit_forms_submit_actions', $actions);
             foreach ($formActions as $actID => $actionInfo) {
                 $action = $this->actions[$actionInfo['_id']];
@@ -1016,7 +1277,7 @@ class WP_Form_front
                         if ($result['type'] == 'JS') {
                             $outputHtml .= '<script>'.$result['code'].'</script>';
                         } elseif ($result['type'] == 'HTML') {
-                            $outputHtml .= str_replace('\"', '"', $result['code']);
+                            $outputHtml .= $result['code'];
                         }
                     } elseif ($result !== true) {
                         $error = true;
@@ -1039,9 +1300,10 @@ class WP_Form_front
     public function generateViewImage()
     {
         if (isset($_GET['madeit_forms_view']) && $_GET['madeit_forms_view'] == 'yes' && isset($_GET['input_id'])) {
-            $formInputId = $_GET['input_id'];
-            $post = get_post($formInputId);
-            if ($post->post_type === 'ma_form_inputs') {
+            $formInputId = is_scalar($_GET['input_id']) ? absint($_GET['input_id']) : 0;
+            $token = $_GET['token'] ?? '';
+            $post = $formInputId ? get_post($formInputId) : null;
+            if ($post && $post->post_type === 'ma_form_inputs' && is_string($token) && hash_equals(wp_hash('madeit_forms_view_'.$formInputId), $token)) {
                 update_post_meta($post->ID, 'read', 1);
             }
 
@@ -1074,8 +1336,6 @@ class WP_Form_front
         $data = str_replace('|--MAFORM-RN--|', '\r\n', $data);
         $data = str_replace('|--MAFORM-R--|', '\r', $data);
         $data = str_replace('|--MAFORM-N--|', '\n', $data);
-
-        $data = preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $data);
 
         return $data;
     }
@@ -1136,33 +1396,7 @@ class WP_Form_front
 
     private function notifyError($error = null)
     {
-        global $_POST;
-        //Send post request to url with all $_POST data, error, form_id, IP and user agent
-        $url = 'https://portal.madeit.be/forms/error';
-
-        $data = [
-            'website' => get_site_url(),
-            'error'   => $error,
-            'form_id' => $this->form_id,
-            'ip'      => $this->getIP(),
-            'ua'      => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'UNKNOWN',
-            'data'    => json_encode($_POST, JSON_PRETTY_PRINT),
-        ];
-
-        error_log(json_encode($data, JSON_PRETTY_PRINT));
-
-        //curl
-        try {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-            $result = curl_exec($ch);
-            curl_close($ch);
-        } catch (Exception $e) {
-            error_log($e->getMessage());
-        }
+        do_action('madeit_forms_submission_error', $error, $this->form_id);
     }
 
     public function getMaximumFileUploadSize()

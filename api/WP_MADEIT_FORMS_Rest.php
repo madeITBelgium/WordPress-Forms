@@ -25,7 +25,7 @@ class WP_MADEIT_FORMS_Rest
 
     public function can_access()
     {
-        return current_user_can('edit_posts');
+        return current_user_can('manage_options');
     }
 
     public function get_forms(WP_REST_Request $request)

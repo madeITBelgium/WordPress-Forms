@@ -51,7 +51,7 @@ class WP_MADEIT_FORM_admin
     public function initAdmin()
     {
         if (isset($_GET['post_type']) && isset($_GET['action']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'export') {
-            if (!wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
+            if (!current_user_can('manage_options') || !isset($_GET['_wpnonce']) || !is_string($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'export_forms')) {
                 wp_die('Security check');
             }
             $data = get_posts([
@@ -60,13 +60,13 @@ class WP_MADEIT_FORM_admin
                 'meta_query'  => [
                     [
                         'key'   => 'form_id',
-                        'value' => $_GET['id'],
+                        'value' => absint($_GET['id'] ?? 0),
                     ],
                 ],
             ]);
 
-            $form = get_post($_GET['id']);
-            if ($form->post_type !== 'ma_forms') {
+            $form = get_post(absint($_GET['id'] ?? 0));
+            if (!$form || $form->post_type !== 'ma_forms') {
                 exit();
             }
 
@@ -97,7 +97,7 @@ class WP_MADEIT_FORM_admin
             $columns = array_keys($row);
 
             // output the column headings
-            fputcsv($output, $columns, ";");
+            fputcsv($output, array_map([$this, 'csv_value'], $columns), ';', '"', '');
 
             // fetch the data
             foreach ($data as $d) {
@@ -107,10 +107,7 @@ class WP_MADEIT_FORM_admin
                 ];
 
                 foreach (json_decode($this->removeSlashes(get_post_meta($d->ID, 'data', true)), true) as $k => $v) {
-                    if(is_array($v)) {
-                        $v = implode(", ", $v);
-                    }
-                    $row[$k] = $v;
+                    $row[$k] = $this->submission_value_to_text($v);
                 }
 
                 $row['ip'] = get_post_meta($d->ID, 'ip', true);
@@ -118,11 +115,11 @@ class WP_MADEIT_FORM_admin
                 $row['date'] = $d->post_date;
 
                 unset($row['g-recaptcha-response']);
-                fputcsv($output, $row, ";");
+                fputcsv($output, array_map([$this, 'csv_value'], $row), ';', '"', '');
             }
             exit();
         } elseif (isset($_GET['post_type']) && isset($_GET['action']) && $_GET['post_type'] === 'ma_form_inputs' && $_GET['action'] === 'mark_as_read_forms') {
-            if (!wp_verify_nonce($_GET['forms_wpnonce'], 'mark_as_read_forms')) {
+            if (!current_user_can('manage_options') || !isset($_GET['forms_wpnonce']) || !is_string($_GET['forms_wpnonce']) || !wp_verify_nonce($_GET['forms_wpnonce'], 'mark_as_read_forms')) {
                 wp_die('Security check 1');
             }
 
@@ -159,8 +156,8 @@ class WP_MADEIT_FORM_admin
     private function save_settings()
     {
         $success = false;
-        $nonce = $_POST['_wpnonce'];
-        if (!wp_verify_nonce($nonce, 'madeit_forms_settings')) {
+        $nonce = $_POST['_wpnonce'] ?? '';
+        if (!current_user_can('manage_options') || !is_string($nonce) || !wp_verify_nonce($nonce, 'madeit_forms_settings')) {
             // This nonce is not valid.
             wp_die('Security check');
         } else {
@@ -314,7 +311,8 @@ class WP_MADEIT_FORM_admin
     {
         if ($column === 'form') {
             $formId = get_post_meta($post_id, 'form_id', true);
-            echo get_post($formId)->post_title;
+            $form = get_post($formId);
+            echo esc_html($form ? $form->post_title : '');
         } elseif ($column === 'read') {
             echo get_post_meta($post_id, 'read', true) == 1 ? __('Yes', 'forms-by-made-it') : __('No', 'forms-by-made-it');
         } elseif (strpos($column, 'input_') !== false) {
@@ -329,11 +327,7 @@ class WP_MADEIT_FORM_admin
                 
                 $v = $data[$fieldName] ?? '';
                 
-                if(is_array($v)) {
-                    echo implode(", ", $v);
-                } else {
-                    echo $v;
-                }
+                echo esc_html($this->submission_value_to_text($v));
             } else {
                 $data = json_decode($this->removeSlashes($this->dbToEnter(str_replace("\'", "'", get_post_meta($post_id, 'data', true)))), true);
                 $fields = array_keys($data ?? []);
@@ -344,14 +338,26 @@ class WP_MADEIT_FORM_admin
                     if($fieldName === 'g-recaptcha-response') {
                         $v = '';
                     }
-                    if(is_array($v)) {
-                        echo implode(", ", $v);
-                    } else {
-                        echo $v;
-                    }
+                    echo esc_html($this->submission_value_to_text($v));
                 }
             }
         }
+    }
+
+    private function submission_value_to_text($value)
+    {
+        if (is_array($value)) {
+            return implode(', ', array_map([$this, 'submission_value_to_text'], $value));
+        }
+
+        return is_scalar($value) ? (string) $value : '';
+    }
+
+    private function csv_value($value)
+    {
+        $value = $this->submission_value_to_text($value);
+
+        return preg_match('/^(?:\s*[=+@-]|[\t\r\n])/', $value) ? "'".$value : $value;
     }
 
     /*
@@ -380,6 +386,7 @@ class WP_MADEIT_FORM_admin
     public function edit_form_advanced($post)
     {
         if ($post->post_type === 'ma_forms' && get_post_meta($post->ID, 'form_type', true) === 'html') {
+            wp_nonce_field('madeit_forms_save_'.$post->ID, 'madeit_forms_admin_nonce');
             $formValue = '<p>Your name:</p>
 [text name="your-name"]
 <p>Your email:</p>
@@ -397,7 +404,7 @@ class WP_MADEIT_FORM_admin
 
             $formValue = str_replace('\"', '"', $formValue); ?>
             <input type="hidden" name="madeit_form_editor" value="yes">
-            <input type="hidden" name="save_inputs" value="<?php echo get_post_meta($post->ID, 'save_inputs', true); ?>">
+            <input type="hidden" name="save_inputs" value="<?php echo esc_attr(get_post_meta($post->ID, 'save_inputs', true)); ?>">
 
             <div id="madeit-tab">
                 <ul id="madeit-tab-tabs">
@@ -439,7 +446,7 @@ class WP_MADEIT_FORM_admin
                                     ?>
                                             <input type="hidden" name="action_key_<?php echo $actID; ?>" value="<?php echo esc_attr($actionInfo['key']); ?>" />
                                             <?php
-                                            echo ' - ('.__('Key', 'forms-by-made-it').':'.$actionInfo['key'].')';
+                                            echo esc_html(' - ('.__('Key', 'forms-by-made-it').':'.$actionInfo['key'].')');
                                 } ?></h3>
                                     <table class="form-table">
                                         <tbody>
@@ -486,7 +493,7 @@ class WP_MADEIT_FORM_admin
                                                                 <?php
                                                             } elseif ($info['type'] == 'textarea') {
                                                                 $value = stripcslashes($inputValue); ?>
-                                                                <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo isset($info['options']['min-height']) ? $info['options']['min-height'] : '50px'; ?>;"><?php echo $value; ?></textarea>
+                                                                <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo esc_attr($info['options']['min-height'] ?? '50px'); ?>;"><?php echo esc_textarea($value); ?></textarea>
                                                                 <?php
                                                             } elseif ($info['type'] == 'checkbox') {
                                                                 ?>
@@ -589,7 +596,7 @@ class WP_MADEIT_FORM_admin
                                             <?php
                                         } elseif ($info['type'] == 'textarea') {
                                             $value = stripcslashes($inputValue); ?>
-                                            <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo isset($info['options']['min-height']) ? $info['options']['min-height'] : '50px'; ?>;"><?php echo $value; ?></textarea>
+                                            <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo esc_attr($info['options']['min-height'] ?? '50px'); ?>;"><?php echo esc_textarea($value); ?></textarea>
                                             <?php
                                         } elseif ($info['type'] == 'checkbox') {
                                             ?>
@@ -653,6 +660,10 @@ class WP_MADEIT_FORM_admin
     {
         global $_POST;
 
+        if (!$this->can_save_form($post_id, $post)) {
+            return;
+        }
+
         if (isset($_POST['madeit_form_editor']) && $_POST['madeit_form_editor'] == 'yes') {
             update_post_meta($post_id, 'save_inputs', 1);
             update_post_meta($post_id, 'form', $_POST['form']);
@@ -696,6 +707,10 @@ class WP_MADEIT_FORM_admin
 
     public function save_meta($post_id, $post, $update)
     {
+        if (!$this->can_save_form($post_id, $post)) {
+            return $post_id;
+        }
+
         // Do not save the data if autosave
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return $post_id;
@@ -739,7 +754,7 @@ class WP_MADEIT_FORM_admin
             }
 
             if(isset($_POST['settings_max_submits'])) {
-                update_post_meta($post_id, 'max_submits', $_POST['settings_max_submits']);
+                update_post_meta($post_id, 'max_submits', absint($_POST['settings_max_submits']));
             } else {
                 delete_post_meta($post_id, 'max_submits');
             }
@@ -747,6 +762,19 @@ class WP_MADEIT_FORM_admin
             update_post_meta($post_id, 'actions', $this->enterToDB(json_encode($actions)));
             update_post_meta($post_id, 'messages', $this->enterToDB(json_encode($messages)));
         }
+    }
+
+    private function can_save_form($post_id, $post)
+    {
+        $nonce = $_POST['madeit_forms_admin_nonce'] ?? '';
+
+        return $post && $post->post_type === 'ma_forms'
+            && !(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+            && !wp_is_post_revision($post_id)
+            && current_user_can('manage_options')
+            && current_user_can('edit_post', $post_id)
+            && is_string($nonce)
+            && wp_verify_nonce($nonce, 'madeit_forms_save_'.$post_id);
     }
 
     public function removeSlashes($str)
@@ -765,16 +793,34 @@ class WP_MADEIT_FORM_admin
         add_meta_box('ma_form_inputs_data', __('Submitted form data', 'forms-by-made-it'), [$this, 'ma_form_inputs_data'], 'ma_form_inputs', 'normal', 'high');
 
         if ($post && get_post_meta($post->ID, 'form_type', true) !== 'html') {
-            add_meta_box('ma_forms_actions', __('Actions', 'forms-by-made-it'), [$this, 'ma_forms_actions'], 'ma_forms', 'normal', 'high');
-            add_meta_box('ma_forms_messages', __('Messages', 'forms-by-made-it'), [$this, 'ma_forms_messages'], 'ma_forms', 'normal', 'high');
-            add_meta_box('ma_forms_settings', __('Settings', 'forms-by-made-it'), [$this, 'ma_forms_settings'], 'ma_forms', 'normal', 'high');
+            add_meta_box('ma_forms_tabs', __('Form settings', 'forms-by-made-it'), [$this, 'ma_forms_tabs'], 'ma_forms', 'normal', 'high');
         }
+    }
+
+    public function ma_forms_tabs($post)
+    {
+        wp_nonce_field('madeit_forms_save_'.$post->ID, 'madeit_forms_admin_nonce');
+        ?>
+        <div id="madeit-tab" class="madeit-tabs-left">
+            <ul id="madeit-tab-tabs">
+                <li id="actions-panels-tab"><a href="#actions-panel" style="display: block;"><?php echo esc_html(__('Actions', 'forms-by-made-it')); ?></a></li>
+                <li id="messages-panels-tab"><a href="#messages-panel" style="display: block;"><?php echo esc_html(__('Messages', 'forms-by-made-it')); ?></a></li>
+                <li id="settings-panels-tab"><a href="#settings-panel" style="display: block;"><?php echo esc_html(__('Settings', 'forms-by-made-it')); ?></a></li>
+            </ul>
+            <?php
+            $this->ma_forms_actions($post);
+            $this->ma_forms_messages($post);
+            $this->ma_forms_settings($post);
+            ?>
+        </div>
+        <?php
     }
 
     public function ma_forms_actions($post)
     {
         $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'actions', true))), true); ?>
-        <div id="actions-panel">
+        <div id="actions-panel" class="madeit-tab-panel">
+            <h2><?php echo esc_html(__('Actions', 'forms-by-made-it')); ?></h2>
             <input type="hidden" name="ma_forms_save_meta_type" value="actions">
             <fieldset>
                 <legend><?php echo esc_html(__('In the following fields, you can use these name-tags:', 'forms-by-made-it')); ?><br /><span class="name-tags"></span></legend>
@@ -785,12 +831,12 @@ class WP_MADEIT_FORM_admin
                         <section id="action-panel-<?php echo $actID; ?>" data-id="<?php echo $actID; ?>" data-section-id="action-panel-" class="action-section">
                             <input type="hidden" name="action_panel_<?php echo $actID; ?>" value="<?php echo $actID; ?>" data-name="action_panel_">
                             <span style="float:right; margin: 5px;"><a href="javascript:void(0);" class="delete-section" style="text-decoration:none;"><span class="dashicons dashicons-no-alt"></span></a></span>
-                            <h3><?php echo esc_html(__('Action', 'forms-by-made-it')); ?>
+                            <br><h3><?php echo esc_html(__('Action', 'forms-by-made-it')); ?>
                                 <?php if (isset($actionInfo['key'])) {
                             ?>
                                     <input type="hidden" name="action_key_<?php echo $actID; ?>" value="<?php echo esc_attr($actionInfo['key']); ?>" />
                                     <?php
-                                    echo ' - ('.__('Key', 'forms-by-made-it').':'.$actionInfo['key'].')';
+                                    echo esc_html(' - ('.__('Key', 'forms-by-made-it').':'.$actionInfo['key'].')');
                         } ?></h3>
                             <table class="form-table">
                                 <tbody>
@@ -837,7 +883,7 @@ class WP_MADEIT_FORM_admin
                                                         <?php
                                                     } elseif ($info['type'] == 'textarea') {
                                                         $value = stripcslashes($inputValue); ?>
-                                                        <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo isset($info['options']['min-height']) ? $info['options']['min-height'] : '50px'; ?>;"><?php echo $value; ?></textarea>
+                                                        <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo esc_attr($info['options']['min-height'] ?? '50px'); ?>;"><?php echo esc_textarea($value); ?></textarea>
                                                         <?php
                                                     } elseif ($info['type'] == 'checkbox') {
                                                         ?>
@@ -867,20 +913,23 @@ class WP_MADEIT_FORM_admin
     public function ma_forms_messages($post)
     {
         $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($post->ID, 'messages', true))), true); ?>
-        <fieldset>
-            <input type="hidden" name="ma_forms_save_meta_type" value="messages">
-            <legend><?php echo esc_html(__('In the following fields, you can use these name-tags:', 'forms-by-made-it')); ?><br /><span class="name-tags"></span></legend>
-            <?php
-            foreach ($this->messages as $arr) {
-                $value = isset($messages[$arr['field']]) ? $messages[$arr['field']] : $arr['value']; ?>
-                <p class="description">
-                    <label for="<?php echo $arr['field']; ?>"><?php echo esc_html($arr['description']); ?><br />
-                        <input type="text" id="messages_<?php echo $arr['field']; ?>" name="messages_<?php echo $arr['field']; ?>" class="large-text" size="70" value="<?php echo esc_attr($this->removeSlashes($value)); ?>" />
-                    </label>
-                </p>
+        <div id="messages-panel" class="madeit-tab-panel">
+            <h2><?php echo esc_html(__('Messages', 'forms-by-made-it')); ?></h2>
+            <fieldset>
+                <input type="hidden" name="ma_forms_save_meta_type" value="messages">
+                <legend><?php echo esc_html(__('In the following fields, you can use these name-tags:', 'forms-by-made-it')); ?><br /><span class="name-tags"></span></legend>
                 <?php
-            } ?>
-        </fieldset>
+                foreach ($this->messages as $arr) {
+                    $value = isset($messages[$arr['field']]) ? $messages[$arr['field']] : $arr['value']; ?>
+                    <p class="description" style="opacity: 1;">
+                        <label for="<?php echo $arr['field']; ?>"><?php echo esc_html($arr['description']); ?><br />
+                            <input type="text" id="messages_<?php echo $arr['field']; ?>" name="messages_<?php echo $arr['field']; ?>" class="large-text" size="70" value="<?php echo esc_attr($this->removeSlashes($value)); ?>" />
+                        </label>
+                    </p>
+                    <?php
+                } ?>
+            </fieldset>
+        </div>
         <?php
     }
 
@@ -889,14 +938,17 @@ class WP_MADEIT_FORM_admin
     {
         $maxAantalInzendingen = get_post_meta($post->ID, 'max_submits', true);
         ?>
-        <fieldset>
-            <input type="hidden" name="ma_forms_save_meta_type" value="settings">
-            <p class="description">
-                <label for="settings_max_submits">Maximaal aantal inzendingen:<br />
-                    <input type="numeric" id="settings_max_submits" name="settings_max_submits" class="large-text" size="70" value="<?php echo $maxAantalInzendingen; ?>" />
-                </label>
-            </p>
-        </fieldset>
+        <div id="settings-panel" class="madeit-tab-panel">
+            <h2><?php echo esc_html(__('Settings', 'forms-by-made-it')); ?></h2>
+            <fieldset>
+                <input type="hidden" name="ma_forms_save_meta_type" value="settings">
+                <p class="description" style="opacity: 1;">
+                    <label for="settings_max_submits">Maximaal aantal inzendingen:<br />
+                        <input type="numeric" id="settings_max_submits" name="settings_max_submits" class="large-text" size="70" value="<?php echo esc_attr($maxAantalInzendingen); ?>" />
+                    </label>
+                </p>
+            </fieldset>
+        </div>
         <?php
     }
 
@@ -917,12 +969,7 @@ class WP_MADEIT_FORM_admin
                         </th>
                         <td>
                             <?php 
-                            if(is_array($v)) {
-                                echo esc_html(implode(", ", $v));
-                            }
-                            else {
-                                echo nl2br(esc_html($v));
-                            }
+                            echo nl2br(esc_html($this->submission_value_to_text($v)));
                             ?>
                         </td>
                     </tr>
@@ -963,7 +1010,8 @@ class WP_MADEIT_FORM_admin
                 e.preventDefault();
                 var data = {
                     'action': 'ma_forms_resend_mail',
-                    'id': <?php echo $post->ID; ?>
+                    'id': <?php echo (int) $post->ID; ?>,
+                    'nonce': <?php echo wp_json_encode(wp_create_nonce('ma_forms_resend_mail_'.$post->ID)); ?>
                 };
                 jQuery.post(ajaxurl, data, function(response) {
                     alert(response);
@@ -974,7 +1022,11 @@ class WP_MADEIT_FORM_admin
     }
 
     public function resendMail() {
-        $id = $_POST['id'];
+        $id = isset($_POST['id']) && is_scalar($_POST['id']) ? absint($_POST['id']) : 0;
+        if (!$id || !current_user_can('manage_options') || !current_user_can('edit_post', $id) || get_post_type($id) !== 'ma_form_inputs') {
+            wp_die('Forbidden', '', ['response' => 403]);
+        }
+        check_ajax_referer('ma_forms_resend_mail_'.$id, 'nonce');
 
         //TODO!!
         
@@ -1040,7 +1092,9 @@ class WP_MADEIT_FORM_admin
                 $menu[$k][0] .= $new;
             }
         }
-        $submenu['edit.php?post_type=ma_forms'][11][0] .= $new;
+        if (isset($submenu['edit.php?post_type=ma_forms'][11][0])) {
+            $submenu['edit.php?post_type=ma_forms'][11][0] .= $new;
+        }
     }
 
     public function form_inputs_export_button()
@@ -1137,9 +1191,14 @@ class WP_MADEIT_FORM_admin
 
     public function handle_bulk_action_ma_form_inputs($redirect_url, $action, $post_ids)
     {
+        if (!current_user_can('manage_options')) {
+            return $redirect_url;
+        }
         if ($action == 'mark-as-read') {
             foreach ($post_ids as $post_id) {
-                update_post_meta($post_id, 'read', 1);
+                if (get_post_type($post_id) === 'ma_form_inputs' && current_user_can('edit_post', $post_id)) {
+                    update_post_meta($post_id, 'read', 1);
+                }
             }
             $redirect_url = add_query_arg('changed-mark-as-read', count($post_ids), $redirect_url);
         }
@@ -1228,8 +1287,6 @@ class WP_MADEIT_FORM_admin
         $data = str_replace('|--MAFORM-R--|', '\r', $data);
         $data = str_replace('|--MAFORM-N--|', '\n', $data);
 
-        $data = preg_replace('/u([\da-fA-F]{4})/', '&#x\1;', $data);
-
         return $data;
     }
 
@@ -1306,30 +1363,6 @@ class WP_MADEIT_FORM_admin
             }
         }
         
-        if($tag) {
-            preg_match_all('/\['.$tag.'.*name="'.$name.'".*\]/', $form, $result);
-            if (isset($result[0][0])) {
-                $partWithTag = $result[0][0];
-
-                $key = '';
-                foreach (explode('="', $partWithTag) as $o) {
-                    if ($key == '') {
-                        $space = explode(' ', $o);
-                        if (count($space) <= 1) {
-                            $key = $space[0];
-                        } else {
-                            $key = array_last($space);
-                        }
-                    } else {
-                        $tags[$key] = substr($o, 0, strpos($o, '"'));
-                        $key = trim(substr($o, strpos($o, '"') + 1));
-                    }
-                }
-
-                return $tags;
-            }
-        }
-
         return $tags;
     }
 }

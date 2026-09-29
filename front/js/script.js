@@ -106,7 +106,7 @@ function submitMadeitForm(formId) {
             setSubmitLoading(formId, false);
 
             if(data.success) {
-                jQuery('#' + formId).before('<div class="madeit-form-success">' + data.message + '</div>');
+                jQuery('#' + formId).before(jQuery('<div>', {class: 'madeit-form-success'}).text(data.message || ''));
                 jQuery('#' + formId).hide();
                 jQuery('body').append(data.html);
             } else {
@@ -117,7 +117,7 @@ function submitMadeitForm(formId) {
                 jQuery('#' + formId).find('[type=submit]').before('<input name="btn_submit" id="' + id + '" type="submit" class="' + cls + '" value="' + val + '">');
                 jQuery('#' + formId).find('.delete-submit').remove();
                 
-                jQuery('#' + formId).before('<div class="madeit-form-error">' + data.message + '</div>');
+                jQuery('#' + formId).before(jQuery('<div>', {class: 'madeit-form-error'}).text(data.message || ''));
 		    
                 jQuery('html, body').animate({
                     scrollTop: jQuery('.madeit-form-error').offset().top

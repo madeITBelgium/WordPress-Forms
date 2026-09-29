@@ -16,6 +16,6 @@ class WP_MADEIT_FORM_Javacript extends WP_MADEIT_FORM_Action
 
     public function callback($data, $messages, $actionInfo, $formId = null, $inputId = null, $postData = null)
     {
-        return ['type' => 'HTML', 'code' => str_replace("\'", "'", $data['js_event_code'])];
+        return ['type' => 'HTML', 'code' => str_replace("\'", "'", $actionInfo['js_event_code'] ?? '')];
     }
 }

@@ -16,6 +16,8 @@ class WP_MADEIT_FORM_Download extends WP_MADEIT_FORM_Action
 
     public function callback($data, $messages, $actionInfo, $formId = null, $inputId = null, $postData = null)
     {
-        return ['type' => 'HTML', 'code' => "<script>window.open('".$data['download_url']."', '_blank');</script>"];
+        $url = esc_url_raw($data['download_url'], ['http', 'https']);
+
+        return ['type' => 'HTML', 'code' => '<script>window.open('.wp_json_encode($url, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT).', "_blank", "noopener");</script>'];
     }
 }

@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="wrap">
     <h1><?php echo esc_html(__('Settings', 'forms-by-made-it')); ?></h1>
-    <form method="post" action="<?php echo str_replace('%7E', '~', $_SERVER['REQUEST_URI']); ?>" id="madeit-security-admin-form-element">
+    <form method="post" action="<?php echo esc_url(str_replace('%7E', '~', $_SERVER['REQUEST_URI'])); ?>" id="madeit-security-admin-form-element">
         <?php if ($success) {
     ?>
             <div class="updated"><p><strong><?php echo __('The settings are successfully saved.', 'forms-by-made-it'); ?></strong></p></div>
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
         if (!empty($error)) {
             ?>
-            <div class="error"><p><strong><?php echo $error; ?></strong></p></div>
+            <div class="error"><p><strong><?php echo esc_html($error); ?></strong></p></div>
             <?php
         }
         ?>
@@ -77,7 +77,7 @@ if (!defined('ABSPATH')) {
                                                 <label for=""><?php echo esc_html(__('Google invisble reCaptcha key', 'forms-by-made-it')); ?></label>
                                             </th>
                                             <td>
-                                                <input type="text" name="madeit_forms_reCaptcha_key" class="large-text code" size="70" value="<?php echo $this->defaultSettings['reCaptcha']['key']; ?>" />
+                                                <input type="text" name="madeit_forms_reCaptcha_key" class="large-text code" size="70" value="<?php echo esc_attr($this->defaultSettings['reCaptcha']['key']); ?>" />
                                                 <p>
                                                     <a href="https://www.google.com/recaptcha/admin" target="_blank"><?php echo esc_html(__('Create your key here.', 'forms-by-made-it')) ?></a>
                                                 </p>
@@ -88,7 +88,7 @@ if (!defined('ABSPATH')) {
                                                 <label for=""><?php echo esc_html(__('Google invisble reCaptcha secret key', 'forms-by-made-it')); ?></label>
                                             </th>
                                             <td>
-                                                <input type="text" name="madeit_forms_reCaptcha_secret" class="large-text code" size="70" value="<?php echo $this->defaultSettings['reCaptcha']['secret']; ?>" />
+                                                <input type="text" name="madeit_forms_reCaptcha_secret" class="large-text code" size="70" value="<?php echo esc_attr($this->defaultSettings['reCaptcha']['secret']); ?>" />
                                             </td>
                                         </tr>
                                         <?php if ($this->defaultSettings['reCaptcha']['version'] === 'V3') { ?>
@@ -97,7 +97,7 @@ if (!defined('ABSPATH')) {
                                                     <label for=""><?php echo esc_html(__('Google invisble reCaptcha minimum score (default: 0.7)', 'forms-by-made-it')); ?></label>
                                                 </th>
                                                 <td>
-                                                    <input type="text" name="madeit_forms_reCaptcha_minScore" class="large-text code" size="70" value="<?php echo $this->defaultSettings['reCaptcha']['minScore']; ?>" />
+                                                    <input type="text" name="madeit_forms_reCaptcha_minScore" class="large-text code" size="70" value="<?php echo esc_attr($this->defaultSettings['reCaptcha']['minScore']); ?>" />
                                                 </td>
                                             </tr>
                                         <?php } ?>
@@ -110,7 +110,7 @@ if (!defined('ABSPATH')) {
                         <?php
                         $nonce = wp_create_nonce('madeit_forms_settings');
                         ?>
-                        <input type="hidden" name="_wpnonce" value="<?php echo $nonce; ?>" />
+                        <input type="hidden" name="_wpnonce" value="<?php echo esc_attr($nonce); ?>" />
                         <input type="submit" class="button-primary" value="<?php echo esc_html(__('Save', 'forms-by-made-it')); ?>" />
                     </p>
                 </div><!-- #postbox-container-2 -->
