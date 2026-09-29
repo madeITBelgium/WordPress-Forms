@@ -559,8 +559,8 @@ class WP_Form_front
 
         $response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
             'timeout' => 10,
-            'body' => [
-                'secret' => $this->defaultSettings['reCaptcha']['secret'],
+            'body'    => [
+                'secret'   => $this->defaultSettings['reCaptcha']['secret'],
                 'response' => wp_unslash($token),
                 'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
             ],
@@ -846,6 +846,7 @@ class WP_Form_front
         if (is_array($parsed) && !empty($parsed['host'])) {
             $host = $this->ensureWwwHost($parsed['host']);
             $path = isset($parsed['path']) ? $parsed['path'] : '';
+
             return $host.$path;
         }
 
