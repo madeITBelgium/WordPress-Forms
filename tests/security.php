@@ -16,11 +16,14 @@ function esc_html($value)
 
 function get_post_meta($post_id, $key, $single)
 {
-    return $GLOBALS['test_meta'][$key] ?? '';
+    return $GLOBALS['test_meta_by_id'][$post_id][$key] ?? $GLOBALS['test_meta'][$key] ?? '';
 }
 
 function get_post($post_id)
 {
+    if (isset($GLOBALS['test_posts'])) {
+        return $GLOBALS['test_posts'][$post_id] ?? null;
+    }
     return $GLOBALS['test_post'] ?? (object) ['post_title' => '<img src=x onerror=alert(1)>'];
 }
 
@@ -74,7 +77,9 @@ function wp_slash($value) { return is_array($value) ? array_map('wp_slash', $val
 function wp_kses_post($value) { return strip_tags($value, '<strong><em><a><br>'); }
 function sanitize_textarea_field($value) { return trim(strip_tags($value)); }
 function map_deep($value, $callback) { return is_array($value) ? array_map(function ($item) use ($callback) { return map_deep($item, $callback); }, $value) : $callback($value); }
-function apply_filters($name, $value, ...$args) { return $value; }
+function apply_filters($name, $value, ...$args) {
+    return isset($GLOBALS['test_filters'][$name]) ? $GLOBALS['test_filters'][$name]($value, ...$args) : $value;
+}
 function add_filter(...$args) {}
 function do_action(...$args) {}
 function current_user_can($capability, ...$args) { return $GLOBALS['test_admin'] ?? false; }
@@ -319,4 +324,105 @@ $campaign = (new ReflectionClass(WP_MADEIT_FORM_ActiveCampaign::class))->newInst
 $request = new ReflectionMethod($campaign, 'requestAC');
 security_check($request->invoke($campaign, 'POST', 'https://example.test', 'test', []) === ['{"result":17}', 200], 'ActiveCampaign response failed');
 security_check($GLOBALS['test_http_args']['redirection'] === 0 && $GLOBALS['test_http_args']['sslverify'] === true, 'ActiveCampaign network protections missing');
+function current_time($type) { return 1700000000; }
+function date_i18n($format, $timestamp) { return gmdate($format, $timestamp); }
+function home_url() { return 'https://example.test'; }
+function wp_parse_url($url) { return parse_url($url); }
+
+$replayCalls = [];
+$definition = [
+    'title' => 'Email',
+    'action_fields' => [
+        'to' => ['value' => 'default@example.test'],
+        'message' => ['value' => 'Hello [alpha]'],
+    ],
+    'callback' => function ($data, $messages, $actionInfo, $formId, $inputId, $postData) use (&$replayCalls) {
+        $replayCalls[] = compact('data', 'messages', 'actionInfo', 'formId', 'inputId', 'postData');
+        return true;
+    },
+];
+$registry = ['EMAIL' => $definition, 'WEBHOOK' => array_merge($definition, ['title' => 'Webhook'])];
+$registry['FAILURE'] = array_merge($definition, ['callback' => function () { return 'Provider rejected request'; }]);
+$registry['EXCEPTION'] = array_merge($definition, ['callback' => function () { throw new RuntimeException('secret credential'); }]);
+$registry['CUSTOM_BROWSER'] = array_merge($definition, ['execution_context' => 'browser']);
+$configured = [
+    ['_id' => 'EMAIL', 'to' => '[email]', 'message' => '{{if alpha}}Hello [alpha]{{endif}} {{foreach choices}}[choices];{{endforeach}} {{DATUM}}'],
+    ['_id' => 'FAILURE'],
+    ['_id' => 'EXCEPTION'],
+    ['_id' => 'WEBHOOK'],
+    ['_id' => 'MISSING'],
+    ['_id' => 'CUSTOM_BROWSER'],
+];
+foreach (['REDIRECT', 'DOWNLOAD', 'JS_EVENT', 'GA_EVENT', 'GA_ADS_EVENT'] as $browserAction) {
+    $registry[$browserAction] = $definition;
+    $configured[] = ['_id' => $browserAction];
+}
+$GLOBALS['test_filters']['madeit_forms_actions'] = function ($actions) use ($registry) { return $registry; };
+$GLOBALS['test_filters']['madeit_forms_submit_actions'] = function ($actions) {
+    $actions[] = ['_id' => 'EMAIL', 'message' => 'Filtered action'];
+    return $actions;
+};
+$GLOBALS['test_filters']['madeit_forms_action_data'] = function ($data, $formId, $inputId, $actionInfo, $postData) {
+    $data['filter_context'] = [$formId, $inputId, $postData['alpha']];
+    return $data;
+};
+$savedData = ['alpha' => 'Stored visitor', 'email' => 'visitor@example.test', 'choices' => ['One', 'Two']];
+$form = (object) ['ID' => 1, 'post_type' => 'ma_forms'];
+$_POST = ['alpha' => 'Untrusted request value'];
+$results = $front->replayServerActions($form, 123, $savedData, $configured, ['failed' => 'Configured failure']);
+security_check(count($replayCalls) === 3, 'Server actions or action filter not executed');
+security_check(count(array_filter($results, function ($result) { return $result['status'] === 'skipped'; })) === 6, 'Browser actions were not skipped');
+security_check(array_column(array_slice($results, 0, 5), 'status') === ['success', 'failed', 'failed', 'success', 'failed'], 'Failure did not preserve later action execution');
+security_check(strpos(json_encode($results), 'secret credential') === false, 'Exception exposed integration credentials');
+security_check($replayCalls[0]['data']['to'] === 'visitor@example.test', 'Email recipient not resolved from saved input');
+security_check($replayCalls[0]['data']['message'] === 'Hello Stored visitor One;Two; '.gmdate('j F Y', 1700000000), 'Replay template processing differs from submissions');
+security_check($replayCalls[0]['data']['filter_context'] === [1, 123, 'Stored visitor'], 'Action data filter context missing');
+security_check($replayCalls[0]['data']['id'] === 123 && $replayCalls[0]['formId'] === 1 && $replayCalls[0]['inputId'] === 123, 'Replay IDs are incorrect');
+security_check($replayCalls[0]['postData'] === array_merge($savedData, ['input_id' => 123]), 'Saved input context not passed to callback');
+security_check($replayCalls[1]['data']['to'] === 'default@example.test', 'Action defaults not applied');
+security_check($replayCalls[0]['messages']['failed'] === 'Configured failure', 'Form messages not passed to actions');
+
+unset($GLOBALS['test_filters']['madeit_forms_submit_actions']);
+$GLOBALS['test_admin'] = true;
+$GLOBALS['test_posts'] = [1 => $form, 123 => (object) ['ID' => 123, 'post_type' => 'ma_form_inputs', 'post_date' => '2026-09-29 12:00:00']];
+$GLOBALS['test_meta_by_id'] = [
+    123 => ['form_id' => 1, 'data' => $front->enterToDB(wp_json_encode($savedData))],
+    1 => ['actions' => wp_json_encode([['_id' => 'EMAIL'], ['_id' => 'WEBHOOK'], ['_id' => 'REDIRECT']]), 'messages' => '{}'],
+];
+$replayAdmin = new WP_MADEIT_FORM_admin(new SecurityTestSettings());
+foreach (['success', 'empty', 'invalid_data', 'invalid_actions', 'missing_form', 'wrong_type', 'get', 'denied', 'invalid_nonce'] as $scenario) {
+    $replayCalls = [];
+    $GLOBALS['test_inserted'] = [];
+    $GLOBALS['test_writes'] = [];
+    $originalMeta = $GLOBALS['test_meta_by_id'];
+    $originalPosts = $GLOBALS['test_posts'];
+    $_POST = ['id' => 123, 'nonce' => 'valid-ma_forms_resend_mail_123', 'alpha' => 'Forged'];
+    $_SERVER['REQUEST_METHOD'] = $scenario === 'get' ? 'GET' : 'POST';
+    $GLOBALS['test_admin'] = $scenario !== 'denied';
+    if ($scenario === 'invalid_nonce') { $_POST['nonce'] = 'wrong'; }
+    if ($scenario === 'invalid_data') { $GLOBALS['test_meta_by_id'][123]['data'] = '{invalid'; }
+    if ($scenario === 'invalid_actions') { $GLOBALS['test_meta_by_id'][1]['actions'] = '{invalid'; }
+    if ($scenario === 'empty') { $GLOBALS['test_meta_by_id'][1]['actions'] = '[]'; }
+    if ($scenario === 'missing_form') { unset($GLOBALS['test_posts'][1]); }
+    if ($scenario === 'wrong_type') { $GLOBALS['test_posts'][123] = (object) ['post_type' => 'post']; }
+    ob_start();
+    try { $replayAdmin->resendMail(); } catch (SecurityTestExit $exception) {}
+    $response = json_decode(ob_get_clean(), true);
+    security_check(count($replayCalls) === ($scenario === 'success' ? 2 : 0), 'Replay handler guard failed: '.$scenario);
+    security_check(!$GLOBALS['test_inserted'] && !$GLOBALS['test_writes'], 'Replay modified stored submissions: '.$scenario);
+    if ($scenario === 'success') {
+        security_check($response['success'] === true && array_column($response['results'], 'status') === ['success', 'success', 'skipped'], 'Replay handler result reporting failed');
+        security_check($replayCalls[0]['data']['message'] === 'Hello Stored visitor', 'Handler used request values instead of saved data');
+    }
+    if ($scenario === 'empty') {
+        security_check($response['results'] === [] && $response['message'] === 'No actions configured.', 'Empty action configuration not reported');
+    }
+    $GLOBALS['test_meta_by_id'] = $originalMeta;
+    $GLOBALS['test_posts'] = $originalPosts;
+}
+ob_start();
+$replayAdmin->ma_form_inputs_data($GLOBALS['test_posts'][123]);
+$replayHtml = ob_get_clean();
+security_check(strpos($replayHtml, 'Run actions again') !== false && strpos($replayHtml, 'window.confirm') !== false, 'Replay control or duplicate-side-effect confirmation missing');
+security_check(strpos($replayHtml, '.text(result.title') !== false, 'Replay results are not rendered as text');
 echo $checks." security regression checks passed.\n";

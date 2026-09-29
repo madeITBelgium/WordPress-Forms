@@ -39,6 +39,7 @@ For basic usage, you can also have a look at the [plugin homepage](https://githu
 
 == Changelog ==
 = 3.0.2 =
+* Fix: Run configured server actions again from a saved submission, using current form settings and stored input values. Browser actions are skipped; results are shown per action. Repeated runs can create duplicate emails or external records.
 * Security: Escape stored submission values in all submissions-list branches, including existing records and array values.
 * Security: Escape frontend field values, settings, action arguments and messages; protect CSV exports from formula injection.
 * Security: Validate POST requests and field shapes for AJAX and regular submissions, and store only declared request fields.

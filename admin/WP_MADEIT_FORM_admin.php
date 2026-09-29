@@ -1002,19 +1002,40 @@ class WP_MADEIT_FORM_admin
             </tbody>
         </table>
 
-        <button class="button" role="button" id="btnResend">
-            Resend mail
+        <button type="button" class="button" id="btnResend">
+            <span class="dashicons dashicons-update" aria-hidden="true"></span>
+            <?php echo esc_html(__('Run actions again', 'forms-by-made-it')); ?>
         </button>
+        <div id="madeit-action-results" role="status" aria-live="polite"></div>
         <script>
             document.getElementById('btnResend').addEventListener('click', function(e) {
                 e.preventDefault();
+                if (!window.confirm(<?php echo wp_json_encode(__('Run the current server actions again? This can send duplicate emails, webhooks or integration records.', 'forms-by-made-it')); ?>)) {
+                    return;
+                }
+                var button = jQuery(this);
+                var results = jQuery('#madeit-action-results');
+                button.prop('disabled', true);
+                results.text(<?php echo wp_json_encode(__('Running actions...', 'forms-by-made-it')); ?>);
                 var data = {
                     'action': 'ma_forms_resend_mail',
                     'id': <?php echo (int) $post->ID; ?>,
                     'nonce': <?php echo wp_json_encode(wp_create_nonce('ma_forms_resend_mail_'.$post->ID)); ?>
                 };
-                jQuery.post(ajaxurl, data, function(response) {
-                    alert(response);
+                jQuery.post(ajaxurl, data, null, 'json').done(function(response) {
+                    results.empty();
+                    if (response.message) {
+                        results.text(response.message);
+                    }
+                    var list = jQuery('<ul>');
+                    (response.results || []).forEach(function(result) {
+                        jQuery('<li>').text(result.title + ': ' + result.message).appendTo(list);
+                    });
+                    results.append(list);
+                }).fail(function(xhr) {
+                    results.text((xhr.responseJSON && xhr.responseJSON.message) || <?php echo wp_json_encode(__('Request failed. Some actions may already have run; check before retrying.', 'forms-by-made-it')); ?>);
+                }).always(function() {
+                    button.prop('disabled', false);
                 });
             });
         </script>
@@ -1028,41 +1049,30 @@ class WP_MADEIT_FORM_admin
         }
         check_ajax_referer('ma_forms_resend_mail_'.$id, 'nonce');
 
-        //TODO!!
-        
-        $data = json_decode($this->dbToEnter(get_post_meta($id, 'data', true)), true);
-        $formId = get_post_meta($id, 'form_id', true);
-        
-        $data['message'] = "Beste,
-
-        Onderstaande gegevens zijn ingevoerd via de website
-        
-        Van: [field-1]
-        E-mailadres: [field-2]
-        Telefoon: [field-3]
-        Adres: [field-4], [field-5] [field-6]
-        Organisatie: [field-7]
-        Gelegenheid: [field-9]
-        Aantal personen: [field-12]
-        Datum: [field-10]
-        Bericht: [field-11]";
-
-        $data['to'] = "";
-        $data['subject'] = "Contact via website ";
-        $data['header'] = "Reply-to: " . $data['field-2'] . "\r\n";
-
-        foreach($data as $key => $v) {
-            $data['message'] = str_replace("[" . $key . "]", $v, $data['message']);
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+            wp_send_json(['success' => false, 'message' => __('POST required.', 'forms-by-made-it')], 405);
         }
 
-        $mail = new WP_MADEIT_FORM_Email();
-        if($mail->callback($data, [], null, $formId, $id, null)) {
-            echo "Gelukt!";
-        } else {
-            echo "Mislukt!";
+        $formId = absint(get_post_meta($id, 'form_id', true));
+        $form = $formId ? get_post($formId) : null;
+        if (!$form || $form->post_type !== 'ma_forms' || !current_user_can('edit_post', $formId)) {
+            wp_send_json(['success' => false, 'message' => __('The original form is unavailable.', 'forms-by-made-it')], 404);
         }
 
-        wp_die();
+        $postData = json_decode($this->dbToEnter(get_post_meta($id, 'data', true)), true);
+        $actions = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($formId, 'actions', true))), true);
+        $messages = json_decode(str_replace("\'", "'", $this->dbToEnter(get_post_meta($formId, 'messages', true))), true);
+        if (!is_array($postData) || !is_array($actions)) {
+            wp_send_json(['success' => false, 'message' => __('Stored submission or action configuration is invalid.', 'forms-by-made-it')], 400);
+        }
+
+        $runner = new WP_Form_front($this->settings);
+        $results = $runner->replayServerActions($form, $id, $postData, $actions, is_array($messages) ? $messages : []);
+        wp_send_json([
+            'success' => !in_array('failed', array_column($results, 'status'), true),
+            'message' => $results ? __('Action run finished.', 'forms-by-made-it') : __('No actions configured.', 'forms-by-made-it'),
+            'results' => $results,
+        ]);
     }
 
     public function admin_menu()

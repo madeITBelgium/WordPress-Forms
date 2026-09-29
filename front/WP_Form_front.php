@@ -1297,6 +1297,48 @@ class WP_Form_front
         }
     }
 
+    public function replayServerActions($form, $inputId, $postData, $configuredActions, $messages)
+    {
+        $this->form_id = $form->ID;
+        $postData['input_id'] = $inputId;
+        $registeredActions = apply_filters('madeit_forms_actions', []);
+        $actions = apply_filters('madeit_forms_submit_actions', $configuredActions);
+        $results = [];
+        $browserActions = ['REDIRECT', 'DOWNLOAD', 'JS_EVENT', 'GA_EVENT', 'GA_ADS_EVENT'];
+        $messages = array_merge(['failed' => __('Action failed.', 'forms-by-made-it')], $messages);
+
+        foreach ((array) $actions as $actionInfo) {
+            $actionId = is_array($actionInfo) ? ($actionInfo['_id'] ?? '') : '';
+            $actionId = is_string($actionId) ? $actionId : '';
+            $action = $registeredActions[$actionId] ?? null;
+            $result = ['title' => $action['title'] ?? $actionId, 'status' => 'failed', 'message' => __('Action unavailable.', 'forms-by-made-it')];
+            if (in_array($actionId, $browserActions, true) || ($action['execution_context'] ?? '') === 'browser') {
+                $result['status'] = 'skipped';
+                $result['message'] = __('Browser action skipped.', 'forms-by-made-it');
+            } elseif ($action && is_callable($action['callback'] ?? null)) {
+                try {
+                    $data = ['id' => $inputId];
+                    foreach ($action['action_fields'] as $name => $info) {
+                        $data[$name] = $this->changeInputTag($actionInfo[$name] ?? $info['value'], $postData);
+                    }
+                    $data = apply_filters('madeit_forms_action_data', $data, $form->ID, $inputId, $actionInfo, $postData);
+                    $response = call_user_func($action['callback'], $data, $messages, $actionInfo, $form->ID, $inputId, $postData);
+                    if ($response === true) {
+                        $result['status'] = 'success';
+                        $result['message'] = __('Action completed.', 'forms-by-made-it');
+                    } else {
+                        $result['message'] = __('Action did not report success.', 'forms-by-made-it');
+                    }
+                } catch (\Throwable $exception) {
+                    $result['message'] = __('Action failed. Check the integration configuration.', 'forms-by-made-it');
+                }
+            }
+            $results[] = $result;
+        }
+
+        return $results;
+    }
+
     public function generateViewImage()
     {
         if (isset($_GET['madeit_forms_view']) && $_GET['madeit_forms_view'] == 'yes' && isset($_GET['input_id'])) {
