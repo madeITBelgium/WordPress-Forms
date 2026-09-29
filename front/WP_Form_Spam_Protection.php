@@ -22,7 +22,7 @@ class WP_Form_Spam_Protection
         $reasons = [];
 
         $ip = $this->getIP();
-        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? trim((string) $_SERVER['HTTP_USER_AGENT']) : '';
+        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) && is_string($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
 
         $spamIPs = apply_filters('madeit_forms_spam_ips', []);
         if ($ip !== 'UNKNOWN' && in_array($ip, $spamIPs, true)) {
@@ -154,7 +154,9 @@ class WP_Form_Spam_Protection
             return call_user_func($this->getIpCallback);
         }
 
-        return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'UNKNOWN';
+        $ip = isset($_SERVER['REMOTE_ADDR']) && is_string($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+
+        return filter_var($ip, FILTER_VALIDATE_IP) !== false ? $ip : 'UNKNOWN';
     }
 
     private function normalizeValues($data)

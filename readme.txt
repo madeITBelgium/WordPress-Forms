@@ -1,13 +1,13 @@
 === Forms ===
 Contributors: madeit
 Donate link: http://www.madeit.be/donate/
-Tags: contact, form, contact form, feedback, email, captcha, form submit, newsletter
-Requires at least: 5.0
-Tested up to: 6.9.4
+Tags: contact form, feedback, email, captcha, newsletter
+Requires at least: 6.9.0
+Tested up to: 7.1
 Requires PHP: 8.5
 Stable tag: 3.0.2
-License: GNU GPL v3.0
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+License: GPL-3.0-only
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Build easy and flexible forms with Forms.
 

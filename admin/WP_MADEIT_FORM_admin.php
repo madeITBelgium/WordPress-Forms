@@ -72,7 +72,7 @@ class WP_MADEIT_FORM_admin
 
             // output headers so that the file is downloaded rather than displayed
             header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: attachment; filename=export-madeit-forms-'.date('Y-m-d-H-i-s').'.csv');
+            header('Content-Disposition: attachment; filename=export-madeit-forms-'.gmdate('Y-m-d-H-i-s').'.csv');
 
             // create a file pointer connected to the output stream
             $output = fopen('php://output', 'w');
@@ -284,9 +284,9 @@ class WP_MADEIT_FORM_admin
         if ($column === 'short_code') {
             $formId = get_post_meta($post_id, 'form_id', true);
             if (!empty($formId)) {
-                echo '<code>[form id="'.$formId.'"]</code> of ';
+                echo '<code>[form id="'.esc_attr($formId).'"]</code> of ';
             }
-            echo '<code>[form id="'.$post_id.'"]</code>';
+            echo '<code>[form id="'.esc_attr($post_id).'"]</code>';
         }
     }
 
@@ -314,7 +314,7 @@ class WP_MADEIT_FORM_admin
             $form = get_post($formId);
             echo esc_html($form ? $form->post_title : '');
         } elseif ($column === 'read') {
-            echo get_post_meta($post_id, 'read', true) == 1 ? __('Yes', 'forms-by-made-it') : __('No', 'forms-by-made-it');
+            echo esc_html(get_post_meta($post_id, 'read', true) == 1 ? __('Yes', 'forms-by-made-it') : __('No', 'forms-by-made-it'));
         } elseif (strpos($column, 'input_') !== false) {
             $fieldNr = substr($column, strlen('input_'));
             $formId = get_post_meta($post_id, 'form_id', true);
@@ -422,6 +422,7 @@ class WP_MADEIT_FORM_admin
                                 echo sprintf(
                                     '<a href="#TB_inline?width=600&height=550&inlineId=%1$s" class="thickbox button" title="%2$s">%3$s</a>',
                                     esc_attr($panel['content'].'-'.$id),
+                                    /* translators: %s: Title of the form-tag generator panel. */
                                     esc_attr(sprintf(__('Form-tag Generator: %s', 'forms-by-made-it'), $panel['title'])),
                                     esc_html($panel['title'])
                                 );
@@ -438,13 +439,13 @@ class WP_MADEIT_FORM_admin
                         if (isset($actions) && count($actions) > 0) {
                             foreach ($actions as $actID => $actionInfo) {
                                 ?>
-                                <section id="action-panel-<?php echo $actID; ?>" data-id="<?php echo $actID; ?>" data-section-id="action-panel-" class="action-section">
-                                    <input type="hidden" name="action_panel_<?php echo $actID; ?>" value="<?php echo $actID; ?>" data-name="action_panel_">
+                                <section id="action-panel-<?php echo esc_attr($actID); ?>" data-id="<?php echo esc_attr($actID); ?>" data-section-id="action-panel-" class="action-section">
+                                    <input type="hidden" name="action_panel_<?php echo esc_attr($actID); ?>" value="<?php echo esc_attr($actID); ?>" data-name="action_panel_">
                                     <span style="float:right; margin: 5px;"><a href="javascript:void(0);" class="delete-section" style="text-decoration:none;"><span class="dashicons dashicons-no-alt"></span></a></span>
                                     <h3><?php echo esc_html(__('Action', 'forms-by-made-it')); ?>
                                         <?php if (isset($actionInfo['key'])) {
                                     ?>
-                                            <input type="hidden" name="action_key_<?php echo $actID; ?>" value="<?php echo esc_attr($actionInfo['key']); ?>" />
+                                            <input type="hidden" name="action_key_<?php echo esc_attr($actID); ?>" value="<?php echo esc_attr($actionInfo['key']); ?>" />
                                             <?php
                                             echo esc_html(' - ('.__('Key', 'forms-by-made-it').':'.$actionInfo['key'].')');
                                 } ?></h3>
@@ -452,10 +453,10 @@ class WP_MADEIT_FORM_admin
                                         <tbody>
                                             <tr data-name="action_type_">
                                                 <th scope="row">
-                                                    <label for="action_type_<?php echo $actID; ?>"><?php echo esc_html(__('Type', 'forms-by-made-it')); ?></label>
+                                                    <label for="action_type_<?php echo esc_attr($actID); ?>"><?php echo esc_html(__('Type', 'forms-by-made-it')); ?></label>
                                                 </th>
                                                 <td>
-                                                    <select name="action_type_<?php echo $actID; ?>" class="large-text code" style="width:100%">
+                                                    <select name="action_type_<?php echo esc_attr($actID); ?>" class="large-text code" style="width:100%">
                                                         <?php
                                                         foreach ($this->actions as $id => $action) {
                                                             ?>
@@ -471,17 +472,17 @@ class WP_MADEIT_FORM_admin
                                                     $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value']; ?>
                                                     <tr class="ACTION_<?php echo esc_html($id); ?>" data-name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_">
                                                         <th scope="row">
-                                                            <label for="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>"><?php echo esc_html($info['label']); ?></label>
+                                                            <label for="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>"><?php echo esc_html($info['label']); ?></label>
                                                         </th>
                                                         <td>
                                                             <?php
                                                             if ($info['type'] == 'text') {
                                                                 ?>
-                                                                <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" value="<?php echo esc_attr($inputValue); ?>" />
+                                                                <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="large-text code" size="70" value="<?php echo esc_attr($inputValue); ?>" />
                                                                 <?php
                                                             } elseif ($info['type'] == 'select') {
                                                                 ?>
-                                                                <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" width="100%">
+                                                                <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="large-text code" size="70" width="100%">
                                                                     <?php foreach ($info['options'] as $key => $val) {
                                                                     ?>
                                                                         <option value="<?php echo esc_html($key); ?>" <?php if ($key == $inputValue) {
@@ -493,11 +494,11 @@ class WP_MADEIT_FORM_admin
                                                                 <?php
                                                             } elseif ($info['type'] == 'textarea') {
                                                                 $value = stripcslashes($inputValue); ?>
-                                                                <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo esc_attr($info['options']['min-height'] ?? '50px'); ?>;"><?php echo esc_textarea($value); ?></textarea>
+                                                                <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="large-text code" style="min-height: <?php echo esc_attr($info['options']['min-height'] ?? '50px'); ?>;"><?php echo esc_textarea($value); ?></textarea>
                                                                 <?php
                                                             } elseif ($info['type'] == 'checkbox') {
                                                                 ?>
-                                                                <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="" value="checked" <?php if ($inputValue == 'checked') {
+                                                                <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="" value="checked" <?php if ($inputValue == 'checked') {
                                                                     echo 'CHECKED';
                                                                 } ?>>
                                                                 <?php
@@ -525,8 +526,8 @@ class WP_MADEIT_FORM_admin
                         foreach ($this->messages as $arr) {
                             $value = isset($messages[$arr['field']]) ? $messages[$arr['field']] : $arr['value']; ?>
                             <p class="description">
-                                <label for="<?php echo $arr['field']; ?>"><?php echo esc_html($arr['description']); ?><br />
-                                    <input type="text" id="messages_<?php echo $arr['field']; ?>" name="messages_<?php echo $arr['field']; ?>" class="large-text" size="70" value="<?php echo esc_attr($this->removeSlashes($value)); ?>" />
+                                <label for="<?php echo esc_attr($arr['field']); ?>"><?php echo esc_html($arr['description']); ?><br />
+                                    <input type="text" id="messages_<?php echo esc_attr($arr['field']); ?>" name="messages_<?php echo esc_attr($arr['field']); ?>" class="large-text" size="70" value="<?php echo esc_attr($this->removeSlashes($value)); ?>" />
                                 </label>
                             </p>
                             <?php
@@ -580,11 +581,11 @@ class WP_MADEIT_FORM_admin
                                         <?php
                                         if ($info['type'] == 'text') {
                                             ?>
-                                            <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" value="<?php echo esc_attr($inputValue); ?>" />
+                                            <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="large-text code" size="70" value="<?php echo esc_attr($inputValue); ?>" />
                                             <?php
                                         } elseif ($info['type'] == 'select') {
                                             ?>
-                                            <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" width="100%">
+                                            <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="large-text code" size="70" width="100%">
                                                 <?php foreach ($info['options'] as $key => $val) {
                                                 ?>
                                                     <option value="<?php echo esc_html($key); ?>" <?php if ($key == $inputValue) {
@@ -596,11 +597,11 @@ class WP_MADEIT_FORM_admin
                                             <?php
                                         } elseif ($info['type'] == 'textarea') {
                                             $value = stripcslashes($inputValue); ?>
-                                            <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo esc_attr($info['options']['min-height'] ?? '50px'); ?>;"><?php echo esc_textarea($value); ?></textarea>
+                                            <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="large-text code" style="min-height: <?php echo esc_attr($info['options']['min-height'] ?? '50px'); ?>;"><?php echo esc_textarea($value); ?></textarea>
                                             <?php
                                         } elseif ($info['type'] == 'checkbox') {
                                             ?>
-                                            <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="" value="checked" <?php if ($inputValue == 'checked') {
+                                            <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="" value="checked" <?php if ($inputValue == 'checked') {
                                                 echo 'CHECKED';
                                             } ?>>
                                             <?php
@@ -620,7 +621,7 @@ class WP_MADEIT_FORM_admin
             $callback = $panel['form'];
             if (is_callable($callback)) {
                 echo sprintf('<div id="%s" class="hidden">', esc_attr($panel['content'].'-'.$id));
-                echo sprintf('<form action="" class="tag-generator-panel" data-id="%s">', $id);
+                echo sprintf('<form action="" class="tag-generator-panel" data-id="%s">', esc_attr($id));
                 call_user_func($callback, '', array_merge($panel, ['id' => $id]));
                 echo '</form></div>';
             }
@@ -638,9 +639,9 @@ class WP_MADEIT_FORM_admin
                 <h3><?php echo esc_html(__('Information', 'forms-by-made-it')); ?></h3>
                 <div class="inside">
                     <ul>
-                        <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/docs/'), __('Docs', 'forms-by-made-it'), ''); ?></li>
-                        <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/faq'), __('F.A.Q.', 'forms-by-made-it'), ''); ?></li>
-                        <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/'), __('Support', 'forms-by-made-it'), ''); ?></li>
+                        <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/docs/'), esc_attr(__('Docs', 'forms-by-made-it')), ''); ?></li>
+                        <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/faq'), esc_attr(__('F.A.Q.', 'forms-by-made-it')), ''); ?></li>
+                        <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s" target="_blank">%2$s</a>', esc_url('https://www.madeit.be/forms-plugin/'), esc_attr(__('Support', 'forms-by-made-it')), ''); ?></li>
                     </ul>
                 </div>
             </div><!-- #informationdiv -->
@@ -651,7 +652,7 @@ class WP_MADEIT_FORM_admin
                 /* translators: %s: Number of errors */
                 $message = sprintf(_n('%s configuration error found', '%s configuration errors found', $errors, 'forms-by-made-it'), $errors);
                 $link = sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#configuration-validator'), __("What's this?", 'forms-by-made-it'), '');
-                echo sprintf('<div class="misc-pub-section warning">%1$s<br />%2$s</div>', $message, $link);
+                echo sprintf('<div class="misc-pub-section warning">%1$s<br />%2$s</div>', esc_html($message), wp_kses_post($link));
             }
         }
     }
@@ -828,13 +829,13 @@ class WP_MADEIT_FORM_admin
                 if (isset($actions) && count($actions) > 0) {
                     foreach ($actions as $actID => $actionInfo) {
                         ?>
-                        <section id="action-panel-<?php echo $actID; ?>" data-id="<?php echo $actID; ?>" data-section-id="action-panel-" class="action-section">
-                            <input type="hidden" name="action_panel_<?php echo $actID; ?>" value="<?php echo $actID; ?>" data-name="action_panel_">
+                        <section id="action-panel-<?php echo esc_attr($actID); ?>" data-id="<?php echo esc_attr($actID); ?>" data-section-id="action-panel-" class="action-section">
+                            <input type="hidden" name="action_panel_<?php echo esc_attr($actID); ?>" value="<?php echo esc_attr($actID); ?>" data-name="action_panel_">
                             <span style="float:right; margin: 5px;"><a href="javascript:void(0);" class="delete-section" style="text-decoration:none;"><span class="dashicons dashicons-no-alt"></span></a></span>
                             <br><h3><?php echo esc_html(__('Action', 'forms-by-made-it')); ?>
                                 <?php if (isset($actionInfo['key'])) {
                             ?>
-                                    <input type="hidden" name="action_key_<?php echo $actID; ?>" value="<?php echo esc_attr($actionInfo['key']); ?>" />
+                                    <input type="hidden" name="action_key_<?php echo esc_attr($actID); ?>" value="<?php echo esc_attr($actionInfo['key']); ?>" />
                                     <?php
                                     echo esc_html(' - ('.__('Key', 'forms-by-made-it').':'.$actionInfo['key'].')');
                         } ?></h3>
@@ -842,10 +843,10 @@ class WP_MADEIT_FORM_admin
                                 <tbody>
                                     <tr data-name="action_type_">
                                         <th scope="row">
-                                            <label for="action_type_<?php echo $actID; ?>"><?php echo esc_html(__('Type', 'forms-by-made-it')); ?></label>
+                                            <label for="action_type_<?php echo esc_attr($actID); ?>"><?php echo esc_html(__('Type', 'forms-by-made-it')); ?></label>
                                         </th>
                                         <td>
-                                            <select name="action_type_<?php echo $actID; ?>" class="large-text code" style="width:100%">
+                                            <select name="action_type_<?php echo esc_attr($actID); ?>" class="large-text code" style="width:100%">
                                                 <?php
                                                 foreach ($this->actions as $id => $action) {
                                                     ?>
@@ -861,17 +862,17 @@ class WP_MADEIT_FORM_admin
                                             $inputValue = isset($actionInfo[$name]) ? $actionInfo[$name] : $info['value']; ?>
                                             <tr class="ACTION_<?php echo esc_html($id); ?>" data-name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_">
                                                 <th scope="row">
-                                                    <label for="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>"><?php echo esc_html($info['label']); ?></label>
+                                                    <label for="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>"><?php echo esc_html($info['label']); ?></label>
                                                 </th>
                                                 <td>
                                                     <?php
                                                     if ($info['type'] == 'text') {
                                                         ?>
-                                                        <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" value="<?php echo esc_attr($inputValue); ?>" />
+                                                        <input type="text" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="large-text code" size="70" value="<?php echo esc_attr($inputValue); ?>" />
                                                         <?php
                                                     } elseif ($info['type'] == 'select') {
                                                         ?>
-                                                        <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" size="70" width="100%">
+                                                        <select name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="large-text code" size="70" width="100%">
                                                             <?php foreach ($info['options'] as $key => $val) {
                                                             ?>
                                                                 <option value="<?php echo esc_html($key); ?>" <?php if ($key == $inputValue) {
@@ -883,11 +884,11 @@ class WP_MADEIT_FORM_admin
                                                         <?php
                                                     } elseif ($info['type'] == 'textarea') {
                                                         $value = stripcslashes($inputValue); ?>
-                                                        <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="large-text code" style="min-height: <?php echo esc_attr($info['options']['min-height'] ?? '50px'); ?>;"><?php echo esc_textarea($value); ?></textarea>
+                                                        <textarea name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="large-text code" style="min-height: <?php echo esc_attr($info['options']['min-height'] ?? '50px'); ?>;"><?php echo esc_textarea($value); ?></textarea>
                                                         <?php
                                                     } elseif ($info['type'] == 'checkbox') {
                                                         ?>
-                                                        <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo $actID; ?>" class="" value="checked" <?php if ($inputValue == 'checked') {
+                                                        <input type="checkbox" name="action_<?php echo esc_html($id); ?>_<?php echo esc_html($name); ?>_<?php echo esc_attr($actID); ?>" class="" value="checked" <?php if ($inputValue == 'checked') {
                                                             echo 'CHECKED';
                                                         } ?>>
                                                         <?php
@@ -922,8 +923,8 @@ class WP_MADEIT_FORM_admin
                 foreach ($this->messages as $arr) {
                     $value = isset($messages[$arr['field']]) ? $messages[$arr['field']] : $arr['value']; ?>
                     <p class="description" style="opacity: 1;">
-                        <label for="<?php echo $arr['field']; ?>"><?php echo esc_html($arr['description']); ?><br />
-                            <input type="text" id="messages_<?php echo $arr['field']; ?>" name="messages_<?php echo $arr['field']; ?>" class="large-text" size="70" value="<?php echo esc_attr($this->removeSlashes($value)); ?>" />
+                        <label for="<?php echo esc_attr($arr['field']); ?>"><?php echo esc_html($arr['description']); ?><br />
+                            <input type="text" id="messages_<?php echo esc_attr($arr['field']); ?>" name="messages_<?php echo esc_attr($arr['field']); ?>" class="large-text" size="70" value="<?php echo esc_attr($this->removeSlashes($value)); ?>" />
                         </label>
                     </p>
                     <?php
@@ -977,7 +978,7 @@ class WP_MADEIT_FORM_admin
                 } ?>
                 <tr>
                     <th scope="row">
-                        <label><strong><?php echo __('IP', 'forms-by-made-it'); ?></strong></label>
+                        <label><strong><?php echo esc_html(__('IP', 'forms-by-made-it')); ?></strong></label>
                     </th>
                     <td>
                         <?php echo esc_html(get_post_meta($post->ID, 'ip', true)); ?>
@@ -985,7 +986,7 @@ class WP_MADEIT_FORM_admin
                 </tr>
                 <tr>
                     <th scope="row">
-                        <label><strong><?php echo __('User agent', 'forms-by-made-it'); ?></strong></label>
+                        <label><strong><?php echo esc_html(__('User agent', 'forms-by-made-it')); ?></strong></label>
                     </th>
                     <td>
                         <?php echo esc_html(get_post_meta($post->ID, 'user_agent', true)); ?>
@@ -993,7 +994,7 @@ class WP_MADEIT_FORM_admin
                 </tr>
                 <tr>
                     <th scope="row">
-                        <label><strong><?php echo __('Date', 'forms-by-made-it'); ?></strong></label>
+                        <label><strong><?php echo esc_html(__('Date', 'forms-by-made-it')); ?></strong></label>
                     </th>
                     <td>
                         <?php echo esc_html($post->post_date); ?>
@@ -1124,7 +1125,7 @@ class WP_MADEIT_FORM_admin
                             <input type="hidden" name="action" value="export">
                             <select name="id">
                                 <?php foreach ($forms as $form) { ?>
-                                <option value="<?php echo $form->ID; ?>"><?php echo esc_textarea($form->post_title); ?></option>
+                                <option value="<?php echo esc_attr($form->ID); ?>"><?php echo esc_textarea($form->post_title); ?></option>
                                 <?php } ?>
                             </select>
                             <input type="submit" value="Exporteer" class="button">
@@ -1134,7 +1135,7 @@ class WP_MADEIT_FORM_admin
                         <form method="get" action="/wp-admin/edit.php">
                             <input type="hidden" name="post_type" value="ma_form_inputs">
                             <input type="hidden" name="action" value="mark_as_read_forms">
-                            <input type="hidden" name="forms_wpnonce" value="<?php echo wp_create_nonce('mark_as_read_forms'); ?>">
+                            <input type="hidden" name="forms_wpnonce" value="<?php echo esc_attr(wp_create_nonce('mark_as_read_forms')); ?>">
                             <input type="submit" value="Markeer alle inzendingen als gelezen" class="button">
                         </form>
                     </div>
@@ -1221,7 +1222,7 @@ class WP_MADEIT_FORM_admin
         if (!empty($_REQUEST['changed-mark-as-read'])) {
             $num_changed = (int) $_REQUEST['changed-mark-as-read'];
             /* translators: %s: Number of changed posts */
-            printf('<div id="message" class="updated notice is-dismissable"><p>'.__('%d submits marked as read.', 'forms-by-made-it').'</p></div>', $num_changed);
+            printf('<div id="message" class="updated notice is-dismissable"><p>'.esc_html__('%d submits marked as read.', 'forms-by-made-it').'</p></div>', (int) $num_changed);
         }
     }
 
@@ -1276,7 +1277,7 @@ class WP_MADEIT_FORM_admin
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < 5; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+            $randomString .= $characters[wp_rand(0, $charactersLength - 1)];
         }
 
         return $randomString;
@@ -1309,11 +1310,11 @@ class WP_MADEIT_FORM_admin
                 'numberposts' => -1,
             ]); ?>
             <select name="ma_forms" id="ma_forms" class="postform">
-                <option value=""><?php echo __('All forms', 'forms-by-made-it'); ?></option>
+                <option value=""><?php echo esc_html(__('All forms', 'forms-by-made-it')); ?></option>
                 <?php
                 foreach ($forms as $form) {
                     ?>
-                    <option value="<?php echo $form->ID; ?>"
+                    <option value="<?php echo esc_attr($form->ID); ?>"
                         <?php if (isset($_GET['ma_forms']) && $_GET['ma_forms'] == $form->ID) {
                         echo 'SELECTED';
                     } ?>

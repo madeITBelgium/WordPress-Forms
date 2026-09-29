@@ -1,4 +1,7 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 if(!class_exists("WP_MADEIT_FORM_Module")) {
     require_once(MADEIT_FORM_DIR . '/modules/WP_MADEIT_FORM_Module.php');
 }
@@ -26,12 +29,16 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
         }
 
         if ( 'text' == $type ) {
+            /* translators: %s: Link to the text field documentation. */
             $description = __("Generate a form-tag for a single-line plain text input field. For more details, see %s.", 'forms-by-made-it');
         } elseif ( 'email' == $type ) {
+            /* translators: %s: Link to the text field documentation. */
             $description = __("Generate a form-tag for a single-line email address input field. For more details, see %s.", 'forms-by-made-it');
         } elseif ( 'url' == $type ) {
+            /* translators: %s: Link to the text field documentation. */
             $description = __("Generate a form-tag for a single-line URL input field. For more details, see %s.", 'forms-by-made-it');
         } elseif ( 'tel' == $type ) {
+            /* translators: %s: Link to the text field documentation. */
             $description = __("Generate a form-tag for a single-line telephone number input field. For more details, see %s.", 'forms-by-made-it');
         }
 
@@ -40,7 +47,7 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
         ?>
         <div class="control-box">
             <fieldset>
-                <legend><?php echo sprintf(esc_html( $description), $desc_link); ?></legend>
+                <legend><?php echo sprintf(esc_html($description), wp_kses_post($desc_link)); ?></legend>
                 <table class="form-table">
                     <tbody>
                         <tr>
@@ -76,14 +83,16 @@ class WP_MADEIT_FORM_Module_Text extends WP_MADEIT_FORM_Module {
             </fieldset>
         </div>
         <div class="insert-box">
-            <input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
+            <input type="text" name="<?php echo esc_attr($type); ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
             <div class="submitbox">
                 <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr(__('Insert Tag', 'forms-by-made-it')); ?>" />
             </div>
             <br class="clear" />
             <p class="description mail-tag">
                 <label for="<?php echo esc_attr($args['content'] . '-mailtag'); ?>">
-                    <?php echo sprintf( esc_html(__("To use the value input through this field in a action field, you need to insert the corresponding name-tag (%s) into the field on the Actions tab.", 'forms-by-made-it')), '<strong><span class="mail-tag"></span></strong>'); ?>
+                    <?php
+                    /* translators: %s: Field name-tag displayed in bold, for use in action settings. */
+                    echo sprintf( esc_html(__("To use the value input through this field in a action field, you need to insert the corresponding name-tag (%s) into the field on the Actions tab.", 'forms-by-made-it')), '<strong><span class="mail-tag"></span></strong>'); ?>
                     <input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr($args['content'] . '-mailtag'); ?>" />
                 </label>
             </p>

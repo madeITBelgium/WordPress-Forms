@@ -1,4 +1,7 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 if(!class_exists("WP_MADEIT_FORM_Module")) {
     require_once(MADEIT_FORM_DIR . '/modules/WP_MADEIT_FORM_Module.php');
 }
@@ -13,13 +16,14 @@ class WP_MADEIT_FORM_Module_Select extends WP_MADEIT_FORM_Module {
         $args = wp_parse_args( $args, array() );
         $type = $args['id'];
         
+        /* translators: %s: URL to the documentation for drop-down menus */
         $description = __("Generate a form-tag for a drop-down menu. For more details, see %s.", 'forms-by-made-it');
-        $desc_link = '<a href="' . esc_url('https://www.madeit.be/wordpress/forms/docs/drop-down/') . '" target="_blank">' . __('Text Fields', 'forms-by-made-it') . '</a>';
+        $desc_link = '<a href="' . esc_url('https://www.madeit.be/wordpress/forms/docs/drop-down/') . '" target="_blank">' . __('Drop-down menus', 'forms-by-made-it') . '</a>';
 
         ?>
         <div class="control-box">
             <fieldset>
-                <legend><?php echo sprintf(esc_html($description), $desc_link); ?></legend>
+                <legend><?php echo sprintf(esc_html($description), wp_kses_post($desc_link)); ?></legend>
                 <table class="form-table">
                     <tbody>
                         <tr>
@@ -60,14 +64,17 @@ class WP_MADEIT_FORM_Module_Select extends WP_MADEIT_FORM_Module {
             </fieldset>
         </div>
         <div class="insert-box">
-            <input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
+            <input type="text" name="<?php echo esc_attr($type); ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
             <div class="submitbox">
                 <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr(__('Insert Tag', 'forms-by-made-it')); ?>" />
             </div>
             <br class="clear" />
             <p class="description mail-tag">
                 <label for="<?php echo esc_attr($args['content'] . '-mailtag'); ?>">
-                    <?php echo sprintf(esc_html(__("To use the value input through this field in a action field, you need to insert the corresponding name-tag (%s) into the field on the Actions tab.", 'forms-by-made-it')), '<strong><span class="mail-tag"></span></strong>'); ?>
+                    <?php
+                    /* translators: %s: mail tag */
+                    echo sprintf(esc_html(__("To use the value input through this field in a action field, you need to insert the corresponding name-tag (%s) into the field on the Actions tab.", 'forms-by-made-it')), '<strong><span class="mail-tag"></span></strong>');
+                    ?>
                     <input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr($args['content'] . '-mailtag'); ?>" />
                 </label>
             </p>
@@ -115,7 +122,7 @@ class WP_MADEIT_FORM_Module_Select extends WP_MADEIT_FORM_Module {
             }
             foreach(explode("|", $value) as $v) {
                 ?>
-                <option value="<?php echo $v; ?>" <?php if($selected === $v) { echo 'SELECTED'; } ?>><?php echo $v; ?></option>
+                <option value="<?php echo esc_attr($v); ?>" <?php if($selected === $v) { echo 'SELECTED'; } ?>><?php echo esc_html($v); ?></option>
                 <?php
             }
             ?>

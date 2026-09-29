@@ -329,7 +329,7 @@ class WP_Form_front
                 $uploadDir = wp_upload_dir();
                 $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/';
                 if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
+                    wp_mkdir_p($uploadDir);
                 }
                 $this->ensureUploadsProtection($uploadDir);
 
@@ -380,31 +380,18 @@ class WP_Form_front
                         continue;
                     }
 
-                    // If no extension from WP, try to infer from MIME; fallback to .bin
-                    if (empty($ext) && !empty($mime)) {
-                        $ext = $this->extensionFromMime($mime);
-                    }
-                    if (empty($ext)) {
-                        $ext = 'bin';
-                    }
-
-                    //generate random unique filename, keeping only validated extension
-                    $filename = wp_unique_filename($uploadDir, md5(uniqid((string) random_int(1000, 9999), true)).'.'.$ext);
-
-                    //move file to upload dir
-                    $result = @move_uploaded_file($file['tmp_name'], $uploadDir.$filename);
-                    if ($result === false) {
+                    $result = $this->handleValidatedUpload($file, $form->ID, $ext, $mime);
+                    if (isset($result['error'])) {
                         $error = true;
                         $error_msg = isset($messages['file_upload_error']) ? $messages['file_upload_error'] : __('Error uploading file.', 'forms-by-made-it');
                         $error_msg .= ' ('.$uploadableFields[$k]['label'].')';
+                        continue;
                     }
 
-                    $url = home_url().'/wp-content/uploads/madeit-forms/'.$form->ID.'/'.$filename;
-
                     $uploadedFiles[$k] = [
-                        'url'      => $url,
-                        'location' => $uploadDir.$filename,
-                        'filename' => $filename,
+                        'url'      => $result['url'],
+                        'location' => $result['file'],
+                        'filename' => wp_basename($result['file']),
                         'name'     => $file['name'],
                     ];
                 }
@@ -412,7 +399,7 @@ class WP_Form_front
                 if ($error) {
                     //remove uploaded files
                     foreach ($uploadedFiles as $file) {
-                        unlink($file['location']);
+                        wp_delete_file($file['location']);
                     }
                 }
             }
@@ -460,18 +447,18 @@ class WP_Form_front
 
                 /* Process file upload */
                 if (count($uploadedFiles) > 0) {
-                    $uploadDir = wp_upload_dir();
-                    $uploadDir = $uploadDir['basedir'].'/madeit-forms/'.$form->ID.'/'.$inputId.'/';
+                    $uploads = wp_upload_dir();
+                    $uploadDir = $uploads['basedir'].'/madeit-forms/'.$form->ID.'/'.$inputId.'/';
                     if (!file_exists($uploadDir)) {
-                        mkdir($uploadDir, 0755, true);
+                        wp_mkdir_p($uploadDir);
                     }
                     $this->ensureUploadsProtection($uploadDir);
 
                     foreach ($uploadedFiles as $k => $v) {
                         //move file to new path
-                        $url = home_url().'/wp-content/uploads/madeit-forms/'.$form->ID.'/'.$inputId.'/'.$v['filename'];
+                        $url = $uploads['baseurl'].'/madeit-forms/'.$form->ID.'/'.$inputId.'/'.$v['filename'];
 
-                        $result = rename($v['location'], $uploadDir.$v['filename']);
+                        $result = $this->uploadFilesystem()->move($v['location'], $uploadDir.$v['filename'], false);
                         if ($result === false) {
                             $url = $v['url'];
                         }
@@ -515,9 +502,9 @@ class WP_Form_front
                         $result = call_user_func($action['callback'], $data, $messages, $actionInfo, $form->ID, $inputId, $postData);
                         if (is_array($result) && isset($result['type'])) {
                             if ($result['type'] == 'JS') {
-                                echo '<script>'.$result['code'].'</script>';
+                                echo '<script>'.$result['code'].'</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Registered action callbacks encode dynamic JS arguments; escaping the script itself breaks execution.
                             } elseif ($result['type'] == 'HTML') {
-                                echo $result['code'];
+                                echo $result['code']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Registered actions return HTML with context-escaped values or administrator-configured executable code.
                             }
                         } elseif ($result !== true) {
                             $error = true;
@@ -687,7 +674,7 @@ class WP_Form_front
         }
 
         if ($form->post_status !== 'publish') {
-            echo __('This form is not available.', 'forms-by-made-it');
+            echo esc_html(__('This form is not available.', 'forms-by-made-it'));
 
             return;
         }
@@ -713,7 +700,7 @@ class WP_Form_front
         echo '>';
 
         echo '<input type="hidden" name="form_id" value="'.esc_attr($id).'">';
-        echo '<input type="hidden" name="madeit_form_rendered_at" value="'.time().'">';
+        echo '<input type="hidden" name="madeit_form_rendered_at" value="'.esc_attr(time()).'">';
         echo '<input type="text" name="madeit_website" value="" class="madeit-forms-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">';
         if (get_post_meta($form->ID, 'form_type', true) === 'html') {
             $formValue = get_post_meta($form->ID, 'form', true);
@@ -769,13 +756,14 @@ class WP_Form_front
             }
 
             if (isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
-                $captchaCallback = 'onSubmit'.rand();
-                $captchaErrorCallback = 'onErrorSubmit'.rand();
+                $captchaCallback = 'onSubmit'.wp_rand();
+                $captchaErrorCallback = 'onErrorSubmit'.wp_rand();
 
-                $captcha = ' data-sitekey="'.$this->defaultSettings['reCaptcha']['key'].'" data-callback="'.$captchaCallback.'" data-error-callback="'.$captchaErrorCallback.'"';
+                $captcha = ' data-sitekey="'.esc_attr($this->defaultSettings['reCaptcha']['key']).'" data-callback="'.esc_attr($captchaCallback).'" data-error-callback="'.esc_attr($captchaErrorCallback).'"';
                 $formId = 'form_'.$this->form_id();
-                $captcha_js = '<script>function '.$captchaCallback."(token) { submitMadeitForm('".$formId."'); }</script>";
-                $captcha_js .= '<script>function '.$captchaErrorCallback.'(token) { }</script>';
+                $jsonFlags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+                $captcha_js = '<script>window['.wp_json_encode($captchaCallback, $jsonFlags).'] = function(token) { submitMadeitForm('.wp_json_encode($formId, $jsonFlags).'); };</script>';
+                $captcha_js .= '<script>window['.wp_json_encode($captchaErrorCallback, $jsonFlags).'] = function(token) {};</script>';
 
                 $content = str_replace('<button class="', '<button class="g-recaptcha ', $content);
                 $content = str_replace('<button ', '<button '.$captcha, $content);
@@ -784,12 +772,12 @@ class WP_Form_front
 
             $content = $this->checkQuiz($content);
 
-            echo $content;
+            echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Rendered the_content HTML includes form controls and CAPTCHA scripts; request values are escaped in their insertion context above.
         }
         echo '</form>';
         $formHtml = ob_get_clean();
 
-        echo apply_filters('madeit_forms_form_html', $formHtml, $id);
+        echo apply_filters('madeit_forms_form_html', $formHtml, $id); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Complete rendered form HTML; trusted PHP filters must preserve context-appropriate escaping.
     }
 
     public function form_id()
@@ -1350,7 +1338,7 @@ class WP_Form_front
             }
 
             header('Content-Type: image/png');
-            echo base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=');
+            echo base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII='); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Fixed PNG bytes under an image/png response; HTML escaping corrupts the image.
             exit;
         }
     }
@@ -1474,6 +1462,42 @@ class WP_Form_front
         return (int) $iValue;
     }
 
+    private function handleValidatedUpload($file, $formId, $extension, $mime)
+    {
+        if (!function_exists('wp_handle_upload')) {
+            require_once ABSPATH.'wp-admin/includes/file.php';
+        }
+        $directoryFilter = function ($uploads) use ($formId) {
+            $uploads['subdir'] = '/madeit-forms/'.absint($formId);
+            $uploads['path'] = $uploads['basedir'].$uploads['subdir'];
+            $uploads['url'] = $uploads['baseurl'].$uploads['subdir'];
+
+            return $uploads;
+        };
+        add_filter('upload_dir', $directoryFilter);
+        try {
+            return wp_handle_upload($file, [
+                'test_form' => false,
+                'mimes' => [$extension => $mime],
+                'unique_filename_callback' => function ($directory, $name, $suffix) use ($extension) {
+                    return wp_unique_filename($directory, wp_generate_uuid4().'.'.$extension);
+                },
+            ]);
+        } finally {
+            remove_filter('upload_dir', $directoryFilter);
+        }
+    }
+
+    private function uploadFilesystem()
+    {
+        if (!class_exists('WP_Filesystem_Direct')) {
+            require_once ABSPATH.'wp-admin/includes/class-wp-filesystem-base.php';
+            require_once ABSPATH.'wp-admin/includes/class-wp-filesystem-direct.php';
+        }
+
+        return new WP_Filesystem_Direct(null);
+    }
+
     private function ensureUploadsProtection($dir)
     {
         $base = rtrim($dir, '/');
@@ -1481,7 +1505,7 @@ class WP_Form_front
         // Ensure a .htaccess one level up (madeit-forms) and in current dir
         $targets = [$baseForms, $base];
         $rules = "# Security: block script execution in form uploads\n".
-                 "<FilesMatch \\\"\\.(php|phtml|php3|php4|php5|php7|php8|phps|phar)$\\\">\n".
+                 "<FilesMatch \"\\.(php|phtml|php3|php4|php5|php7|php8|phps|phar)$\">\n".
                  "  Require all denied\n".
                  "</FilesMatch>\n".
                  "Options -ExecCGI\n".
@@ -1489,11 +1513,11 @@ class WP_Form_front
                  "RemoveType .php .phtml .phar\n";
         foreach ($targets as $t) {
             if (!is_dir($t)) {
-                @mkdir($t, 0755, true);
+                wp_mkdir_p($t);
             }
             $ht = rtrim($t, '/').'/.htaccess';
             if (!file_exists($ht)) {
-                @file_put_contents($ht, $rules);
+                $this->uploadFilesystem()->put_contents($ht, $rules, 0644);
             }
         }
     }

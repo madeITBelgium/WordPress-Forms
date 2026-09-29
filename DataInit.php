@@ -38,7 +38,7 @@ class DataInit
             }
         }
 
-        usleep(rand(100000, 1500000));
+        usleep(wp_rand(100000, 1500000));
 
         $inputs = $wpdb->get_results('SELECT * FROM `'.$wpdb->base_prefix.'madeit_form_inputs`', ARRAY_A);
         foreach ($inputs as $input) {

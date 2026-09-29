@@ -1,4 +1,7 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 class WP_MADEIT_FORM_Module_Submit
 {
     private $tags = array();
@@ -55,13 +58,14 @@ class WP_MADEIT_FORM_Module_Submit
         $args = wp_parse_args( $args, array() );
         $type = $args['id'];
 
+        /* translators: %s: Link to the submit button documentation. */
         $description = __("Generate a form-tag for a submit button. For more details, see %s.", 'forms-by-made-it');
         $desc_link = '<a href="' . esc_url('https://www.madeit.be/wordpress/forms/docs/submit-button/') . '" target="_blank">' . __('Text Fields', 'forms-by-made-it') . '</a>';
 
         ?>
         <div class="control-box">
             <fieldset>
-                <legend><?php echo sprintf(esc_html($description), $desc_link); ?></legend>
+                <legend><?php echo sprintf(esc_html($description), wp_kses_post($desc_link)); ?></legend>
                 <table class="form-table">
                     <tbody>
                         <tr>
@@ -83,7 +87,7 @@ class WP_MADEIT_FORM_Module_Submit
             </fieldset>
         </div>
         <div class="insert-box">
-            <input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
+            <input type="text" name="<?php echo esc_attr($type); ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
             <div class="submitbox">
                 <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr(__('Insert Tag', 'forms-by-made-it')); ?>" />
             </div>
@@ -103,27 +107,35 @@ class WP_MADEIT_FORM_Module_Submit
             'value' => '',
         ), $atts ));
         ob_start();
-        $captcha = "";
-        $captcha_js = "";
-        if(isset($this->defaultSettings['reCaptcha']['enabled']) && $this->defaultSettings['reCaptcha']['enabled']) {
-            $captchaCallback = "onSubmit" . rand();
-            $captchaErrorCallback = "onErrorSubmit" . rand();
+        $captchaEnabled = !empty($this->defaultSettings['reCaptcha']['enabled']);
+        if ($captchaEnabled) {
+            $captchaCallback = "onSubmit" . wp_rand();
+            $captchaErrorCallback = "onErrorSubmit" . wp_rand();
             $class .= ' g-recaptcha';
-            $captcha = ' data-sitekey="' . $this->defaultSettings['reCaptcha']['key'] . '" data-callback="' . $captchaCallback . '" data-error-callback="' . $captchaErrorCallback . '"';
             $formId = "form_" . apply_filters('madeit_forms_form_id', "");
-            $captcha_js = "<script>function " . $captchaCallback . "(token) { submitMadeitForm('" . $formId . "'); }</script>";
-            $captcha_js .= "<script>function " . $captchaErrorCallback . "(token) { }</script>";
         }
         ?>
         <input type="submit" name="btn_submit"
-           <?php if($captcha != "") { echo $captcha; } ?>
+           <?php if ($captchaEnabled) { ?>
+           data-sitekey="<?php echo esc_attr($this->defaultSettings['reCaptcha']['key']); ?>"
+           data-callback="<?php echo esc_attr($captchaCallback); ?>"
+           data-error-callback="<?php echo esc_attr($captchaErrorCallback); ?>"
+           <?php } ?>
            <?php if($value != "") { ?> value="<?php echo esc_html($value); ?>" <?php } ?>
            <?php if($id != "") { ?> id="<?php echo esc_html($id); ?>" <?php } ?>
            class="<?php echo esc_html( apply_filters('madeit_forms_module_class', $class, 'submit') ); ?>"
                >
         <?php
-        if($captcha_js != "") {
-            echo $captcha_js;
+        if ($captchaEnabled) {
+            $jsonFlags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+            ?>
+            <script>
+                window[<?php echo wp_json_encode($captchaCallback, $jsonFlags); ?>] = function(token) {
+                    submitMadeitForm(<?php echo wp_json_encode($formId, $jsonFlags); ?>);
+                };
+                window[<?php echo wp_json_encode($captchaErrorCallback, $jsonFlags); ?>] = function(token) {};
+            </script>
+            <?php
         }
         $content = ob_get_clean();
         return $content;

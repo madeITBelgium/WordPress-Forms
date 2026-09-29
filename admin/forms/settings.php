@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
     <form method="post" action="<?php echo esc_url(str_replace('%7E', '~', $_SERVER['REQUEST_URI'])); ?>" id="madeit-security-admin-form-element">
         <?php if ($success) {
     ?>
-            <div class="updated"><p><strong><?php echo __('The settings are successfully saved.', 'forms-by-made-it'); ?></strong></p></div>
+            <div class="updated"><p><strong><?php echo esc_html(__('The settings are successfully saved.', 'forms-by-made-it')); ?></strong></p></div>
             <?php
 }
         if (!empty($error)) {
@@ -33,9 +33,9 @@ if (!defined('ABSPATH')) {
                         <h3><?php echo esc_html(__('Information', 'forms-by-made-it')); ?></h3>
                         <div class="inside">
                             <ul>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#docs'), __('Docs', 'forms-by-made-it'), ''); ?></li>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#faq'), __('F.A.Q.', 'forms-by-made-it'), ''); ?></li>
-                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#support'), __('Support', 'forms-by-made-it'), ''); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#docs'), esc_attr(__('Docs', 'forms-by-made-it')), ''); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#faq'), esc_attr(__('F.A.Q.', 'forms-by-made-it')), ''); ?></li>
+                                <li><?php echo sprintf('<a href="%1$s"%3$s" title="%2$s">%2$s</a>', esc_url('https://www.madeit.be/producten/wordpress/forms-plugin/#support'), esc_attr(__('Support', 'forms-by-made-it')), ''); ?></li>
                             </ul>
                         </div>
                     </div><!-- #informationdiv -->

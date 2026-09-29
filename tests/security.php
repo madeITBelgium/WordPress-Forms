@@ -304,7 +304,7 @@ security_check($realAdmin->getInputFieldsOfForm(1) === ['alpha', 'email'], 'Clas
 
 function wp_safe_remote_request($url, $args) { $GLOBALS['test_http_args'] = $args; return $GLOBALS['test_response']; }
 function wp_safe_remote_post($url, $args) { return wp_safe_remote_request($url, $args); }
-function wp_rand($min, $max) { return $min; }
+function wp_rand($min = 0, $max = 0) { return $min; }
 require dirname(__DIR__).'/actions/Webhook.php';
 require dirname(__DIR__).'/actions/Odoo.php';
 require dirname(__DIR__).'/actions/ActiveCampaign.php';
