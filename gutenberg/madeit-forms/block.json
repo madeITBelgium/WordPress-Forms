@@ -5,12 +5,19 @@
   "title": "Made I.T. Form",
   "description": "Selecteer een Made I.T. formulier",
   "category": "madeit",
-  "icon": "<svg width=\"30\" height=\"30\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"#476a8a\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"><path d=\"M22 6H2a1.001 1.001 0 0 0-1 1v3a1.001 1.001 0 0 0 1 1h20a1.001 1.001 0 0 0 1-1V7a1.001 1.001 0 0 0-1-1zm0 4H2V7h20v3h.001M22 17H2a1.001 1.001 0 0 0-1 1v3a1.001 1.001 0 0 0 1 1h20a1.001 1.001 0 0 0 1-1v-3a1.001 1.001 0 0 0-1-1zm0 4H2v-3h20v3h.001M10 14v1H2v-1zM2 3h8v1H2z\"></path><path fill=\"none\" d=\"M0 0h24v24H0z\"></path></g></svg>",
+  "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:serif=\"http://www.serif.com/\" width=\"30\" height=\"30\" viewBox=\"0 0 24 24\" fill=\"#476a8a\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"><path d=\"M22 6H2a1.001 1.001 0 0 0-1 1v3a1.001 1.001 0 0 0 1 1h20a1.001 1.001 0 0 0 1-1V7a1.001 1.001 0 0 0-1-1zm0 4H2V7h20v3h.001M22 17H2a1.001 1.001 0 0 0-1 1v3a1.001 1.001 0 0 0 1 1h20a1.001 1.001 0 0 0 1-1v-3a1.001 1.001 0 0 0-1-1zm0 4H2v-3h20v3h.001M10 14v1H2v-1zM2 3h8v1H2z\"></path><path fill=\"none\" d=\"M0 0h24v24H0z\"></path></g></svg>",
 
   "status": "new",
   "version": "1.0.0",
   "madeit": {
     "changelog": {
+      "3.0.2": [
+        {
+          "type": "feature",
+          "label": "Nieuwe functionaliteit",
+          "text": "Je kunt vanaf nu dynamische velden laten weergeven in het formulier, zoals de naam van de gebruiker of de datum. Deze velden kunnen worden toegevoegd aan de e-mail notificaties en bevestigingsberichten."
+        }
+      ],
       "1.0.0": [
         "Initial release"
       ]

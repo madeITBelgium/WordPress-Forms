@@ -135,13 +135,205 @@ class WP_Form_Api
         return $this->form_id;
     }
 
-    private function changeInputTag($value)
+    private function changeInputTag($value, $params = [])
     {
-        foreach ($_POST as $k => $v) {
+        if (count($params) === 0) {
+            $params = $_POST;
+        }
+        $value = $this->replaceDynamicTokens($value);
+        $value = $this->applyDynamicFieldBlocks($value, $params);
+        foreach ($params as $k => $v) {
+            if (is_array($v)) {
+                $v = implode(', ', $v);
+            }
             $value = str_replace('['.$k.']', $v, $value);
         }
 
         return $value;
+    }
+
+    private function replaceDynamicTokens($value)
+    {
+        $timestamp = current_time('timestamp');
+        $date = date_i18n('j F Y', $timestamp);
+        $time = date_i18n('G:i', $timestamp);
+        $siteUrl = home_url();
+        $siteUrlEscaped = esc_url($this->formatWebsiteUrl($siteUrl));
+        $siteLabel = esc_html($this->formatWebsiteLabel($siteUrl));
+        $value = str_replace('{{DATUM}}', $date, $value);
+        $value = str_replace('{{TIJD}}', $time, $value);
+        $value = str_replace('{{DATUM_TIJD}}', $date.' '.$time, $value);
+        $value = str_replace('{{WEBSITE}}', '<a href="'.$siteUrlEscaped.'">'.$siteLabel.'</a>', $value);
+
+        return $value;
+    }
+
+    private function formatWebsiteLabel($url)
+    {
+        $parsed = wp_parse_url($url);
+        if (is_array($parsed) && !empty($parsed['host'])) {
+            return $this->ensureWwwHost($parsed['host']);
+        }
+
+        return preg_replace('#^https?://#', '', (string) $url);
+    }
+
+    private function formatWebsiteUrl($url)
+    {
+        $parsed = wp_parse_url($url);
+        if (is_array($parsed) && !empty($parsed['host'])) {
+            $host = $this->ensureWwwHost($parsed['host']);
+            $path = isset($parsed['path']) ? $parsed['path'] : '';
+            return $host.$path;
+        }
+
+        return preg_replace('#^https?://#', '', (string) $url);
+    }
+
+    private function ensureWwwHost($host)
+    {
+        $host = trim((string) $host);
+        if ($host === '') {
+            return $host;
+        }
+
+        return strpos($host, 'www.') === 0 ? $host : 'www.'.$host;
+    }
+
+    private function applyDynamicFieldBlocks($value, $params)
+    {
+        $value = $this->renderForeachBlocks($value, $params);
+        $value = $this->renderIfBlocks($value, $params);
+
+        return $value;
+    }
+
+    private function renderForeachBlocks($value, $params)
+    {
+        $pattern = '/{{foreach\s+([^}]+)}}(.*?){{endforeach}}/s';
+
+        return preg_replace_callback($pattern, function ($matches) use ($params) {
+            $field = trim($matches[1]);
+            $rawValue = isset($params[$field]) ? $params[$field] : null;
+
+            if (is_array($rawValue)) {
+                $items = $rawValue;
+            } else {
+                $rawValue = isset($rawValue) ? trim((string) $rawValue) : '';
+                $items = $rawValue === '' ? [] : [$rawValue];
+            }
+
+            if (count($items) === 0) {
+                return '';
+            }
+
+            $output = '';
+            foreach ($items as $item) {
+                $chunk = str_replace('['.$field.']', $item, $matches[2]);
+                $output .= $chunk;
+            }
+
+            return $output;
+        }, $value);
+    }
+
+    private function renderIfBlocks($value, $params)
+    {
+        $pattern = '/{{if\s+([^}]+)}}((?:(?!{{if\s).)*?){{endif}}/s';
+        $previous = null;
+
+        while ($previous !== $value) {
+            $previous = $value;
+            $value = preg_replace_callback($pattern, function ($matches) use ($params) {
+                if (!$this->evaluateIfCondition(trim($matches[1]), $params)) {
+                    return '';
+                }
+
+                return $matches[2];
+            }, $value);
+        }
+
+        return $value;
+    }
+
+    private function evaluateIfCondition($condition, $params)
+    {
+        if (strpos($condition, '===') !== false || strpos($condition, '!==') !== false) {
+            $operator = strpos($condition, '!==') !== false ? '!==' : '===';
+            $parts = preg_split('/\s*'.preg_quote($operator, '/').'\s*/', $condition, 2);
+            $field = isset($parts[0]) ? trim($parts[0]) : '';
+            $expectedRaw = isset($parts[1]) ? trim($parts[1]) : '';
+
+            if ($field === '') {
+                return false;
+            }
+
+            $expected = $this->stripConditionQuotes($expectedRaw);
+            $rawValue = isset($params[$field]) ? $params[$field] : null;
+            $isMatch = $this->matchesExpectedValue($rawValue, $expected);
+
+            return $operator === '===' ? $isMatch : !$isMatch;
+        }
+
+        $field = trim($condition);
+        $rawValue = isset($params[$field]) ? $params[$field] : null;
+
+        return $this->isFilledValue($rawValue);
+    }
+
+    private function stripConditionQuotes($value)
+    {
+        if (strlen($value) >= 2) {
+            $first = $value[0];
+            $last = $value[strlen($value) - 1];
+            if (($first === '"' && $last === '"') || ($first === "'" && $last === "'")) {
+                return substr($value, 1, -1);
+            }
+        }
+
+        return $value;
+    }
+
+    private function matchesExpectedValue($rawValue, $expected)
+    {
+        if (is_array($rawValue)) {
+            foreach ($rawValue as $item) {
+                if (trim((string) $item) === $expected) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if ($rawValue === null) {
+            return false;
+        }
+
+        return trim((string) $rawValue) === $expected;
+    }
+
+    private function isFilledValue($value)
+    {
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if (trim((string) $item) !== '') {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if ($value === null) {
+            return false;
+        }
+
+        return trim((string) $value) !== '';
     }
 
     private function getTagNameFromPostInput($form, $inputKey)

@@ -73,3 +73,34 @@
 	line-height: 1.5;
 	margin: .6em 0 .4em;
 }
+
+#madeit-tab.madeit-tabs-left {
+	display: flex;
+	gap: 0;
+}
+
+#madeit-tab.madeit-tabs-left #madeit-tab-tabs {
+	border-bottom: none;
+	border-right: 1px solid #aaa;
+	padding: 0;
+	margin: 0;
+	width: 220px;
+}
+
+#madeit-tab.madeit-tabs-left #madeit-tab-tabs li {
+	display: block;
+	margin: 0;
+	border-bottom: 1px solid #ccc;
+	border-right: none;
+}
+
+#madeit-tab.madeit-tabs-left #madeit-tab-tabs li.ui-tabs-active,
+#madeit-tab.madeit-tabs-left #madeit-tab-tabs li.ui-tabs-active:hover {
+	border-right: none;
+	border-bottom: 1px solid #aaa;
+}
+
+#madeit-tab.madeit-tabs-left .madeit-tab-panel {
+	border-top: 1px solid #aaa;
+	flex: 1;
+}
