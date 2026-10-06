@@ -5,7 +5,7 @@ Tags: contact form, feedback, email, captcha, newsletter
 Requires at least: 6.9.0
 Tested up to: 7.1
 Requires PHP: 8.5
-Stable tag: 3.0.2
+Stable tag: 3.0.3
 License: GPL-3.0-only
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,7 +37,16 @@ You will find 'Forms' menu in your WordPress admin panel.
 
 For basic usage, you can also have a look at the [plugin homepage](https://github.com/madeITBelgium/WordPress-Forms).
 
+== Upgrade Notice ==
+= 3.0.3 =
+Restores missing admin menus by fixing post-type capability mapping. Administrator-only access is preserved. Reload the admin screen after updating; reactivation is not required.
+
 == Changelog ==
+= 3.0.3 =
+* Fix: Restore the Forms and Submitted forms admin menus for administrators.
+* Fix: Use distinct post-type object capabilities to prevent interference with the WordPress manage_options capability.
+* Security: Keep form configuration and submission management restricted to administrators.
+
 = 3.0.2 =
 * Fix: Run configured server actions again from a saved submission, using current form settings and stored input values. Browser actions are skipped; results are shown per action. Repeated runs can create duplicate emails or external records.
 * Security: Escape stored submission values in all submissions-list branches, including existing records and array values.

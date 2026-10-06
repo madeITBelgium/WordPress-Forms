@@ -113,9 +113,7 @@ class DataInit
         add_role('ma_form_role', 'Forms management', ['read' => true, 'edit_posts' => false, 'delete_posts' => false, 'publish_posts' => false, 'upload_files' => true]);
 
         $capabilities = [
-            'edit_post'             => 'manage_options',
-            'read_post'             => 'manage_options',
-            'delete_post'           => 'manage_options',
+            'read'                  => 'manage_options',
             'edit_posts'            => 'manage_options',
             'edit_others_posts'     => 'manage_options',
             'publish_posts'         => 'manage_options',
@@ -179,7 +177,7 @@ class DataInit
             'show_in_rest'          => true,
             'rest_base'             => 'forms',
             'rest_controller_class' => 'WP_REST_Posts_Controller',
-            'capability_type'       => 'post',
+            'capability_type'       => ['ma_form', 'ma_forms'],
             'capabilities'          => $capabilities,
             'map_meta_cap'          => true,
         ];
@@ -233,7 +231,7 @@ class DataInit
             'rewrite'               => false,
             'show_in_rest'          => false,
             'rest_base'             => 'form_inputs',
-            'capability_type'       => 'post',
+            'capability_type'       => ['ma_form_input', 'ma_form_inputs'],
             'capabilities'          => $capabilities,
             'map_meta_cap'          => true,
         ];

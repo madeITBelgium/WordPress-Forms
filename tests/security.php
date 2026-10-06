@@ -227,7 +227,13 @@ $registration->create_post_type();
 security_check($GLOBALS['test_post_types']['ma_form_inputs']['show_in_rest'] === false, 'Submissions exposed in REST');
 foreach ($GLOBALS['test_post_types'] as $definition) {
     security_check(count(array_unique($definition['capabilities'])) === 1 && $definition['capabilities']['edit_posts'] === 'manage_options', 'Post type capabilities allow non-administrators');
+    foreach (['edit_post', 'read_post', 'delete_post'] as $metaCapability) {
+        security_check(!isset($definition['capabilities'][$metaCapability]), 'Primitive administrator capability overridden as a meta capability');
+    }
+    security_check($definition['capabilities']['read'] === 'manage_options', 'Reading published submissions must require administrator permissions');
 }
+security_check($GLOBALS['test_post_types']['ma_forms']['capability_type'] === ['ma_form', 'ma_forms'], 'Forms need distinct meta capability names');
+security_check($GLOBALS['test_post_types']['ma_form_inputs']['capability_type'] === ['ma_form_input', 'ma_form_inputs'], 'Submissions need distinct meta capability names');
 function esc_url_raw($url, $protocols = ['http', 'https']) {
     $scheme = parse_url($url, PHP_URL_SCHEME);
     return $scheme && !in_array(strtolower($scheme), $protocols, true) ? '' : $url;
