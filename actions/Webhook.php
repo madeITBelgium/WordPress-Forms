@@ -29,7 +29,7 @@ class WP_MADEIT_FORM_Webhook extends WP_MADEIT_FORM_Action
 
         $requestHeaders = [
             'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
+            'Accept'       => 'application/json',
         ];
 
         if (!empty($data['wh_headers'])) {
@@ -43,12 +43,12 @@ class WP_MADEIT_FORM_Webhook extends WP_MADEIT_FORM_Action
             }
         }
         $response = wp_safe_remote_request($data['wh_url'], [
-            'method' => strtoupper($data['wh_type']),
-            'headers' => $requestHeaders,
-            'body' => is_array($body) ? wp_json_encode($body) : (string) $body,
-            'timeout' => 30,
-            'redirection' => 0,
-            'sslverify' => true,
+            'method'              => strtoupper($data['wh_type']),
+            'headers'             => $requestHeaders,
+            'body'                => is_array($body) ? wp_json_encode($body) : (string) $body,
+            'timeout'             => 30,
+            'redirection'         => 0,
+            'sslverify'           => true,
             'limit_response_size' => 65536,
         ]);
         if (is_wp_error($response) || wp_remote_retrieve_response_code($response) < 200 || wp_remote_retrieve_response_code($response) >= 300) {

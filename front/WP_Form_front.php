@@ -546,8 +546,8 @@ class WP_Form_front
 
         $response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
             'timeout' => 10,
-            'body' => [
-                'secret' => $this->defaultSettings['reCaptcha']['secret'],
+            'body'    => [
+                'secret'   => $this->defaultSettings['reCaptcha']['secret'],
                 'response' => wp_unslash($token),
                 'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
             ],
@@ -834,6 +834,7 @@ class WP_Form_front
         if (is_array($parsed) && !empty($parsed['host'])) {
             $host = $this->ensureWwwHost($parsed['host']);
             $path = isset($parsed['path']) ? $parsed['path'] : '';
+
             return $host.$path;
         }
 
@@ -1475,10 +1476,11 @@ class WP_Form_front
             return $uploads;
         };
         add_filter('upload_dir', $directoryFilter);
+
         try {
             return wp_handle_upload($file, [
-                'test_form' => false,
-                'mimes' => [$extension => $mime],
+                'test_form'                => false,
+                'mimes'                    => [$extension => $mime],
                 'unique_filename_callback' => function ($directory, $name, $suffix) use ($extension) {
                     return wp_unique_filename($directory, wp_generate_uuid4().'.'.$extension);
                 },

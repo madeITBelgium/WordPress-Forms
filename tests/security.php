@@ -24,6 +24,7 @@ function get_post($post_id)
     if (isset($GLOBALS['test_posts'])) {
         return $GLOBALS['test_posts'][$post_id] ?? null;
     }
+
     return $GLOBALS['test_post'] ?? (object) ['post_title' => '<img src=x onerror=alert(1)>'];
 }
 
@@ -67,51 +68,155 @@ if ($output !== esc_html($payload)) {
 }
 $checks++;
 
-function esc_attr($value) { return esc_html($value); }
-function esc_textarea($value) { return esc_html($value); }
-function __($value, $domain = '') { return $value; }
-function _x($value, $context, $domain = '') { return $value; }
-function absint($value) { return abs((int) $value); }
-function wp_unslash($value) { return is_array($value) ? array_map('wp_unslash', $value) : stripslashes($value); }
-function wp_slash($value) { return is_array($value) ? array_map('wp_slash', $value) : addslashes($value); }
-function wp_kses_post($value) { return strip_tags($value, '<strong><em><a><br>'); }
-function sanitize_textarea_field($value) { return trim(strip_tags($value)); }
-function map_deep($value, $callback) { return is_array($value) ? array_map(function ($item) use ($callback) { return map_deep($item, $callback); }, $value) : $callback($value); }
-function apply_filters($name, $value, ...$args) {
+function esc_attr($value)
+{
+    return esc_html($value);
+}
+function esc_textarea($value)
+{
+    return esc_html($value);
+}
+function __($value, $domain = '')
+{
+    return $value;
+}
+function _x($value, $context, $domain = '')
+{
+    return $value;
+}
+function absint($value)
+{
+    return abs((int) $value);
+}
+function wp_unslash($value)
+{
+    return is_array($value) ? array_map('wp_unslash', $value) : stripslashes($value);
+}
+function wp_slash($value)
+{
+    return is_array($value) ? array_map('wp_slash', $value) : addslashes($value);
+}
+function wp_kses_post($value)
+{
+    return strip_tags($value, '<strong><em><a><br>');
+}
+function sanitize_textarea_field($value)
+{
+    return trim(strip_tags($value));
+}
+function map_deep($value, $callback)
+{
+    return is_array($value) ? array_map(function ($item) use ($callback) { return map_deep($item, $callback); }, $value) : $callback($value);
+}
+function apply_filters($name, $value, ...$args)
+{
     return isset($GLOBALS['test_filters'][$name]) ? $GLOBALS['test_filters'][$name]($value, ...$args) : $value;
 }
-function add_filter(...$args) {}
-function do_action(...$args) {}
-function current_user_can($capability, ...$args) { return $GLOBALS['test_admin'] ?? false; }
-function wp_is_post_revision($post_id) { return false; }
-function wp_verify_nonce($nonce, $action) { return $nonce === 'valid-'.$action; }
-function wp_create_nonce($action) { return 'valid-'.$action; }
-function wp_nonce_field($action, $name, $referer = true) { echo '<input name="'.esc_attr($name).'" value="'.esc_attr(wp_create_nonce($action)).'">'; }
-function wp_json_encode($value, $flags = 0) { return json_encode($value, $flags); }
-function get_post_type($post_id) { return get_post($post_id)->post_type; }
-function get_posts($args) { return []; }
-function shortcode_atts($defaults, $attributes) { return array_merge($defaults, array_intersect_key($attributes, $defaults)); }
-function parse_blocks($content) { return $GLOBALS['test_blocks'] ?? []; }
-function update_post_meta($post_id, $key, $value) { $GLOBALS['test_writes'][$post_id][$key] = is_string($value) ? wp_unslash($value) : $value; }
-function wp_insert_post($data) { $GLOBALS['test_inserted'][] = $data; return 123; }
-function add_role(...$args) {}
-function register_post_type($name, $args) { $GLOBALS['test_post_types'][$name] = $args; }
+function add_filter(...$args)
+{
+}
+function do_action(...$args)
+{
+}
+function current_user_can($capability, ...$args)
+{
+    return $GLOBALS['test_admin'] ?? false;
+}
+function wp_is_post_revision($post_id)
+{
+    return false;
+}
+function wp_verify_nonce($nonce, $action)
+{
+    return $nonce === 'valid-'.$action;
+}
+function wp_create_nonce($action)
+{
+    return 'valid-'.$action;
+}
+function wp_nonce_field($action, $name, $referer = true)
+{
+    echo '<input name="'.esc_attr($name).'" value="'.esc_attr(wp_create_nonce($action)).'">';
+}
+function wp_json_encode($value, $flags = 0)
+{
+    return json_encode($value, $flags);
+}
+function get_post_type($post_id)
+{
+    return get_post($post_id)->post_type;
+}
+function get_posts($args)
+{
+    return [];
+}
+function shortcode_atts($defaults, $attributes)
+{
+    return array_merge($defaults, array_intersect_key($attributes, $defaults));
+}
+function parse_blocks($content)
+{
+    return $GLOBALS['test_blocks'] ?? [];
+}
+function update_post_meta($post_id, $key, $value)
+{
+    $GLOBALS['test_writes'][$post_id][$key] = is_string($value) ? wp_unslash($value) : $value;
+}
+function wp_insert_post($data)
+{
+    $GLOBALS['test_inserted'][] = $data;
 
-class SecurityTestExit extends RuntimeException {}
-function wp_die($message = '', ...$args) { throw new SecurityTestExit($message); }
-function wp_send_json($data, $status = 200) { echo json_encode($data); wp_die(); }
-function check_ajax_referer($action, $name) {
-    if (!wp_verify_nonce($_POST[$name] ?? '', $action)) { wp_die('Invalid nonce'); }
+    return 123;
 }
-class WP_Form_Spam_Protection {
-    public function __construct(...$args) {}
-    public function isSpam($data) { return false; }
+function add_role(...$args)
+{
 }
-class SecurityTestSettings {
-    public function loadDefaultSettings() { return []; }
+function register_post_type($name, $args)
+{
+    $GLOBALS['test_post_types'][$name] = $args;
 }
-function security_check($condition, $message) {
-    if (!$condition) { throw new RuntimeException($message); }
+
+class SecurityTestExit extends RuntimeException
+{
+}
+function wp_die($message = '', ...$args)
+{
+    throw new SecurityTestExit($message);
+}
+function wp_send_json($data, $status = 200)
+{
+    echo json_encode($data);
+    wp_die();
+}
+function check_ajax_referer($action, $name)
+{
+    if (!wp_verify_nonce($_POST[$name] ?? '', $action)) {
+        wp_die('Invalid nonce');
+    }
+}
+class WP_Form_Spam_Protection
+{
+    public function __construct(...$args)
+    {
+    }
+
+    public function isSpam($data)
+    {
+        return false;
+    }
+}
+class SecurityTestSettings
+{
+    public function loadDefaultSettings()
+    {
+        return [];
+    }
+}
+function security_check($condition, $message)
+{
+    if (!$condition) {
+        throw new RuntimeException($message);
+    }
     $GLOBALS['checks']++;
 }
 
@@ -139,10 +244,15 @@ foreach (['ajax', 'post'] as $route) {
         $GLOBALS['test_writes'] = [];
         $GLOBALS['test_inserted'] = [];
         ob_start();
+
         try {
-            if ($route === 'ajax') { $front->submitAjaxForm(); }
-            else { echo $front->shortcode_form(['id' => 1]); }
-        } catch (SecurityTestExit $exception) {}
+            if ($route === 'ajax') {
+                $front->submitAjaxForm();
+            } else {
+                echo $front->shortcode_form(['id' => 1]);
+            }
+        } catch (SecurityTestExit $exception) {
+        }
         $output = ob_get_clean();
         security_check(count($GLOBALS['test_inserted']) === 1, $route.' submission requires a frontend nonce');
         $stored = json_decode($front->dbToEnter($GLOBALS['test_writes'][123]['data']), true);
@@ -154,10 +264,15 @@ foreach (['ajax', 'post'] as $route) {
         $_POST = array_merge(['form_id' => 1], $invalidValues);
         $GLOBALS['test_inserted'] = [];
         ob_start();
+
         try {
-            if ($route === 'ajax') { $front->submitAjaxForm(); }
-            else { echo $front->shortcode_form(['id' => 1]); }
-        } catch (SecurityTestExit $exception) {}
+            if ($route === 'ajax') {
+                $front->submitAjaxForm();
+            } else {
+                echo $front->shortcode_form(['id' => 1]);
+            }
+        } catch (SecurityTestExit $exception) {
+        }
         ob_end_clean();
         security_check(!$GLOBALS['test_inserted'], 'Malformed input reached storage');
     }
@@ -166,10 +281,15 @@ foreach (['ajax', 'post'] as $route) {
         $_POST = ['form_id' => 1, 'alpha' => 'Hello'];
         $GLOBALS['test_inserted'] = [];
         ob_start();
+
         try {
-            if ($route === 'ajax') { $front->submitAjaxForm(); }
-            else { echo $front->shortcode_form(['id' => 1]); }
-        } catch (SecurityTestExit $exception) {}
+            if ($route === 'ajax') {
+                $front->submitAjaxForm();
+            } else {
+                echo $front->shortcode_form(['id' => 1]);
+            }
+        } catch (SecurityTestExit $exception) {
+        }
         ob_end_clean();
         security_check(!$GLOBALS['test_inserted'], 'Non-POST submission reached storage');
     }
@@ -180,7 +300,11 @@ foreach (['draft', 'private', 'trash'] as $status) {
     $GLOBALS['test_post']->post_status = $status;
     $GLOBALS['test_inserted'] = [];
     ob_start();
-    try { $front->submitAjaxForm(); } catch (SecurityTestExit $exception) {}
+
+    try {
+        $front->submitAjaxForm();
+    } catch (SecurityTestExit $exception) {
+    }
     echo $front->shortcode_form(['id' => 1]);
     ob_end_clean();
     security_check(!$GLOBALS['test_inserted'], 'Unpublished form accepted a submission');
@@ -191,7 +315,11 @@ foreach (['get', 'post'] as $source) {
     $_POST = [];
     $_GET = [];
     $values = ['alpha' => '\"><img src=x onerror=alert(1)>', 'message' => '</textarea><img src=x onerror=alert(1)>'];
-    if ($source === 'get') { $_GET = $values; } else { $_POST = $values; }
+    if ($source === 'get') {
+        $_GET = $values;
+    } else {
+        $_POST = $values;
+    }
     $html = $front->shortcode_form(['id' => 1]);
     security_check(strpos($html, 'madeit_forms_nonce') === false, 'Frontend nonce still rendered');
     $document = new DOMDocument();
@@ -215,12 +343,22 @@ foreach ([false, true] as $isAdmin) {
 $GLOBALS['test_admin'] = false;
 $_POST = ['id' => 1];
 $denied = false;
-try { $admin->resendMail(); } catch (SecurityTestExit $exception) { $denied = true; }
+
+try {
+    $admin->resendMail();
+} catch (SecurityTestExit $exception) {
+    $denied = true;
+}
 security_check($denied, 'Unauthorized mail resend allowed');
 $GLOBALS['test_admin'] = true;
 $GLOBALS['test_post']->post_type = 'ma_form_inputs';
 $denied = false;
-try { $admin->resendMail(); } catch (SecurityTestExit $exception) { $denied = true; }
+
+try {
+    $admin->resendMail();
+} catch (SecurityTestExit $exception) {
+    $denied = true;
+}
 security_check($denied, 'Mail resend without nonce allowed');
 $registration = new DataInit();
 $registration->create_post_type();
@@ -234,11 +372,16 @@ foreach ($GLOBALS['test_post_types'] as $definition) {
 }
 security_check($GLOBALS['test_post_types']['ma_forms']['capability_type'] === ['ma_form', 'ma_forms'], 'Forms need distinct meta capability names');
 security_check($GLOBALS['test_post_types']['ma_form_inputs']['capability_type'] === ['ma_form_input', 'ma_form_inputs'], 'Submissions need distinct meta capability names');
-function esc_url_raw($url, $protocols = ['http', 'https']) {
+function esc_url_raw($url, $protocols = ['http', 'https'])
+{
     $scheme = parse_url($url, PHP_URL_SCHEME);
+
     return $scheme && !in_array(strtolower($scheme), $protocols, true) ? '' : $url;
 }
-function esc_url($url) { return esc_attr(esc_url_raw($url)); }
+function esc_url($url)
+{
+    return esc_attr(esc_url_raw($url));
+}
 require dirname(__DIR__).'/actions/WP_MADEIT_FORM_Action.php';
 foreach (['Redirect', 'Download', 'GAEvent', 'GAAdsEvent', 'Javascript'] as $action) {
     require dirname(__DIR__).'/actions/'.$action.'.php';
@@ -262,12 +405,28 @@ foreach (['WP_MADEIT_FORM_Redirect' => 'redirect_url', 'WP_MADEIT_FORM_Download'
 $instance = (new ReflectionClass('WP_MADEIT_FORM_Javacript'))->newInstanceWithoutConstructor();
 $result = $instance->callback(['js_event_code' => $attack], [], ['js_event_code' => '<script>window.fixedEvent=true;</script>']);
 security_check($result['code'] === '<script>window.fixedEvent=true;</script>', 'Custom JavaScript used submitted values');
-function wp_remote_post($url, $args) { return $GLOBALS['test_response']; }
-function wp_remote_retrieve_response_code($response) { return $response['status']; }
-function wp_remote_retrieve_body($response) { return $response['body']; }
-function is_wp_error($response) { return $response instanceof RuntimeException; }
-class SecurityTestCaptchaSettings {
-    public function loadDefaultSettings() { return ['reCaptcha' => ['enabled' => true, 'secret' => 'test', 'key' => 'test', 'version' => 'V3', 'minScore' => 0.5]]; }
+function wp_remote_post($url, $args)
+{
+    return $GLOBALS['test_response'];
+}
+function wp_remote_retrieve_response_code($response)
+{
+    return $response['status'];
+}
+function wp_remote_retrieve_body($response)
+{
+    return $response['body'];
+}
+function is_wp_error($response)
+{
+    return $response instanceof RuntimeException;
+}
+class SecurityTestCaptchaSettings
+{
+    public function loadDefaultSettings()
+    {
+        return ['reCaptcha' => ['enabled' => true, 'secret' => 'test', 'key' => 'test', 'version' => 'V3', 'minScore' => 0.5]];
+    }
 }
 $captchaFront = new WP_Form_front(new SecurityTestCaptchaSettings());
 $GLOBALS['test_post']->post_type = 'ma_forms';
@@ -286,10 +445,15 @@ foreach ([
     foreach (['ajax', 'post'] as $route) {
         $GLOBALS['test_inserted'] = [];
         ob_start();
+
         try {
-            if ($route === 'ajax') { $captchaFront->submitAjaxForm(); }
-            else { echo $captchaFront->shortcode_form(['id' => 1]); }
-        } catch (SecurityTestExit $exception) {}
+            if ($route === 'ajax') {
+                $captchaFront->submitAjaxForm();
+            } else {
+                echo $captchaFront->shortcode_form(['id' => 1]);
+            }
+        } catch (SecurityTestExit $exception) {
+        }
         ob_end_clean();
         security_check(!empty($GLOBALS['test_inserted']) === $case[1], 'CAPTCHA verification failed for '.$route);
     }
@@ -308,9 +472,20 @@ $realAdmin = (new ReflectionClass(WP_MADEIT_FORM_admin::class))->newInstanceWith
 $GLOBALS['test_meta']['form'] = '[text name="alpha"][email name="email"]';
 security_check($realAdmin->getInputFieldsOfForm(1) === ['alpha', 'email'], 'Classic field lookup failed');
 
-function wp_safe_remote_request($url, $args) { $GLOBALS['test_http_args'] = $args; return $GLOBALS['test_response']; }
-function wp_safe_remote_post($url, $args) { return wp_safe_remote_request($url, $args); }
-function wp_rand($min = 0, $max = 0) { return $min; }
+function wp_safe_remote_request($url, $args)
+{
+    $GLOBALS['test_http_args'] = $args;
+
+    return $GLOBALS['test_response'];
+}
+function wp_safe_remote_post($url, $args)
+{
+    return wp_safe_remote_request($url, $args);
+}
+function wp_rand($min = 0, $max = 0)
+{
+    return $min;
+}
 require dirname(__DIR__).'/actions/Webhook.php';
 require dirname(__DIR__).'/actions/Odoo.php';
 require dirname(__DIR__).'/actions/ActiveCampaign.php';
@@ -330,20 +505,33 @@ $campaign = (new ReflectionClass(WP_MADEIT_FORM_ActiveCampaign::class))->newInst
 $request = new ReflectionMethod($campaign, 'requestAC');
 security_check($request->invoke($campaign, 'POST', 'https://example.test', 'test', []) === ['{"result":17}', 200], 'ActiveCampaign response failed');
 security_check($GLOBALS['test_http_args']['redirection'] === 0 && $GLOBALS['test_http_args']['sslverify'] === true, 'ActiveCampaign network protections missing');
-function current_time($type) { return 1700000000; }
-function date_i18n($format, $timestamp) { return gmdate($format, $timestamp); }
-function home_url() { return 'https://example.test'; }
-function wp_parse_url($url) { return parse_url($url); }
+function current_time($type)
+{
+    return 1700000000;
+}
+function date_i18n($format, $timestamp)
+{
+    return gmdate($format, $timestamp);
+}
+function home_url()
+{
+    return 'https://example.test';
+}
+function wp_parse_url($url)
+{
+    return parse_url($url);
+}
 
 $replayCalls = [];
 $definition = [
-    'title' => 'Email',
+    'title'         => 'Email',
     'action_fields' => [
-        'to' => ['value' => 'default@example.test'],
+        'to'      => ['value' => 'default@example.test'],
         'message' => ['value' => 'Hello [alpha]'],
     ],
     'callback' => function ($data, $messages, $actionInfo, $formId, $inputId, $postData) use (&$replayCalls) {
         $replayCalls[] = compact('data', 'messages', 'actionInfo', 'formId', 'inputId', 'postData');
+
         return true;
     },
 ];
@@ -366,10 +554,12 @@ foreach (['REDIRECT', 'DOWNLOAD', 'JS_EVENT', 'GA_EVENT', 'GA_ADS_EVENT'] as $br
 $GLOBALS['test_filters']['madeit_forms_actions'] = function ($actions) use ($registry) { return $registry; };
 $GLOBALS['test_filters']['madeit_forms_submit_actions'] = function ($actions) {
     $actions[] = ['_id' => 'EMAIL', 'message' => 'Filtered action'];
+
     return $actions;
 };
 $GLOBALS['test_filters']['madeit_forms_action_data'] = function ($data, $formId, $inputId, $actionInfo, $postData) {
     $data['filter_context'] = [$formId, $inputId, $postData['alpha']];
+
     return $data;
 };
 $savedData = ['alpha' => 'Stored visitor', 'email' => 'visitor@example.test', 'choices' => ['One', 'Two']];
@@ -393,7 +583,7 @@ $GLOBALS['test_admin'] = true;
 $GLOBALS['test_posts'] = [1 => $form, 123 => (object) ['ID' => 123, 'post_type' => 'ma_form_inputs', 'post_date' => '2026-09-29 12:00:00']];
 $GLOBALS['test_meta_by_id'] = [
     123 => ['form_id' => 1, 'data' => $front->enterToDB(wp_json_encode($savedData))],
-    1 => ['actions' => wp_json_encode([['_id' => 'EMAIL'], ['_id' => 'WEBHOOK'], ['_id' => 'REDIRECT']]), 'messages' => '{}'],
+    1   => ['actions' => wp_json_encode([['_id' => 'EMAIL'], ['_id' => 'WEBHOOK'], ['_id' => 'REDIRECT']]), 'messages' => '{}'],
 ];
 $replayAdmin = new WP_MADEIT_FORM_admin(new SecurityTestSettings());
 foreach (['success', 'empty', 'invalid_data', 'invalid_actions', 'missing_form', 'wrong_type', 'get', 'denied', 'invalid_nonce'] as $scenario) {
@@ -405,14 +595,30 @@ foreach (['success', 'empty', 'invalid_data', 'invalid_actions', 'missing_form',
     $_POST = ['id' => 123, 'nonce' => 'valid-ma_forms_resend_mail_123', 'alpha' => 'Forged'];
     $_SERVER['REQUEST_METHOD'] = $scenario === 'get' ? 'GET' : 'POST';
     $GLOBALS['test_admin'] = $scenario !== 'denied';
-    if ($scenario === 'invalid_nonce') { $_POST['nonce'] = 'wrong'; }
-    if ($scenario === 'invalid_data') { $GLOBALS['test_meta_by_id'][123]['data'] = '{invalid'; }
-    if ($scenario === 'invalid_actions') { $GLOBALS['test_meta_by_id'][1]['actions'] = '{invalid'; }
-    if ($scenario === 'empty') { $GLOBALS['test_meta_by_id'][1]['actions'] = '[]'; }
-    if ($scenario === 'missing_form') { unset($GLOBALS['test_posts'][1]); }
-    if ($scenario === 'wrong_type') { $GLOBALS['test_posts'][123] = (object) ['post_type' => 'post']; }
+    if ($scenario === 'invalid_nonce') {
+        $_POST['nonce'] = 'wrong';
+    }
+    if ($scenario === 'invalid_data') {
+        $GLOBALS['test_meta_by_id'][123]['data'] = '{invalid';
+    }
+    if ($scenario === 'invalid_actions') {
+        $GLOBALS['test_meta_by_id'][1]['actions'] = '{invalid';
+    }
+    if ($scenario === 'empty') {
+        $GLOBALS['test_meta_by_id'][1]['actions'] = '[]';
+    }
+    if ($scenario === 'missing_form') {
+        unset($GLOBALS['test_posts'][1]);
+    }
+    if ($scenario === 'wrong_type') {
+        $GLOBALS['test_posts'][123] = (object) ['post_type' => 'post'];
+    }
     ob_start();
-    try { $replayAdmin->resendMail(); } catch (SecurityTestExit $exception) {}
+
+    try {
+        $replayAdmin->resendMail();
+    } catch (SecurityTestExit $exception) {
+    }
     $response = json_decode(ob_get_clean(), true);
     security_check(count($replayCalls) === ($scenario === 'success' ? 2 : 0), 'Replay handler guard failed: '.$scenario);
     security_check(!$GLOBALS['test_inserted'] && !$GLOBALS['test_writes'], 'Replay modified stored submissions: '.$scenario);

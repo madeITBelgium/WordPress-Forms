@@ -106,11 +106,11 @@ class WP_MADEIT_FORM_Odoo extends WP_MADEIT_FORM_Action
         ];
 
         $response = wp_safe_remote_post($endpoint, [
-            'headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
-            'body' => wp_json_encode($payload),
-            'timeout' => 30,
-            'redirection' => 0,
-            'sslverify' => true,
+            'headers'             => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
+            'body'                => wp_json_encode($payload),
+            'timeout'             => 30,
+            'redirection'         => 0,
+            'sslverify'           => true,
             'limit_response_size' => 65536,
         ]);
         if (is_wp_error($response) || wp_remote_retrieve_response_code($response) < 200 || wp_remote_retrieve_response_code($response) >= 300) {
