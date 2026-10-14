@@ -6,7 +6,7 @@
  * Description: Build cool, easy and flexible forms with Forms.
  * Author: Made I.T.
  * Author URI: https://www.madeit.be
- * Version: 3.0.3
+ * Version: 3.1.0
  * Text Domain: forms-by-made-it
  * Domain Path: /languages
  * License: GPL-3.0-only
@@ -26,7 +26,7 @@ if (!defined('MADEIT_FORM_FRONT')) {
     define('MADEIT_FORM_FRONT', MADEIT_FORM_DIR.'/front'); // Admin Dir
 }
 if (!defined('MADEIT_FORM_VERSION')) {
-    define('MADEIT_FORM_VERSION', '3.0.3');
+    define('MADEIT_FORM_VERSION', '3.1.0');
 }
 require_once MADEIT_FORM_DIR.'/vendor/autoload.php';
 
@@ -114,6 +114,8 @@ function madeit_forms_loadActions()
     $a = new WP_MADEIT_FORM_Webhook();
     require_once MADEIT_FORM_DIR.'/actions/Odoo.php';
     $a = new WP_MADEIT_FORM_Odoo();
+    require_once MADEIT_FORM_DIR.'/actions/Nizu.php';
+    $a = new WP_MADEIT_FORM_Nizu();
 
     require_once MADEIT_FORM_DIR.'/modules/Text.php';
     require_once MADEIT_FORM_DIR.'/modules/Checkbox.php';

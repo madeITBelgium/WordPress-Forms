@@ -42,6 +42,9 @@ For basic usage, you can also have a look at the [plugin homepage](https://githu
 Restores missing admin menus by fixing post-type capability mapping. Administrator-only access is preserved. Reload the admin screen after updating; reactivation is not required.
 
 == Changelog ==
+= 3.1.0 =
+* Add Nizu.be CRM action to submit form leads using configurable field mappings.
+
 = 3.0.3 =
 * Fix: Restore the Forms and Submitted forms admin menus for administrators.
 * Fix: Use distinct post-type object capabilities to prevent interference with the WordPress manage_options capability.
@@ -54,7 +57,7 @@ Restores missing admin menus by fixing post-type capability mapping. Administrat
 * Security: Validate POST requests and field shapes for AJAX and regular submissions, and store only declared request fields.
 * Security: Restrict form configuration and submission management to administrators, protect privileged actions with nonces, and disable the submissions REST endpoint.
 * Security: Validate uploads before moving files, require successful CAPTCHA verification, and sign email read-tracking links.
-* Security: Use safe HTTP requests for Webhook, Odoo and ActiveCampaign actions; update bundled HTTP dependencies.
+* Security: Use safe HTTP requests for Webhook, Odoo, Nizu.be and ActiveCampaign actions; update bundled HTTP dependencies.
 * Privacy: Remove automatic transmission of failed submissions to the vendor and logging of full submission bodies.
 * Fix: Preserve quoted and Unicode submission values through WordPress metadata storage.
 * Cache compatibility: Public submissions do not require a frontend nonce. Admin actions retain nonce and capability checks.

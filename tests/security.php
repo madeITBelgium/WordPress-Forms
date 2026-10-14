@@ -308,11 +308,12 @@ $realAdmin = (new ReflectionClass(WP_MADEIT_FORM_admin::class))->newInstanceWith
 $GLOBALS['test_meta']['form'] = '[text name="alpha"][email name="email"]';
 security_check($realAdmin->getInputFieldsOfForm(1) === ['alpha', 'email'], 'Classic field lookup failed');
 
-function wp_safe_remote_request($url, $args) { $GLOBALS['test_http_args'] = $args; return $GLOBALS['test_response']; }
+function wp_safe_remote_request($url, $args) { $GLOBALS['test_http_url'] = $url; $GLOBALS['test_http_args'] = $args; return $GLOBALS['test_response']; }
 function wp_safe_remote_post($url, $args) { return wp_safe_remote_request($url, $args); }
 function wp_rand($min = 0, $max = 0) { return $min; }
 require dirname(__DIR__).'/actions/Webhook.php';
 require dirname(__DIR__).'/actions/Odoo.php';
+require dirname(__DIR__).'/actions/Nizu.php';
 require dirname(__DIR__).'/actions/ActiveCampaign.php';
 $webhook = (new ReflectionClass(WP_MADEIT_FORM_Webhook::class))->newInstanceWithoutConstructor();
 foreach ([new RuntimeException('Unsafe URL'), ['status' => 302, 'body' => ''], ['status' => 500, 'body' => ''], ['status' => 204, 'body' => '']] as $response) {
@@ -326,6 +327,38 @@ $request = new ReflectionMethod($odoo, 'requestJsonRpc');
 $GLOBALS['test_response'] = ['status' => 200, 'body' => '{"result":17}'];
 security_check($request->invoke($odoo, 'https://example.test', []) === 17, 'Odoo JSON response failed');
 security_check($GLOBALS['test_http_args']['redirection'] === 0 && $GLOBALS['test_http_args']['sslverify'] === true, 'Odoo network protections missing');
+$nizu = new WP_MADEIT_FORM_Nizu();
+$nizuData = [
+    'nizu_url' => 'https://ondernemendklt.nizu.io/collect_leads/save',
+    'nizu_company_name' => '[company_name]',
+    'nizu_first_name' => '[first_name]',
+    'nizu_last_name' => '[last_name]',
+    'nizu_email' => '[email]',
+    'nizu_lead_source_id' => '6',
+    'nizu_lead_owner_id' => '1',
+];
+$GLOBALS['test_response'] = ['status' => 200, 'body' => 'ok'];
+security_check($nizu->callback($nizuData, [], [], 1, 123, [
+    'company_name' => 'Example & Sons',
+    'first_name' => 'Jane',
+    'last_name' => 'Doe',
+    'email' => 'jane@example.test',
+]) === true, 'Nizu form submission failed');
+security_check($GLOBALS['test_http_url'] === $nizuData['nizu_url'], 'Nizu endpoint was not used');
+security_check($GLOBALS['test_http_args']['body'] === [
+    'company_name' => 'Example & Sons',
+    'first_name' => 'Jane',
+    'last_name' => 'Doe',
+    'email' => 'jane@example.test',
+    'lead_source_id' => '6',
+    'lead_owner_id' => '1',
+], 'Nizu form fields were not mapped correctly');
+security_check($GLOBALS['test_http_args']['redirection'] === 0 && $GLOBALS['test_http_args']['sslverify'] === true, 'Nizu network protections missing');
+foreach ([new RuntimeException('Network error'), ['status' => 302, 'body' => ''], ['status' => 500, 'body' => '']] as $response) {
+    $GLOBALS['test_response'] = $response;
+    security_check($nizu->callback($nizuData, ['action_nizu_error' => 'failed'], [], 1, 123, []) === 'failed', 'Nizu request failure was not reported');
+}
+$GLOBALS['test_response'] = ['status' => 200, 'body' => '{"result":17}'];
 $campaign = (new ReflectionClass(WP_MADEIT_FORM_ActiveCampaign::class))->newInstanceWithoutConstructor();
 $request = new ReflectionMethod($campaign, 'requestAC');
 security_check($request->invoke($campaign, 'POST', 'https://example.test', 'test', []) === ['{"result":17}', 200], 'ActiveCampaign response failed');
