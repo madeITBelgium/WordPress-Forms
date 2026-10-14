@@ -10,7 +10,7 @@
  * Text Domain: forms-by-made-it
  * Domain Path: /languages
  * License: GPL-3.0-only
- * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html.
  */
 // Defines
 if (!defined('MADEIT_FORM_DIR')) {

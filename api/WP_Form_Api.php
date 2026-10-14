@@ -184,6 +184,7 @@ class WP_Form_Api
         if (is_array($parsed) && !empty($parsed['host'])) {
             $host = $this->ensureWwwHost($parsed['host']);
             $path = isset($parsed['path']) ? $parsed['path'] : '';
+
             return $host.$path;
         }
 

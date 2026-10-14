@@ -32,12 +32,12 @@ class WP_MADEIT_FORM_Nizu extends WP_MADEIT_FORM_Action
         }
 
         $fields = [
-            'company_name' => 'nizu_company_name',
-            'first_name' => 'nizu_first_name',
-            'last_name' => 'nizu_last_name',
-            'email' => 'nizu_email',
+            'company_name'   => 'nizu_company_name',
+            'first_name'     => 'nizu_first_name',
+            'last_name'      => 'nizu_last_name',
+            'email'          => 'nizu_email',
             'lead_source_id' => 'nizu_lead_source_id',
-            'lead_owner_id' => 'nizu_lead_owner_id',
+            'lead_owner_id'  => 'nizu_lead_owner_id',
         ];
         $body = [];
         foreach ($fields as $field => $setting) {
@@ -48,12 +48,12 @@ class WP_MADEIT_FORM_Nizu extends WP_MADEIT_FORM_Action
         $response = wp_safe_remote_post($url, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
-                'Accept' => 'text/html,application/xhtml+xml',
+                'Accept'       => 'text/html,application/xhtml+xml',
             ],
-            'body' => $body,
-            'timeout' => 30,
-            'redirection' => 0,
-            'sslverify' => true,
+            'body'                => $body,
+            'timeout'             => 30,
+            'redirection'         => 0,
+            'sslverify'           => true,
             'limit_response_size' => 65536,
         ]);
         if (is_wp_error($response) || wp_remote_retrieve_response_code($response) < 200 || wp_remote_retrieve_response_code($response) >= 300) {
@@ -66,7 +66,7 @@ class WP_MADEIT_FORM_Nizu extends WP_MADEIT_FORM_Action
     private function replacePlaceholders($value, $postData, $formId, $inputId)
     {
         $replacements = [
-            'form_id' => $formId,
+            'form_id'  => $formId,
             'input_id' => $inputId,
         ];
 
